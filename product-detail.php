@@ -40,7 +40,7 @@ $page_title = $product['name'];
 $meta_description = $product['meta_description'] ?? $product['short_description'];
 
 // Extra CSS for this page
-$extra_css = ['assets/css/product-detail.css'];
+$extra_css = [SITE_URL . '/assets/css/product-detail.css'];
 
 include 'includes/header.php';
 include 'includes/navbar.php';
@@ -443,9 +443,67 @@ include 'includes/navbar.php';
         } else {
             // Fallback: copy to clipboard
             navigator.clipboard.writeText(window.location.href);
-            showToast('Success', 'Link copied to clipboard!', 'success');
+            if (typeof showToast === 'function') {
+                showToast('Success', 'Link copied to clipboard!', 'success');
+            } else {
+                alert('Link copied to clipboard!');
+            }
         }
     }
+
+    // Real-time Countdown Timer
+    function updateCountdown() {
+        const countdownElement = document.getElementById('productCountdown');
+        if (!countdownElement) return;
+
+        let curContent = countdownElement.innerText.trim();
+        let timeParts = curContent.split(':');
+        if (timeParts.length !== 3) return;
+
+        let hours = parseInt(timeParts[0]);
+        let minutes = parseInt(timeParts[1]);
+        let seconds = parseInt(timeParts[2]);
+
+        let totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+        if (totalSeconds <= 0) {
+            // Reset to 24h or stop
+            countdownElement.innerText = "00:00:00";
+            return;
+        }
+
+        totalSeconds--;
+
+        let h = Math.floor(totalSeconds / 3600);
+        let m = Math.floor((totalSeconds % 3600) / 60);
+        let s = totalSeconds % 60;
+
+        countdownElement.innerText = 
+            (h < 10 ? '0' + h : h) + ':' + 
+            (m < 10 ? '0' + m : m) + ':' + 
+            (s < 10 ? '0' + s : s);
+    }
+    setInterval(updateCountdown, 1000);
+
+    // Quantity Picker Logic
+    document.addEventListener('DOMContentLoaded', function() {
+        const qtyInput = document.getElementById('productQuantity');
+        const minusBtn = document.querySelector('.qty-btn-minus');
+        const plusBtn = document.querySelector('.qty-btn-plus');
+
+        if (qtyInput && minusBtn && plusBtn) {
+            minusBtn.addEventListener('click', function() {
+                let val = parseInt(qtyInput.value);
+                if (val > 1) qtyInput.value = val - 1;
+            });
+
+            plusBtn.addEventListener('click', function() {
+                let val = parseInt(qtyInput.value);
+                let max = parseInt(qtyInput.getAttribute('max')) || 99;
+                if (val < max) qtyInput.value = val + 1;
+            });
+        }
+    });
 </script>
 
 <?php include 'includes/footer.php'; ?>

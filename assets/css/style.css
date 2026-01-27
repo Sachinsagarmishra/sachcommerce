@@ -489,6 +489,16 @@ h6,
     font-weight: 600 !important;
     background: transparent !important;
     box-shadow: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    -moz-appearance: textfield !important;
+    appearance: textfield !important;
+}
+
+.quantity-picker-custom .qty-input::-webkit-outer-spin-button,
+.quantity-picker-custom .qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
 }
 
 .btn-orange-custom {
@@ -499,6 +509,10 @@ h6,
     font-weight: 700 !important;
     letter-spacing: 1px !important;
     transition: background 0.3s !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
 }
 
 .btn-orange-custom:hover {
@@ -514,6 +528,10 @@ h6,
     font-weight: 700 !important;
     letter-spacing: 1px !important;
     transition: opacity 0.3s !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
 }
 
 .btn-black-custom:hover {

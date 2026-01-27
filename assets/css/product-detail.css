@@ -1,0 +1,225 @@
+/* Product Detail Page Specific Styles */
+
+.product-title-serif {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #000;
+}
+
+.price-section .selling-price {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #000;
+}
+
+.price-section .regular-price {
+    font-size: 1.3rem;
+    color: #666;
+}
+
+.text-orange {
+    color: #ff6a39 !important;
+}
+
+.rating-section i {
+    color: #ddd;
+    margin-right: 2px;
+}
+
+.rating-section i.fas.fa-star {
+    color: #ffc107;
+}
+
+.quantity-picker-custom {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    height: 50px;
+    width: 140px;
+    background: #fff;
+}
+
+.quantity-picker-custom .qty-btn {
+    background: transparent;
+    border: none;
+    width: 45px;
+    height: 100%;
+    font-size: 1.2rem;
+    transition: background 0.2s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quantity-picker-custom .qty-btn:hover {
+    background: #f8f9fa;
+}
+
+.quantity-picker-custom .qty-input {
+    border: none !important;
+    border-left: 1px solid #ddd !important;
+    border-right: 1px solid #ddd !important;
+    width: 50px !important;
+    height: 100%;
+    text-align: center !important;
+    font-weight: 600 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    -moz-appearance: textfield !important;
+    appearance: textfield !important;
+    margin: 0 !important;
+}
+
+.quantity-picker-custom .qty-input::-webkit-outer-spin-button,
+.quantity-picker-custom .qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+
+.btn-orange-custom {
+    background-color: #ff6a39 !important;
+    color: white !important;
+    border: none !important;
+    height: 50px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    transition: background 0.3s !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+}
+
+.btn-orange-custom:hover {
+    background-color: #e55a2d !important;
+    color: white !important;
+}
+
+.btn-black-custom {
+    background-color: #000 !important;
+    color: white !important;
+    border: none !important;
+    height: 50px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    transition: opacity 0.3s !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+}
+
+.btn-black-custom:hover {
+    opacity: 0.8 !important;
+    color: white !important;
+}
+
+.delivery-message p {
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.timeline-box {
+    background-color: #fffaf0;
+    border: 1px solid #ff6a39;
+    border-radius: 12px;
+}
+
+.timeline-line {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between;
+    position: relative;
+    padding-top: 10px;
+}
+
+.line-hr {
+    position: absolute;
+    top: 32px;
+    left: 15%;
+    right: 15%;
+    height: 2px;
+    background: #ff6a39;
+    z-index: 1;
+}
+
+.timeline-point {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    flex: 1;
+}
+
+.timeline-point .icon-circle {
+    width: 44px;
+    height: 44px;
+    background: white;
+    border: 2px solid #ff6a39;
+    border-radius: 50%;
+    margin: 0 auto 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff6a39;
+    font-size: 1.1rem;
+}
+
+.timeline-point.active .icon-circle {
+    background: #ff6a39;
+    color: white;
+}
+
+.timeline-point .label {
+    display: block;
+    font-weight: 700;
+    font-size: 0.75rem;
+    color: #ff6a39;
+}
+
+.timeline-point .date {
+    display: block;
+    font-size: 0.7rem;
+    color: #ff6a39;
+}
+
+.share-links-custom a {
+    color: #666;
+    font-size: 1rem;
+    transition: color 0.2s;
+    text-decoration: none;
+}
+
+.share-links-custom a:hover {
+    color: #000;
+}
+
+@media (max-width: 768px) {
+    .product-title-serif {
+        font-size: 1.8rem;
+    }
+
+    .timeline-line {
+        flex-direction: column !important;
+        align-items: flex-start;
+        padding-left: 20px;
+    }
+
+    .line-hr {
+        display: none;
+    }
+
+    .timeline-point {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        text-align: left;
+        margin-bottom: 15px;
+    }
+
+    .timeline-point .icon-circle {
+        margin: 0;
+    }
+}
