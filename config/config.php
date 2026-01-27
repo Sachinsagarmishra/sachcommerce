@@ -31,7 +31,7 @@ define('IS_LIVE_ENV', !$is_local);
 // ============================================================================
 if (IS_LOCAL_ENV) {
     define('ENVIRONMENT', 'development');
-    $site_url = 'https://ivory-weasel-745273.hostingersite.com/trendsone';
+    $site_url = 'https://ivory-weasel-745273.hostingersite.com';
 
     // Database - Local
     define('DB_HOST', 'localhost');
@@ -53,7 +53,7 @@ if (IS_LOCAL_ENV) {
 } else {
     // LIVE ENVIRONMENT
     define('ENVIRONMENT', 'production');
-    $site_url = 'https://ivory-weasel-745273.hostingersite.com/trendsone';
+    $site_url = 'https://ivory-weasel-745273.hostingersite.com';
 
     // Database - Live
     define('DB_HOST', 'localhost');
