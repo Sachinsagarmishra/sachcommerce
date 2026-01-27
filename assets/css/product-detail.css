@@ -281,3 +281,14 @@
         font-size: 0.65rem !important;
     }
 }
+
+/* Viewing Count Section */
+.viewing-count {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.viewing-count .count-num {
+    color: #ff6a39;
+    font-weight: 700;
+}
