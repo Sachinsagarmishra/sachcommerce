@@ -30,9 +30,8 @@ define('IS_LIVE_ENV', !$is_local);
 // Note: Constants are now defined later, after DB connection
 // ============================================================================
 if (IS_LOCAL_ENV) {
-    // LOCAL ENVIRONMENT
     define('ENVIRONMENT', 'development');
-    define('SITE_URL', 'https://ivory-weasel-745273.hostingersite.com');
+    $site_url = 'https://ivory-weasel-745273.hostingersite.com/trendsone';
 
     // Database - Local
     define('DB_HOST', 'localhost');
@@ -54,7 +53,7 @@ if (IS_LOCAL_ENV) {
 } else {
     // LIVE ENVIRONMENT
     define('ENVIRONMENT', 'production');
-    define('SITE_URL', 'https://ivory-weasel-745273.hostingersite.com');
+    $site_url = 'https://ivory-weasel-745273.hostingersite.com/trendsone';
 
     // Database - Live
     define('DB_HOST', 'localhost');
@@ -73,6 +72,8 @@ if (IS_LOCAL_ENV) {
     define('SMTP_USERNAME', 'your-production-email@gmail.com');
     define('SMTP_PASSWORD', 'your-production-app-password');
 }
+
+define('SITE_URL', $site_url);
 
 // ============================================================================
 // SESSION CONFIGURATION (Must be set BEFORE session_start)

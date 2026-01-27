@@ -7,37 +7,48 @@
                 <h5 class="mb-3"><i class="fas fa-store"></i> <?php echo SITE_NAME; ?></h5>
                 <p class="text-white-50"><?php echo SITE_TAGLINE; ?></p>
                 <div class="social-links mt-3">
-                    <a href="<?php echo FACEBOOK_URL; ?>" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
-                    <a href="<?php echo INSTAGRAM_URL; ?>" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
-                    <a href="<?php echo TWITTER_URL; ?>" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="<?php echo FACEBOOK_URL; ?>" class="text-white me-3"><i
+                            class="fab fa-facebook fa-lg"></i></a>
+                    <a href="<?php echo INSTAGRAM_URL; ?>" class="text-white me-3"><i
+                            class="fab fa-instagram fa-lg"></i></a>
+                    <a href="<?php echo TWITTER_URL; ?>" class="text-white me-3"><i
+                            class="fab fa-twitter fa-lg"></i></a>
                     <a href="<?php echo YOUTUBE_URL; ?>" class="text-white"><i class="fab fa-youtube fa-lg"></i></a>
                 </div>
             </div>
-            
+
             <!-- Quick Links -->
             <div class="col-md-3 mb-4">
                 <h5 class="mb-3">Quick Links</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/about.php" class="text-white-50 text-decoration-none">About Us</a></li>
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/shop.php" class="text-white-50 text-decoration-none">Shop</a></li>
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/blog.php" class="text-white-50 text-decoration-none">Blog</a></li>
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/contact.php" class="text-white-50 text-decoration-none">Contact Us</a></li>
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/faq.php" class="text-white-50 text-decoration-none">FAQ</a></li>
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/about.php"
+                            class="text-white-50 text-decoration-none">About Us</a></li>
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/shop.php"
+                            class="text-white-50 text-decoration-none">Shop</a></li>
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/contact.php"
+                            class="text-white-50 text-decoration-none">Contact Us</a></li>
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/faq.php"
+                            class="text-white-50 text-decoration-none">FAQ</a></li>
                 </ul>
             </div>
-            
+
             <!-- Customer Service -->
             <div class="col-md-3 mb-4">
                 <h5 class="mb-3">Customer Service</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/my-account.php" class="text-white-50 text-decoration-none">My Account</a></li>
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/orders.php" class="text-white-50 text-decoration-none">Track Order</a></li>
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/return-policy.php" class="text-white-50 text-decoration-none">Return Policy</a></li>
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/shipping-policy.php" class="text-white-50 text-decoration-none">Shipping Policy</a></li>
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/terms-conditions.php" class="text-white-50 text-decoration-none">Terms & Conditions</a></li>
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/my-account.php"
+                            class="text-white-50 text-decoration-none">My Account</a></li>
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/orders.php"
+                            class="text-white-50 text-decoration-none">Track Order</a></li>
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/return-policy.php"
+                            class="text-white-50 text-decoration-none">Return Policy</a></li>
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/shipping-policy.php"
+                            class="text-white-50 text-decoration-none">Shipping Policy</a></li>
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/terms-conditions.php"
+                            class="text-white-50 text-decoration-none">Terms & Conditions</a></li>
                 </ul>
             </div>
-            
+
             <!-- Contact Info -->
             <div class="col-md-3 mb-4">
                 <h5 class="mb-3">Contact Us</h5>
@@ -48,18 +59,21 @@
                     </li>
                     <li class="mb-2">
                         <i class="fas fa-phone me-2"></i>
-                        <a href="tel:<?php echo SITE_PHONE; ?>" class="text-white-50 text-decoration-none"><?php echo SITE_PHONE; ?></a>
+                        <a href="tel:<?php echo SITE_PHONE; ?>"
+                            class="text-white-50 text-decoration-none"><?php echo SITE_PHONE; ?></a>
                     </li>
                     <li class="mb-2">
                         <i class="fas fa-envelope me-2"></i>
-                        <a href="mailto:<?php echo SITE_EMAIL; ?>" class="text-white-50 text-decoration-none"><?php echo SITE_EMAIL; ?></a>
+                        <a href="mailto:<?php echo SITE_EMAIL; ?>"
+                            class="text-white-50 text-decoration-none"><?php echo SITE_EMAIL; ?></a>
                     </li>
                 </ul>
-                
+
                 <!-- Newsletter -->
                 <div class="mt-3">
                     <h6>Newsletter</h6>
-                    <form action="<?php echo SITE_URL; ?>/api/newsletter-subscribe.php" method="POST" class="newsletter-form">
+                    <form action="<?php echo SITE_URL; ?>/api/newsletter-subscribe.php" method="POST"
+                        class="newsletter-form">
                         <div class="input-group input-group-sm">
                             <input type="email" class="form-control" name="email" placeholder="Your email" required>
                             <button class="btn btn-primary" type="submit">
@@ -70,9 +84,9 @@
                 </div>
             </div>
         </div>
-        
+
         <hr class="bg-white-50 my-4">
-        
+
         <!-- Payment Methods & Copyright -->
         <div class="row align-items-center">
             <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
@@ -81,7 +95,8 @@
                 </p>
             </div>
             <div class="col-md-6 text-center text-md-end">
-                <img src="<?php echo SITE_URL; ?>/assets/images/payment-methods.png" alt="Payment Methods" height="30" class="opacity-75">
+                <img src="<?php echo SITE_URL; ?>/assets/images/payment-methods.png" alt="Payment Methods" height="30"
+                    class="opacity-75">
             </div>
         </div>
     </div>
@@ -108,4 +123,5 @@
 <?php endif; ?>
 
 </body>
+
 </html>
