@@ -69,13 +69,15 @@ function get_product_by_slug($slug)
 /**
  * Get product images
  */
-function get_product_images($product_id)
-{
-    global $pdo;
+if (!function_exists('get_product_images')) {
+    function get_product_images($product_id)
+    {
+        global $pdo;
 
-    $stmt = $pdo->prepare("SELECT * FROM product_images WHERE product_id = ? ORDER BY is_primary DESC, display_order ASC");
-    $stmt->execute([$product_id]);
-    return $stmt->fetchAll();
+        $stmt = $pdo->prepare("SELECT * FROM product_images WHERE product_id = ? ORDER BY is_primary DESC, display_order ASC");
+        $stmt->execute([$product_id]);
+        return $stmt->fetchAll();
+    }
 }
 
 /**
