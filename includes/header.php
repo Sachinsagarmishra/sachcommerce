@@ -50,6 +50,10 @@
             <link rel="stylesheet" href="<?php echo $css; ?>">
         <?php endforeach; ?>
     <?php endif; ?>
+
+    <script>
+        const siteUrl = '<?php echo SITE_URL; ?>';
+    </script>
 </head>
 
 <body>
