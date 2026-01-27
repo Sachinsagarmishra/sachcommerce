@@ -2,6 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+echo "PHP Version: " . phpversion() . "<br>";
 echo "Testing config.php... <br>";
 require_once '../config/config.php';
 echo "config.php OK <br>";
