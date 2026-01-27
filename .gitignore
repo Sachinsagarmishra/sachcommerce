@@ -1,0 +1,19 @@
+# Apple Double Files
+._*
+.DS_Store
+
+# Temporary files
+*.tmp
+*.log
+
+# Sensitive config (usually)
+# But user specifically updated it for this repo
+# config/config.php
+
+# PHP related
+vendor/
+composer.lock
+
+# Uploads
+uploads/*
+!uploads/.gitkeep

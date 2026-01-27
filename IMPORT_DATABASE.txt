@@ -1,0 +1,109 @@
+===============================================
+TRENDSONE - DATABASE IMPORT INSTRUCTIONS
+===============================================
+
+PROBLEM: Admin login shows "Invalid email or password"
+SOLUTION: You need to import the database first!
+
+===============================================
+STEP-BY-STEP GUIDE:
+===============================================
+
+1. START MYSQL
+   - Open XAMPP Control Panel
+   - Click "Start" next to MySQL (if not already running)
+   - MySQL should show green "Running" status
+
+2. OPEN PHPMYADMIN
+   - Click "Admin" button next to MySQL in XAMPP
+   OR
+   - Open browser and go to: http://localhost/phpmyadmin
+
+3. CREATE DATABASE
+   - Click "New" in the left sidebar
+   - Database name: trendsone_db
+   - Collation: utf8mb4_unicode_ci
+   - Click "Create"
+
+4. IMPORT SQL FILE
+   - Click on "trendsone_db" database in left sidebar
+   - Click "Import" tab at the top
+   - Click "Choose File" button
+   - Navigate to: C:\xampp\htdocs\trendsone\database\schema.sql
+   - Click "Go" button at the bottom
+   - Wait for success message
+
+5. VERIFY IMPORT
+   - You should see 18 tables in the left sidebar:
+     ✓ users
+     ✓ categories
+     ✓ products
+     ✓ product_images
+     ✓ product_variants
+     ✓ orders
+     ✓ order_items
+     ✓ cart
+     ✓ wishlist
+     ✓ coupons
+     ✓ coupon_usage
+     ✓ reviews
+     ✓ blog_posts
+     ✓ blog_categories
+     ✓ site_settings
+     ✓ newsletter_subscribers
+     ✓ contact_messages
+     ✓ order_status_history
+     ✓ user_addresses
+     ✓ activity_logs
+
+6. CHECK ADMIN USER
+   - Click on "users" table
+   - Click "Browse" tab
+   - You should see 1 row with:
+     Email: admin@trendsone.com
+     Role: admin
+
+===============================================
+NOW YOU CAN LOGIN:
+===============================================
+
+Admin Panel: http://localhost/trendsone/admin/
+
+Login Credentials:
+- Email: admin@trendsone.com
+- Password: admin123
+
+⚠️ IMPORTANT: Change the password after first login!
+
+===============================================
+TROUBLESHOOTING:
+===============================================
+
+Problem: "Database connection failed"
+Solution: 
+- Check MySQL is running in XAMPP
+- Verify database name is "trendsone_db"
+- Check config/config.php has correct credentials
+
+Problem: "Table already exists" error
+Solution:
+- Drop the existing database
+- Create new database
+- Import again
+
+Problem: Still can't login
+Solution:
+- Clear browser cache
+- Try different browser
+- Check if password is exactly: admin123 (case-sensitive)
+
+===============================================
+NEED HELP?
+===============================================
+
+Check these files:
+- README.md - Full documentation
+- QUICK_START.md - Quick reference
+- PROJECT_STATUS.md - Development roadmap
+
+===============================================

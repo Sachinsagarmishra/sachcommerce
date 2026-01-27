@@ -1,0 +1,23 @@
+# TrendsOne eCommerce - robots.txt
+
+User-agent: *
+Allow: /
+
+# Disallow admin area
+Disallow: /admin/
+Disallow: /config/
+Disallow: /vendor/
+Disallow: /database/
+Disallow: /api/
+
+# Disallow search and filter URLs
+Disallow: /search.php?
+Disallow: /shop.php?
+
+# Allow specific directories
+Allow: /assets/
+Allow: /uploads/products/
+Allow: /uploads/blog/
+
+# Sitemap
+Sitemap: http://localhost/trendsone/sitemap.xml
