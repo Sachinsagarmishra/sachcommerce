@@ -296,8 +296,30 @@ include 'includes/navbar.php';
                 </div>
             </div>
 
-            <div class="product-footer-meta small py-3 border-top">
-                <p class="mb-2 text-muted"><strong>SKU:</strong> <?php echo htmlspecialchars($product['sku']); ?></p>
+            <!-- Vendor & SKU Grid -->
+            <div class="vendor-sku-grid d-flex gap-5 mb-4 py-3 border-top border-bottom">
+                <div class="meta-item">
+                    <span class="text-muted">Vendor:</span>
+                    <span class="fw-bold ms-1"><?php echo SITE_NAME; ?></span>
+                </div>
+                <div class="meta-item">
+                    <span class="text-muted">Sku:</span>
+                    <span class="fw-bold ms-1"><?php echo htmlspecialchars($product['sku']); ?></span>
+                </div>
+            </div>
+
+            <!-- Safe Checkout Section -->
+            <div class="safe-checkout-section mb-4">
+                <div class="safe-checkout-heading text-center mb-3">
+                    <span class="px-3 bg-white h5 fw-normal">Guarantee safe checkout</span>
+                </div>
+                <div class="safe-checkout-box p-3 border rounded text-center">
+                    <img src="<?php echo SITE_URL; ?>/uploads/img/safecheckout.avif" alt="Safe Checkout Badges"
+                        class="img-fluid">
+                </div>
+            </div>
+
+            <div class="product-footer-meta small py-3">
                 <div class="share-links-custom d-flex align-items-center gap-3">
                     <span class="text-muted"><strong>Share:</strong></span>
                     <a href="#"><i class="fab fa-facebook-f"></i></a>
@@ -478,26 +500,26 @@ include 'includes/navbar.php';
         let m = Math.floor((totalSeconds % 3600) / 60);
         let s = totalSeconds % 60;
 
-        countdownElement.innerText = 
-            (h < 10 ? '0' + h : h) + ':' + 
-            (m < 10 ? '0' + m : m) + ':' + 
+        countdownElement.innerText =
+            (h < 10 ? '0' + h : h) + ':' +
+            (m < 10 ? '0' + m : m) + ':' +
             (s < 10 ? '0' + s : s);
     }
     setInterval(updateCountdown, 1000);
 
     // Quantity Picker Logic
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const qtyInput = document.getElementById('productQuantity');
         const minusBtn = document.querySelector('.qty-btn-minus');
         const plusBtn = document.querySelector('.qty-btn-plus');
 
         if (qtyInput && minusBtn && plusBtn) {
-            minusBtn.addEventListener('click', function() {
+            minusBtn.addEventListener('click', function () {
                 let val = parseInt(qtyInput.value);
                 if (val > 1) qtyInput.value = val - 1;
             });
 
-            plusBtn.addEventListener('click', function() {
+            plusBtn.addEventListener('click', function () {
                 let val = parseInt(qtyInput.value);
                 let max = parseInt(qtyInput.getAttribute('max')) || 99;
                 if (val < max) qtyInput.value = val + 1;
