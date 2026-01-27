@@ -232,11 +232,37 @@ $(document).ready(function () {
     });
 
     // Product Image Gallery
-    $('.product-thumbnail').click(function () {
+    $(document).on('click', '.product-thumbnail, .product-thumb-item', function () {
         const newSrc = $(this).data('image');
         $('#mainProductImage').attr('src', newSrc);
-        $('.product-thumbnail').removeClass('active');
+        $('.product-thumbnail, .product-thumb-item').removeClass('active');
         $(this).addClass('active');
+    });
+
+    // Buy Now
+    $(document).on('click', '.buy-now-btn', function (e) {
+        e.preventDefault();
+        const productId = $(this).data('product-id');
+        let quantity = $('#productQuantity').val() || 1;
+
+        $.ajax({
+            url: baseSiteUrl + '/api/add-to-cart.php',
+            method: 'POST',
+            data: {
+                product_id: productId,
+                quantity: quantity
+            },
+            success: function (response) {
+                if (response.success) {
+                    window.location.href = baseSiteUrl + '/checkout.php';
+                } else {
+                    showToast('Error', response.message || 'Failed to process request', 'error');
+                }
+            },
+            error: function () {
+                showToast('Error', 'Something went wrong', 'error');
+            }
+        });
     });
 
     // Quantity Increment/Decrement

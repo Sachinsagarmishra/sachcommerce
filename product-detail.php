@@ -18,10 +18,11 @@ if (!$product) {
     exit;
 }
 
-// Get product images - using primary_image from products table
-// If you want multiple images, populate product_images table later
-$product_images = [];
-if (!empty($product['primary_image'])) {
+// Get product images
+$product_images = get_product_images($product['id']);
+
+// If no images found in product_images table, use primary_image from products table as fallback
+if (empty($product_images) && !empty($product['primary_image'])) {
     $product_images[] = [
         'image_path' => $product['primary_image'],
         'is_primary' => 1
@@ -38,151 +39,222 @@ $related_products = get_related_products($product['id'], $product['category_id']
 $page_title = $product['name'];
 $meta_description = $product['meta_description'] ?? $product['short_description'];
 
+// Extra CSS for this page
+$extra_css = ['assets/css/product-detail.css'];
+
 include 'includes/header.php';
 include 'includes/navbar.php';
 ?>
 
+<style>
+    .product-detail-gallery {
+        display: flex;
+        gap: 15px;
+    }
+
+    .product-thumbnails {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100px;
+    }
+
+    .product-thumb-item {
+        width: 100px;
+        height: 100px;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        cursor: pointer;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .product-thumb-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .product-thumb-item.active {
+        border-color: #82b440;
+        box-shadow: 0 0 5px rgba(130, 180, 64, 0.3);
+    }
+
+    .product-main-image {
+        flex: 1;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #f9f9f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .product-main-image img {
+        max-width: 100%;
+        max-height: 600px;
+        transition: transform 0.5s ease;
+    }
+
+    .product-main-image:hover img {
+        transform: scale(1.05);
+    }
+
+    .price-section h2 {
+        color: #82b440;
+        font-weight: 700;
+    }
+
+    .btn-buy-now {
+        background-color: #000;
+        color: #fff;
+        border: none;
+        padding: 12px 25px;
+        font-weight: 600;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-buy-now:hover {
+        background-color: #333;
+        color: #fff;
+    }
+
+    .btn-add-cart {
+        background-color: #82b440;
+        color: #fff;
+        border: none;
+        padding: 12px 25px;
+        font-weight: 600;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-add-cart:hover {
+        background-color: #6e9a36;
+        color: #fff;
+    }
+
+    .stock-info {
+        color: #82b440;
+        font-weight: 500;
+    }
+
+    .qty-selector {
+        max-width: 120px;
+    }
+</style>
+
 <!-- Breadcrumb -->
-<div class="breadcrumb-section">
-    <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>">Home</a></li>
-                <li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>/shop.php">Shop</a></li>
-                <?php if ($product['category_slug']): ?>
-                    <li class="breadcrumb-item"><a
-                            href="<?php echo SITE_URL; ?>/shop.php?category=<?php echo $product['category_slug']; ?>"><?php echo htmlspecialchars($product['category_name']); ?></a>
-                    </li>
-                <?php endif; ?>
-                <li class="breadcrumb-item active"><?php echo htmlspecialchars($product['name']); ?></li>
-            </ol>
-        </nav>
+<div class="breadcrumb-section py-3 bg-light">
+    <div class="container text-muted small">
+        <a href="<?php echo SITE_URL; ?>" class="text-decoration-none text-muted">Home</a>
+        <span class="mx-2">/</span>
+        <?php if ($product['category_slug']): ?>
+            <a href="<?php echo SITE_URL; ?>/shop.php?category=<?php echo $product['category_slug']; ?>"
+                class="text-decoration-none text-muted"><?php echo htmlspecialchars($product['category_name']); ?></a>
+            <span class="mx-2">/</span>
+        <?php endif; ?>
+        <span class="text-dark"><?php echo htmlspecialchars($product['name']); ?></span>
     </div>
 </div>
 
-<!-- Product Detail -->
 <div class="container my-5">
     <div class="row">
-        <!-- Product Images -->
-        <div class="col-lg-6 mb-4">
-            <div class="product-detail-images">
-                <!-- Main Image -->
-                <div class="main-image-wrapper mb-3">
+        <!-- Gallery -->
+        <div class="col-lg-7 mb-4">
+            <div class="product-detail-gallery">
+                <div class="product-thumbnails d-none d-md-flex">
+                    <?php foreach ($product_images as $index => $img): ?>
+                        <div class="product-thumb-item <?php echo $index === 0 ? 'active' : ''; ?>"
+                            data-image="<?php echo PRODUCT_IMAGE_URL . $img['image_path']; ?>">
+                            <img src="<?php echo PRODUCT_IMAGE_URL . $img['image_path']; ?>" alt="Thumb">
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <div class="product-main-image">
                     <img id="mainProductImage"
                         src="<?php echo !empty($product_images) ? PRODUCT_IMAGE_URL . $product_images[0]['image_path'] : 'https://via.placeholder.com/600x600?text=No+Image'; ?>"
-                        class="img-fluid rounded" alt="<?php echo htmlspecialchars($product['name']); ?>">
+                        alt="<?php echo htmlspecialchars($product['name']); ?>">
                 </div>
-
-                <!-- Thumbnail Images -->
-                <?php if (count($product_images) > 1): ?>
-                    <div class="row g-2">
-                        <?php foreach ($product_images as $index => $image): ?>
-                            <div class="col-3">
-                                <img src="<?php echo PRODUCT_IMAGE_URL . $image['image_path']; ?>"
-                                    class="img-fluid rounded product-thumbnail <?php echo $index === 0 ? 'active' : ''; ?>"
-                                    data-image="<?php echo PRODUCT_IMAGE_URL . $image['image_path']; ?>"
-                                    style="cursor: pointer; border: 2px solid <?php echo $index === 0 ? 'var(--primary-color)' : 'transparent'; ?>;"
-                                    alt="<?php echo htmlspecialchars($product['name']); ?>">
-                            </div>
-                        <?php endforeach; ?>
+            </div>
+            <!-- Mobile Thumbnails -->
+            <div class="product-thumbnails d-flex d-md-none flex-row mt-3 overflow-auto w-100">
+                <?php foreach ($product_images as $index => $img): ?>
+                    <div class="product-thumb-item me-2 <?php echo $index === 0 ? 'active' : ''; ?>"
+                        data-image="<?php echo PRODUCT_IMAGE_URL . $img['image_path']; ?>"
+                        style="min-width: 80px; height: 80px;">
+                        <img src="<?php echo PRODUCT_IMAGE_URL . $img['image_path']; ?>" alt="Thumb">
                     </div>
-                <?php endif; ?>
+                <?php endforeach; ?>
             </div>
         </div>
 
-        <!-- Product Info -->
-        <div class="col-lg-6">
-            <h1 class="h2 mb-3"><?php echo htmlspecialchars($product['name']); ?></h1>
+        <!-- Info -->
+        <div class="col-lg-5">
+            <h1 class="display-6 fw-bold mb-3"><?php echo htmlspecialchars($product['name']); ?></h1>
 
-            <!-- Rating -->
-            <div class="mb-3">
-                <?php echo display_rating($rating_data['avg_rating'] ?? 0); ?>
-                <span class="text-muted ms-2">(<?php echo $rating_data['total_reviews'] ?? 0; ?> reviews)</span>
-            </div>
-
-            <!-- Price -->
-            <div class="mb-4">
+            <div class="price-section mb-3">
                 <?php if ($product['sale_price']): ?>
-                    <h3 class="text-primary mb-0">
-                        <?php echo format_price($product['sale_price']); ?>
-                        <span
-                            class="h5 text-muted text-decoration-line-through ms-2"><?php echo format_price($product['price']); ?></span>
-                        <span class="badge bg-danger ms-2"><?php echo $product['discount_percentage']; ?>% OFF</span>
-                    </h3>
+                    <h2 class="mb-0"><?php echo format_price($product['sale_price']); ?></h2>
+                    <p class="text-muted text-decoration-line-through mb-0"><?php echo format_price($product['price']); ?>
+                    </p>
                 <?php else: ?>
-                    <h3 class="text-primary mb-0"><?php echo format_price($product['price']); ?></h3>
+                    <h2 class="mb-0"><?php echo format_price($product['price']); ?></h2>
                 <?php endif; ?>
-                <small class="text-muted">Inclusive of all taxes</small>
             </div>
 
-            <!-- Short Description -->
-            <p class="lead"><?php echo nl2br(htmlspecialchars($product['short_description'])); ?></p>
-
-            <!-- Stock Status -->
             <div class="mb-4">
-                <?php if ($product['stock_quantity'] > 0): ?>
-                    <span class="badge bg-success">
-                        <i class="fas fa-check-circle me-1"></i>In Stock (<?php echo $product['stock_quantity']; ?>
-                        available)
-                    </span>
-                <?php else: ?>
-                    <span class="badge bg-danger">
-                        <i class="fas fa-times-circle me-1"></i>Out of Stock
-                    </span>
-                <?php endif; ?>
+                <p class="text-muted"><?php echo nl2br(htmlspecialchars($product['short_description'])); ?></p>
             </div>
 
-            <!-- Add to Cart Form -->
+            <div class="mb-4">
+                <p class="stock-info mb-1"><i class="fas fa-check me-2"></i><?php echo $product['stock_quantity']; ?> in
+                    stock</p>
+            </div>
+
             <?php if ($product['stock_quantity'] > 0): ?>
-                <div class="mb-4">
-                    <div class="row g-3">
-                        <div class="col-auto">
-                            <label class="form-label">Quantity:</label>
-                            <div class="input-group" style="width: 130px;">
-                                <button class="btn btn-outline-secondary qty-btn-minus" type="button">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <input type="number" class="form-control text-center qty-input" value="1" min="1"
-                                    max="<?php echo $product['stock_quantity']; ?>" id="productQuantity">
-                                <button class="btn btn-outline-secondary qty-btn-plus" type="button">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <label class="form-label d-block">&nbsp;</label>
-                            <button class="btn btn-primary btn-lg add-to-cart-btn"
-                                data-product-id="<?php echo $product['id']; ?>">
-                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                            </button>
-                        </div>
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="input-group qty-selector">
+                        <button class="btn btn-outline-secondary qty-btn-minus" type="button">-</button>
+                        <input type="number" class="form-control text-center qty-input" value="1" min="1"
+                            max="<?php echo $product['stock_quantity']; ?>" id="productQuantity">
+                        <button class="btn btn-outline-secondary qty-btn-plus" type="button">+</button>
                     </div>
+                    <button class="btn btn-add-cart add-to-cart-btn px-4 py-2"
+                        data-product-id="<?php echo $product['id']; ?>">
+                        ADD TO CART
+                    </button>
+                    <button class="btn btn-buy-now buy-now-btn px-4 py-2" data-product-id="<?php echo $product['id']; ?>">
+                        BUY NOW
+                    </button>
                 </div>
+            <?php else: ?>
+                <div class="alert alert-danger">Out of Stock</div>
             <?php endif; ?>
 
-            <!-- Wishlist & Share -->
-            <div class="mb-4 d-flex gap-2">
-                <?php if (is_logged_in()): ?>
-                    <button class="btn btn-danger add-to-wishlist-btn-detail"
-                        data-product-id="<?php echo $product['id']; ?>" style="min-width: 180px;">
-                        <i class="far fa-heart me-2"></i>Add to Wishlist
-                    </button>
-                <?php else: ?>
-                    <a href="<?php echo SITE_URL; ?>/login.php" class="btn btn-danger" style="min-width: 180px;">
-                        <i class="far fa-heart me-2"></i>Add to Wishlist
-                    </a>
-                <?php endif; ?>
-                <button class="btn btn-outline-secondary" onclick="shareProduct()">
-                    <i class="fas fa-share-alt me-2"></i>Share
-                </button>
+            <div class="d-flex gap-4 mb-4 border-bottom pb-4">
+                <a href="#" class="text-decoration-none text-dark small add-to-compare-btn"><i
+                        class="fas fa-random me-2"></i>Add to compare</a>
+                <a href="#" class="text-decoration-none text-dark small add-to-wishlist-btn-detail"
+                    data-product-id="<?php echo $product['id']; ?>"><i class="far fa-heart me-2"></i>Add to wishlist</a>
             </div>
 
-            <!-- Product Meta -->
-            <div class="border-top pt-4">
-                <p class="mb-2"><strong>SKU:</strong> <?php echo htmlspecialchars($product['sku']); ?></p>
-                <p class="mb-2"><strong>Category:</strong> <a
-                        href="<?php echo SITE_URL; ?>/shop.php?category=<?php echo $product['category_slug']; ?>"><?php echo htmlspecialchars($product['category_name']); ?></a>
+            <div class="product-meta small text-muted">
+                <p class="mb-1"><strong>SKU:</strong> <?php echo htmlspecialchars($product['sku']); ?></p>
+                <p class="mb-1"><strong>Category:</strong> <a
+                        href="<?php echo SITE_URL; ?>/shop.php?category=<?php echo $product['category_slug']; ?>"
+                        class="text-decoration-none text-muted"><?php echo htmlspecialchars($product['category_name']); ?></a>
                 </p>
+                <div class="d-flex align-items-center gap-2 mt-3">
+                    <strong>Share:</strong>
+                    <a href="#" class="text-muted"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="text-muted"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-muted"><i class="fab fa-pinterest"></i></a>
+                    <a href="#" class="text-muted"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="text-muted"><i class="fab fa-telegram-plane"></i></a>
+                </div>
             </div>
         </div>
     </div>
