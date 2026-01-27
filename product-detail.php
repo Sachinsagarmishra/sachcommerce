@@ -296,15 +296,22 @@ include 'includes/navbar.php';
                 </div>
             </div>
 
+            <!-- Viewing Count Section -->
+            <div class="viewing-count mb-4 py-2">
+                <p class="mb-0"><span class="me-2">👀</span><span class="count-num">
+                        <?php echo rand(15, 45); ?>
+                    </span> <span class="text-dark fw-bold">customers are viewing this product</span></p>
+            </div>
+
             <!-- Vendor & SKU Grid -->
             <div class="vendor-sku-grid d-flex gap-5 mb-4 py-3 border-top border-bottom">
                 <div class="meta-item">
                     <span class="text-muted">Vendor:</span>
-                    <span class="fw-bold ms-1"><?php echo SITE_NAME; ?></span>
+                    <span class="fw-bold ms-2 text-dark"><?php echo SITE_NAME; ?></span>
                 </div>
                 <div class="meta-item">
                     <span class="text-muted">Sku:</span>
-                    <span class="fw-bold ms-1"><?php echo htmlspecialchars($product['sku']); ?></span>
+                    <span class="fw-bold ms-2 text-dark"><?php echo htmlspecialchars($product['sku']); ?></span>
                 </div>
             </div>
 
@@ -314,7 +321,7 @@ include 'includes/navbar.php';
                     <span class="px-3 bg-white h5 fw-normal">Guarantee safe checkout</span>
                 </div>
                 <div class="safe-checkout-box p-3 border rounded text-center">
-                    <img src="<?php echo SITE_URL; ?>/uploads/img/safecheckout.avif" alt="Safe Checkout Badges"
+                    <img src="<?php echo SITE_URL; ?>/uploads/img/safecheckout.png" alt="Safe Checkout Badges"
                         class="img-fluid">
                 </div>
             </div>

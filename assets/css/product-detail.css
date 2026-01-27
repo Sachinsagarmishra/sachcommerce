@@ -248,24 +248,36 @@
     }
 
     .timeline-line {
-        flex-direction: column !important;
-        align-items: flex-start;
-        padding-left: 20px;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center;
+        padding-top: 5px;
     }
 
     .line-hr {
-        display: none;
+        display: block !important;
+        top: 28px !important;
+        left: 10% !important;
+        right: 10% !important;
     }
 
     .timeline-point {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        text-align: left;
-        margin-bottom: 15px;
+        flex: 1;
+        margin-bottom: 0 !important;
     }
 
     .timeline-point .icon-circle {
-        margin: 0;
+        width: 34px !important;
+        height: 34px !important;
+        font-size: 0.9rem !important;
+        margin: 0 auto 5px !important;
+    }
+
+    .timeline-point .label {
+        font-size: 0.7rem !important;
+    }
+
+    .timeline-point .date {
+        font-size: 0.65rem !important;
     }
 }
