@@ -339,31 +339,21 @@ include 'includes/navbar.php';
 <section class="hero-slider">
     <?php foreach ($hero_banners as $index => $banner): ?>
         <div class="hero-slide <?php echo $index === 0 ? 'active' : ''; ?>">
-            <picture>
-                <?php if (isset($banner['is_placeholder'])): ?>
-                    <source media="(max-width: 768px)" srcset="<?php echo $banner['image_mobile']; ?>">
-                    <img src="<?php echo $banner['image_desktop']; ?>" alt="<?php echo htmlspecialchars($banner['title']); ?>">
-                <?php else: ?>
-                    <source media="(max-width: 768px)" srcset="<?php echo BANNER_IMAGE_URL . $banner['image_mobile']; ?>">
-                    <img src="<?php echo BANNER_IMAGE_URL . $banner['image_desktop']; ?>"
-                        alt="<?php echo htmlspecialchars($banner['title']); ?>">
+            <?php if (!empty($banner['link'])): ?>
+                <a href="<?php echo $banner['link']; ?>"
+                    style="display: block; width: 100%; height: 100%; z-index: 5; position: relative;">
                 <?php endif; ?>
-            </picture>
-            <div class="hero-overlay"></div>
-            <?php if ($banner['title'] || $banner['subtitle']): ?>
-                <div class="hero-content">
-                    <?php if ($banner['title']): ?>
-                        <h1><?php echo htmlspecialchars($banner['title']); ?></h1>
+                <picture>
+                    <?php if (isset($banner['is_placeholder'])): ?>
+                        <source media="(max-width: 768px)" srcset="<?php echo $banner['image_mobile']; ?>">
+                        <img src="<?php echo $banner['image_desktop']; ?>" alt="Banner">
+                    <?php else: ?>
+                        <source media="(max-width: 768px)" srcset="<?php echo BANNER_IMAGE_URL . $banner['image_mobile']; ?>">
+                        <img src="<?php echo BANNER_IMAGE_URL . $banner['image_desktop']; ?>" alt="Banner">
                     <?php endif; ?>
-                    <?php if ($banner['subtitle']): ?>
-                        <p><?php echo htmlspecialchars($banner['subtitle']); ?></p>
-                    <?php endif; ?>
-                    <?php if ($banner['link']): ?>
-                        <a href="<?php echo $banner['link']; ?>" class="btn btn-light btn-lg hero-btn">
-                            Shop Now
-                        </a>
-                    <?php endif; ?>
-                </div>
+                </picture>
+                <?php if (!empty($banner['link'])): ?>
+                </a>
             <?php endif; ?>
         </div>
     <?php endforeach; ?>
