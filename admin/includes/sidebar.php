@@ -2,135 +2,145 @@
 $current_page = basename($_SERVER['PHP_SELF']);
 $user = get_logged_user();
 ?>
+<!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-        <a href="dashboard.php" class="sidebar-brand">
-            <i class="fas fa-shopping-bag"></i>
-            <span>DEALPORT</span>
-        </a>
-        <button class="btn d-lg-none" id="sidebarClose">
-            <i class="fas fa-times"></i>
-        </button>
+        <h4><i class="fas fa-store"></i> <?php echo SITE_NAME; ?></h4>
     </div>
 
-    <div class="sidebar-nav-container">
-        <!-- Main Menu Section -->
-        <div class="sidebar-section-label">Main menu</div>
-        <ul class="sidebar-nav">
+    <nav class="sidebar-nav">
+        <ul class="nav flex-column">
+            <!-- Dashboard -->
             <li class="nav-item">
-                <a href="dashboard.php"
-                    class="nav-link <?php echo ($current_page == 'dashboard.php') ? 'active' : ''; ?>">
-                    <i class="fas fa-th-large"></i>
-                    <span>Dashboard</span>
+                <a class="nav-link <?php echo ($current_page == 'dashboard.php') ? 'active' : ''; ?>"
+                    href="dashboard.php">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="orders.php"
-                    class="nav-link <?php echo (strpos($current_page, 'order') !== false) ? 'active' : ''; ?>">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Order Management</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="customers.php"
-                    class="nav-link <?php echo (strpos($current_page, 'customer') !== false) ? 'active' : ''; ?>">
-                    <i class="fas fa-users"></i>
-                    <span>Customers</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="coupons.php"
-                    class="nav-link <?php echo (strpos($current_page, 'coupon') !== false) ? 'active' : ''; ?>">
-                    <i class="fas fa-ticket-alt"></i>
-                    <span>Coupon Code</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="categories.php"
-                    class="nav-link <?php echo (strpos($current_page, 'category') !== false) ? 'active' : ''; ?>">
-                    <i class="fas fa-layer-group"></i>
-                    <span>Categories</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="sales-report.php"
-                    class="nav-link <?php echo (strpos($current_page, 'report') !== false) ? 'active' : ''; ?>">
-                    <i class="fas fa-file-invoice-dollar"></i>
-                    <span>Transactions</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="manage-banners.php"
-                    class="nav-link <?php echo (strpos($current_page, 'banner') !== false) ? 'active' : ''; ?>">
-                    <i class="fas fa-flag"></i>
-                    <span>Banners</span>
-                </a>
-            </li>
-        </ul>
 
-        <!-- Product Section -->
-        <div class="sidebar-section-label">Product</div>
-        <ul class="sidebar-nav">
+            <!-- Products -->
             <li class="nav-item">
-                <a href="product-add.php"
-                    class="nav-link <?php echo ($current_page == 'product-add.php') ? 'active' : ''; ?>">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>Add Products</span>
+                <a class="nav-link <?php echo (in_array($current_page, ['products.php', 'add-product.php', 'edit-product.php', 'bulk-upload-products.php'])) ? 'active' : ''; ?>"
+                    data-bs-toggle="collapse" href="#productsMenu" role="button" aria-expanded="false">
+                    <i class="fas fa-box"></i> Products <i class="fas fa-chevron-down float-end"></i>
                 </a>
-            </li>
-            <li class="nav-item">
-                <a href="products.php"
-                    class="nav-link <?php echo ($current_page == 'products.php') ? 'active' : ''; ?>">
-                    <i class="fas fa-list-ul"></i>
-                    <span>Product List</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="reviews.php" class="nav-link <?php echo ($current_page == 'reviews.php') ? 'active' : ''; ?>">
-                    <i class="fas fa-star"></i>
-                    <span>Product Reviews</span>
-                </a>
-            </li>
-        </ul>
-
-        <!-- Admin Section -->
-        <div class="sidebar-section-label">Admin</div>
-        <ul class="sidebar-nav">
-            <li class="nav-item">
-                <a href="general-settings.php"
-                    class="nav-link <?php echo (strpos($current_page, 'settings') !== false) ? 'active' : ''; ?>">
-                    <i class="fas fa-user-shield"></i>
-                    <span>Admin role</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="payment-settings.php"
-                    class="nav-link <?php echo (strpos($current_page, 'payment') !== false) ? 'active' : ''; ?>">
-                    <i class="fas fa-cogs"></i>
-                    <span>Control Authority</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-
-    <div class="sidebar-bottom">
-        <div class="user-card">
-            <?php if ($user['avatar']): ?>
-                <img src="<?php echo AVATAR_IMAGE_URL . $user['avatar']; ?>" class="user-img" alt="User">
-            <?php else: ?>
-                <div class="user-img bg-primary text-white d-flex align-items-center justify-content-center"
-                    style="font-weight: 700;">
-                    <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
+                <div class="collapse" id="productsMenu">
+                    <ul class="nav flex-column ms-3">
+                        <li class="nav-item">
+                            <a class="nav-link" href="products.php"><i class="fas fa-list"></i> All Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="add-product.php"><i class="fas fa-plus"></i> Add Product</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="bulk-upload-products.php"><i class="fas fa-upload"></i> Bulk
+                                Upload</a>
+                        </li>
+                    </ul>
                 </div>
-            <?php endif; ?>
-            <div class="user-info">
-                <div style="font-weight: 700; font-size: 14px;"><?php echo htmlspecialchars($user['name']); ?></div>
-                <div style="font-size: 12px; color: var(--grey);"><?php echo htmlspecialchars($user['email']); ?></div>
-            </div>
-            <a href="logout.php" class="ms-auto text-grey"><i class="fas fa-sign-out-alt"></i></a>
-        </div>
-        <a href="<?php echo SITE_URL; ?>" target="_blank" class="shop-link">
-            <i class="fas fa-external-link-alt me-2"></i> Your Shop
-        </a>
-    </div>
+            </li>
+
+            <!-- Categories -->
+            <li class="nav-item">
+                <a class="nav-link <?php echo (in_array($current_page, ['categories.php', 'add-category.php', 'edit-category.php'])) ? 'active' : ''; ?>"
+                    href="categories.php">
+                    <i class="fas fa-tags"></i> Categories
+                </a>
+            </li>
+
+            <!-- Orders -->
+            <li class="nav-item">
+                <a class="nav-link <?php echo (in_array($current_page, ['orders.php', 'view-order.php'])) ? 'active' : ''; ?>"
+                    href="orders.php">
+                    <i class="fas fa-shopping-cart"></i> Orders
+                </a>
+            </li>
+
+            <!-- Customers -->
+            <li class="nav-item">
+                <a class="nav-link <?php echo (in_array($current_page, ['customers.php', 'view-customer.php', 'edit-customer.php'])) ? 'active' : ''; ?>"
+                    href="customers.php">
+                    <i class="fas fa-users"></i> Customers
+                </a>
+            </li>
+
+            <!-- Coupons -->
+            <li class="nav-item">
+                <a class="nav-link <?php echo (in_array($current_page, ['coupons.php', 'add-coupon.php', 'edit-coupon.php'])) ? 'active' : ''; ?>"
+                    href="coupons.php">
+                    <i class="fas fa-ticket-alt"></i> Coupons
+                </a>
+            </li>
+
+            <!-- Banners (Slider) -->
+            <li class="nav-item">
+                <a class="nav-link <?php echo (in_array($current_page, ['manage-banners.php', 'add-banner.php', 'edit-banner.php'])) ? 'active' : ''; ?>"
+                    href="manage-banners.php">
+                    <i class="fas fa-images"></i> Homepage Banners
+                </a>
+            </li>
+
+            <!-- Reviews -->
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'reviews.php') ? 'active' : ''; ?>" href="reviews.php">
+                    <i class="fas fa-star"></i> Reviews
+                </a>
+            </li>
+
+
+            <!-- Reports -->
+            <li class="nav-item">
+                <a class="nav-link <?php echo (in_array($current_page, ['sales-report.php', 'product-report.php', 'customer-report.php'])) ? 'active' : ''; ?>"
+                    data-bs-toggle="collapse" href="#reportsMenu" role="button" aria-expanded="false">
+                    <i class="fas fa-chart-bar"></i> Reports <i class="fas fa-chevron-down float-end"></i>
+                </a>
+                <div class="collapse" id="reportsMenu">
+                    <ul class="nav flex-column ms-3">
+                        <li class="nav-item">
+                            <a class="nav-link" href="sales-report.php"><i class="fas fa-dollar-sign"></i> Sales
+                                Report</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="product-report.php"><i class="fas fa-box"></i> Product Report</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="customer-report.php"><i class="fas fa-users"></i> Customer
+                                Report</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <!-- Settings -->
+            <li class="nav-item">
+                <a class="nav-link <?php echo (strpos($current_page, 'settings') !== false) ? 'active' : ''; ?>"
+                    data-bs-toggle="collapse" href="#settingsMenu" role="button" aria-expanded="false">
+                    <i class="fas fa-cog"></i> Settings <i class="fas fa-chevron-down float-end"></i>
+                </a>
+                <div class="collapse" id="settingsMenu">
+                    <ul class="nav flex-column ms-3">
+                        <li class="nav-item">
+                            <a class="nav-link" href="general-settings.php"><i class="fas fa-sliders-h"></i> General</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="payment-settings.php"><i class="fas fa-credit-card"></i>
+                                Payment</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="email-settings.php"><i class="fas fa-envelope"></i> Email</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="shipping-settings.php"><i class="fas fa-truck"></i> Shipping</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="tax-settings.php"><i class="fas fa-percentage"></i> Tax</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="seo-settings.php"><i class="fas fa-search"></i> SEO</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </nav>
 </aside>

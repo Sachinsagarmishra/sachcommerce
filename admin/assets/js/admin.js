@@ -10,7 +10,7 @@ $(document).ready(function() {
     }
     
     // Sidebar Toggle
-    $('#sidebarToggle, #sidebarClose').on('click', function(e) {
+    $('#sidebarToggle').on('click', function(e) {
         e.preventDefault();
         $('.sidebar').toggleClass('active');
         $('.sidebar-overlay').toggleClass('active');
