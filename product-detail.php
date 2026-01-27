@@ -250,10 +250,27 @@ include 'includes/navbar.php';
                 <div class="alert alert-danger mb-4">Out of Stock</div>
             <?php endif; ?>
 
+            <?php
+            $current_time = time();
+            $purchased_date = date('M d');
+            $proc_date = date('M d', strtotime('+0 days')) . ' - ' . date('d', strtotime('+1 days'));
+            $del_date = date('M d', strtotime('+2 days')) . ' - ' . date('d', strtotime('+3 days'));
+            $del_range_full = date('M d, Y', strtotime('+2 days')) . ' to ' . date('M d, Y', strtotime('+3 days'));
+
+            // Random countdown for effect (e.g. ends at end of day or next hour)
+            $seconds_left = (24 * 3600) - (time() % (24 * 3600));
+            $hours = floor($seconds_left / 3600);
+            $mins = floor(($seconds_left % 3600) / 60);
+            $secs = $seconds_left % 60;
+            $countdown_formatted = sprintf('%02d:%02d:%02d', $hours, $mins, $secs);
+            ?>
+
             <div class="delivery-message mb-3">
                 <p class="mb-1"><i class="far fa-clock me-2"></i>Order today within <span
-                        class="countdown-timer text-orange fw-bold">00:43:05</span>, you'll receive your package between
-                    <span class="delivery-dates text-orange fw-bold">Jan 29, 2026 to Jan 30, 2026</span>
+                        class="countdown-timer text-orange fw-bold"
+                        id="productCountdown"><?php echo $countdown_formatted; ?></span>, you'll receive your package
+                    between
+                    <span class="delivery-dates text-orange fw-bold"><?php echo $del_range_full; ?></span>
                 </p>
             </div>
 
@@ -263,17 +280,17 @@ include 'includes/navbar.php';
                     <div class="timeline-point active">
                         <div class="icon-circle"><i class="fas fa-shopping-bag"></i></div>
                         <span class="label">Purchased</span>
-                        <span class="date">Jan 27</span>
+                        <span class="date"><?php echo $purchased_date; ?></span>
                     </div>
                     <div class="timeline-point">
                         <div class="icon-circle"><i class="fas fa-truck"></i></div>
                         <span class="label">Processing</span>
-                        <span class="date">Jan 27 - 28</span>
+                        <span class="date"><?php echo $proc_date; ?></span>
                     </div>
                     <div class="timeline-point">
                         <div class="icon-circle"><i class="fas fa-map-marker-alt"></i></div>
                         <span class="label">Delivered</span>
-                        <span class="date">Jan 29 - 30</span>
+                        <span class="date"><?php echo $del_date; ?></span>
                     </div>
                     <div class="line-hr"></div>
                 </div>
