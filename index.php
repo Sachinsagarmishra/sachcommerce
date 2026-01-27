@@ -63,7 +63,16 @@ include 'includes/navbar.php';
     }
 
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Inter', sans-serif;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: 'Jost', sans-serif;
     }
 
     /* Hero Slider */
