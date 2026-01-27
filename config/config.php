@@ -251,6 +251,7 @@ define('PRODUCT_IMAGE_PATH', UPLOAD_PATH . 'products/');
 define('CATEGORY_IMAGE_PATH', UPLOAD_PATH . 'categories/');
 define('BLOG_IMAGE_PATH', UPLOAD_PATH . 'blog/');
 define('AVATAR_IMAGE_PATH', UPLOAD_PATH . 'avatars/');
+define('BANNER_IMAGE_PATH', UPLOAD_PATH . 'banners/');
 define('TEMP_UPLOAD_PATH', UPLOAD_PATH . 'temp/');
 
 // URL Constants
@@ -259,6 +260,7 @@ define('PRODUCT_IMAGE_URL', UPLOAD_URL . 'products/');
 define('CATEGORY_IMAGE_URL', UPLOAD_URL . 'categories/');
 define('BLOG_IMAGE_URL', UPLOAD_URL . 'blog/');
 define('AVATAR_IMAGE_URL', UPLOAD_URL . 'avatars/');
+define('BANNER_IMAGE_URL', UPLOAD_URL . 'banners/');
 
 // ============================================================================
 // AUTO-DETECT ADMIN/FRONTEND
@@ -776,6 +778,7 @@ $upload_dirs = [
     CATEGORY_IMAGE_PATH,
     BLOG_IMAGE_PATH,
     AVATAR_IMAGE_PATH,
+    BANNER_IMAGE_PATH,
     TEMP_UPLOAD_PATH,
     ROOT_PATH . '/logs'
 ];
