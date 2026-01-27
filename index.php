@@ -39,7 +39,7 @@ if (empty($db_banners)) {
         [
             'title' => 'Summer Collection 2024',
             'subtitle' => 'Get up to 50% off on selected items',
-            'link' => SITE_URL . '/shop.php',
+            'link' => SITE_URL . '/shop',
             'image_desktop' => 'https://via.placeholder.com/1920x600?text=Desktop+Banner',
             'image_mobile' => 'https://via.placeholder.com/600x800?text=Mobile+Banner',
             'is_placeholder' => true
@@ -385,7 +385,7 @@ include 'includes/navbar.php';
             <?php if (!empty($categories)): ?>
                 <?php foreach ($categories as $category): ?>
                     <div class="col-6 col-md-4 col-lg-2">
-                        <a href="<?php echo SITE_URL; ?>/shop.php?category=<?php echo $category['slug']; ?>"
+                        <a href="<?php echo SITE_URL; ?>/shop?category=<?php echo $category['slug']; ?>"
                             class="text-decoration-none">
                             <div class="card category-card text-center h-100">
                                 <div class="card-body p-4">
@@ -406,7 +406,7 @@ include 'includes/navbar.php';
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="section-title mb-0">Featured Products</h2>
-            <a href="<?php echo SITE_URL; ?>/shop.php" class="btn btn-outline-primary">View All</a>
+            <a href="<?php echo SITE_URL; ?>/shop" class="btn btn-outline-primary">View All</a>
         </div>
         <div class="row g-4">
             <?php if (!empty($featured_products)): ?>
@@ -417,7 +417,7 @@ include 'includes/navbar.php';
                                 <?php if ($product['discount_percentage'] > 0): ?>
                                     <span class="badge-discount"><?php echo $product['discount_percentage']; ?>% OFF</span>
                                 <?php endif; ?>
-                                <a href="<?php echo SITE_URL; ?>/product-detail.php?slug=<?php echo $product['slug']; ?>">
+                                <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>">
                                     <img src="<?php echo $product['primary_image'] ? PRODUCT_IMAGE_URL . $product['primary_image'] : 'https://via.placeholder.com/300x250?text=No+Image'; ?>"
                                         class="product-image" alt="<?php echo htmlspecialchars($product['name']); ?>">
                                 </a>
@@ -430,7 +430,7 @@ include 'includes/navbar.php';
                             </div>
                             <div class="card-body d-flex flex-column">
                                 <h6 class="card-title">
-                                    <a href="<?php echo SITE_URL; ?>/product-detail.php?slug=<?php echo $product['slug']; ?>"
+                                    <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>"
                                         class="text-decoration-none text-dark">
                                         <?php echo htmlspecialchars($product['name']); ?>
                                     </a>
@@ -474,7 +474,7 @@ include 'includes/navbar.php';
         <div class="container">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="section-title mb-0">New Arrivals</h2>
-                <a href="<?php echo SITE_URL; ?>/shop.php?filter=new" class="btn btn-outline-primary">View All</a>
+                <a href="<?php echo SITE_URL; ?>/shop?filter=new" class="btn btn-outline-primary">View All</a>
             </div>
             <div class="row g-4">
                 <?php foreach ($new_arrivals as $product): ?>
@@ -485,7 +485,7 @@ include 'includes/navbar.php';
                                 <?php if ($product['discount_percentage'] > 0): ?>
                                     <span class="badge-discount"><?php echo $product['discount_percentage']; ?>% OFF</span>
                                 <?php endif; ?>
-                                <a href="<?php echo SITE_URL; ?>/product-detail.php?slug=<?php echo $product['slug']; ?>">
+                                <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>">
                                     <img src="<?php echo $product['primary_image'] ? PRODUCT_IMAGE_URL . $product['primary_image'] : 'https://via.placeholder.com/300x250?text=No+Image'; ?>"
                                         class="product-image" alt="<?php echo htmlspecialchars($product['name']); ?>">
                                 </a>
@@ -498,7 +498,7 @@ include 'includes/navbar.php';
                             </div>
                             <div class="card-body d-flex flex-column">
                                 <h6 class="card-title">
-                                    <a href="<?php echo SITE_URL; ?>/product-detail.php?slug=<?php echo $product['slug']; ?>"
+                                    <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>"
                                         class="text-decoration-none text-dark">
                                         <?php echo htmlspecialchars($product['name']); ?>
                                     </a>

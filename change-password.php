@@ -3,7 +3,7 @@ require_once 'config/config.php';
 require_once 'includes/functions.php';
 
 if (!is_logged_in()) {
-    header('Location: ' . SITE_URL . '/login.php');
+    header('Location: ' . SITE_URL . '/login');
     exit;
 }
 
@@ -13,9 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $current_password = $_POST['current_password'];
     $new_password = $_POST['new_password'];
     $confirm_password = $_POST['confirm_password'];
-    
+
     $user = get_logged_user();
-    
+
     if (empty($current_password) || empty($new_password)) {
         $error = 'Please fill all fields';
     } elseif (!password_verify($current_password, $user['password'])) {
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $password_hash = password_hash($new_password, PASSWORD_BCRYPT, ['cost' => BCRYPT_COST]);
         $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
-        
+
         if ($stmt->execute([$password_hash, $_SESSION['user_id']])) {
             $success = 'Password changed successfully!';
         } else {
@@ -45,7 +45,7 @@ include 'includes/navbar.php';
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>">Home</a></li>
-                <li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>/my-account.php">My Account</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>/my-account">My Account</a></li>
                 <li class="breadcrumb-item active">Change Password</li>
             </ol>
         </nav>
@@ -61,33 +61,33 @@ include 'includes/navbar.php';
                 </div>
                 <div class="card-body">
                     <?php if (isset($error)): ?>
-                    <div class="alert alert-danger"><?php echo $error; ?></div>
+                        <div class="alert alert-danger"><?php echo $error; ?></div>
                     <?php endif; ?>
-                    
+
                     <?php if (isset($success)): ?>
-                    <div class="alert alert-success"><?php echo $success; ?></div>
+                        <div class="alert alert-success"><?php echo $success; ?></div>
                     <?php endif; ?>
-                    
+
                     <form method="POST" action="">
                         <div class="mb-3">
                             <label class="form-label">Current Password *</label>
                             <input type="password" class="form-control" name="current_password" required>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label">New Password *</label>
                             <input type="password" class="form-control" name="new_password" required>
                             <small class="text-muted">Minimum <?php echo PASSWORD_MIN_LENGTH; ?> characters</small>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label">Confirm New Password *</label>
                             <input type="password" class="form-control" name="confirm_password" required>
                         </div>
-                        
+
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary">Change Password</button>
-                            <a href="<?php echo SITE_URL; ?>/my-account.php" class="btn btn-outline-secondary">Cancel</a>
+                            <a href="<?php echo SITE_URL; ?>/my-account" class="btn btn-outline-secondary">Cancel</a>
                         </div>
                     </form>
                 </div>

@@ -11,7 +11,7 @@ $search = isset($_GET['q']) ? $_GET['q'] : '';
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'newest';
 $min_price = isset($_GET['min_price']) ? $_GET['min_price'] : '';
 $max_price = isset($_GET['max_price']) ? $_GET['max_price'] : '';
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 $per_page = 12;
 $offset = ($page - 1) * $per_page;
 
@@ -21,8 +21,10 @@ $filters = [
     'search' => $search
 ];
 
-if ($min_price) $filters['min_price'] = $min_price;
-if ($max_price) $filters['max_price'] = $max_price;
+if ($min_price)
+    $filters['min_price'] = $min_price;
+if ($max_price)
+    $filters['max_price'] = $max_price;
 
 // Get category if specified
 $category = null;
@@ -43,7 +45,8 @@ $total_pages = ceil($total_products / $per_page);
 $categories = get_menu_categories();
 
 // Helper to preserve query string parameters (for pagination and links)
-function build_query_params($exclude = []) {
+function build_query_params($exclude = [])
+{
     $params = $_GET;
     foreach ($exclude as $key) {
         unset($params[$key]);
@@ -86,28 +89,30 @@ include 'includes/navbar.php';
                         <h6 class="fw-bold">Categories</h6>
                         <ul class="list-unstyled">
                             <li class="mb-2">
-                                <a href="<?php echo SITE_URL; ?>/shop.php" class="text-decoration-none <?php echo !$category_slug ? 'text-primary fw-bold' : 'text-dark'; ?>">
+                                <a href="<?php echo SITE_URL; ?>/shop"
+                                    class="text-decoration-none <?php echo !$category_slug ? 'text-primary fw-bold' : 'text-dark'; ?>">
                                     All Products
                                 </a>
                             </li>
                             <?php foreach ($categories as $cat): ?>
-                            <li class="mb-2">
-                                <a href="<?php echo SITE_URL; ?>/shop.php?category=<?php echo $cat['slug']; ?>" 
-                                   class="text-decoration-none <?php echo $category_slug === $cat['slug'] ? 'text-primary fw-bold' : 'text-dark'; ?>">
-                                    <?php echo htmlspecialchars($cat['name']); ?>
-                                </a>
-                            </li>
+                                <li class="mb-2">
+                                    <a href="<?php echo SITE_URL; ?>/shop?category=<?php echo $cat['slug']; ?>"
+                                        class="text-decoration-none <?php echo $category_slug === $cat['slug'] ? 'text-primary fw-bold' : 'text-dark'; ?>">
+                                        <?php echo htmlspecialchars($cat['name']); ?>
+                                    </a>
+                                </li>
                             <?php endforeach; ?>
                         </ul>
                     </div>
-                    
+
                     <!-- Price Range -->
                     <div class="mb-4">
                         <h6 class="fw-bold">Price Range</h6>
-                        <form method="GET" action="shop.php">
+                        <form method="GET" action="shop">
                             <!-- Preserve existing filters -->
                             <?php if ($category_slug): ?>
-                                <input type="hidden" name="category" value="<?php echo htmlspecialchars($category_slug); ?>">
+                                <input type="hidden" name="category"
+                                    value="<?php echo htmlspecialchars($category_slug); ?>">
                             <?php endif; ?>
                             <?php if ($search): ?>
                                 <input type="hidden" name="q" value="<?php echo htmlspecialchars($search); ?>">
@@ -116,25 +121,27 @@ include 'includes/navbar.php';
                             <input type="hidden" name="sort" value="<?php echo htmlspecialchars($sort); ?>">
 
                             <div class="mb-2">
-                                <input type="number" class="form-control form-control-sm" name="min_price" placeholder="Min" value="<?php echo htmlspecialchars($min_price); ?>">
+                                <input type="number" class="form-control form-control-sm" name="min_price"
+                                    placeholder="Min" value="<?php echo htmlspecialchars($min_price); ?>">
                             </div>
                             <div class="mb-2">
-                                <input type="number" class="form-control form-control-sm" name="max_price" placeholder="Max" value="<?php echo htmlspecialchars($max_price); ?>">
+                                <input type="number" class="form-control form-control-sm" name="max_price"
+                                    placeholder="Max" value="<?php echo htmlspecialchars($max_price); ?>">
                             </div>
                             <button type="submit" class="btn btn-primary btn-sm w-100">Apply</button>
                         </form>
                     </div>
-                    
+
                     <!-- Clear Filters -->
                     <?php if ($category_slug || $min_price || $max_price || $search): ?>
-                    <a href="<?php echo SITE_URL; ?>/shop.php" class="btn btn-outline-secondary btn-sm w-100">
-                        <i class="fas fa-times me-2"></i>Clear Filters
-                    </a>
+                        <a href="<?php echo SITE_URL; ?>/shop" class="btn btn-outline-secondary btn-sm w-100">
+                            <i class="fas fa-times me-2"></i>Clear Filters
+                        </a>
                     <?php endif; ?>
                 </div>
             </div>
         </div>
-        
+
         <!-- Products Grid -->
         <div class="col-lg-9">
             <!-- Toolbar -->
@@ -151,10 +158,10 @@ include 'includes/navbar.php';
                     </h4>
                     <small class="text-muted"><?php echo $total_products; ?> products found</small>
                 </div>
-                
+
                 <!-- Sort -->
                 <div>
-                    <form method="GET" action="shop.php" class="d-inline">
+                    <form method="GET" action="shop" class="d-inline">
                         <!-- Preserve Category -->
                         <?php if ($category_slug): ?>
                             <input type="hidden" name="category" value="<?php echo htmlspecialchars($category_slug); ?>">
@@ -173,107 +180,116 @@ include 'includes/navbar.php';
 
                         <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
                             <option value="newest" <?php echo $sort === 'newest' ? 'selected' : ''; ?>>Newest</option>
-                            <option value="price_low" <?php echo $sort === 'price_low' ? 'selected' : ''; ?>>Price: Low to High</option>
-                            <option value="price_high" <?php echo $sort === 'price_high' ? 'selected' : ''; ?>>Price: High to Low</option>
+                            <option value="price_low" <?php echo $sort === 'price_low' ? 'selected' : ''; ?>>Price: Low to
+                                High</option>
+                            <option value="price_high" <?php echo $sort === 'price_high' ? 'selected' : ''; ?>>Price: High
+                                to Low</option>
                             <option value="name" <?php echo $sort === 'name' ? 'selected' : ''; ?>>Name: A-Z</option>
                         </select>
                     </form>
                 </div>
             </div>
-            
+
             <!-- Products -->
             <?php if (!empty($products)): ?>
-            <div class="row g-4">
-                <?php foreach ($products as $product): ?>
-                <div class="col-md-4 col-sm-6">
-                    <div class="card product-card">
-                        <div class="product-image-wrapper">
-                            <?php if ($product['discount_percentage'] > 0): ?>
-                                <span class="product-badge badge-sale"><?php echo $product['discount_percentage']; ?>% OFF</span>
-                            <?php endif; ?>
-                            <?php if ($product['is_new_arrival']): ?>
-                                <span class="product-badge badge-new" style="top: 10px; left: 10px; right: auto;">NEW</span>
-                            <?php endif; ?>
-                            
-                            <a href="<?php echo SITE_URL; ?>/product-detail.php?slug=<?php echo $product['slug']; ?>">
-                                <img src="<?php echo $product['primary_image'] ? PRODUCT_IMAGE_URL . $product['primary_image'] : 'https://via.placeholder.com/300x250?text=No+Image'; ?>" 
-                                     class="product-image" alt="<?php echo htmlspecialchars($product['name']); ?>">
-                            </a>
-                            
-                            <div class="product-actions">
-                                <?php if (is_logged_in()): ?>
-                                <button class="product-action-btn add-to-wishlist-btn" data-product-id="<?php echo $product['id']; ?>" title="Add to Wishlist">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                                <?php endif; ?>
+                <div class="row g-4">
+                    <?php foreach ($products as $product): ?>
+                        <div class="col-md-4 col-sm-6">
+                            <div class="card product-card">
+                                <div class="product-image-wrapper">
+                                    <?php if ($product['discount_percentage'] > 0): ?>
+                                        <span class="product-badge badge-sale"><?php echo $product['discount_percentage']; ?>%
+                                            OFF</span>
+                                    <?php endif; ?>
+                                    <?php if ($product['is_new_arrival']): ?>
+                                        <span class="product-badge badge-new" style="top: 10px; left: 10px; right: auto;">NEW</span>
+                                    <?php endif; ?>
+
+                                    <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>">
+                                        <img src="<?php echo $product['primary_image'] ? PRODUCT_IMAGE_URL . $product['primary_image'] : 'https://via.placeholder.com/300x250?text=No+Image'; ?>"
+                                            class="product-image" alt="<?php echo htmlspecialchars($product['name']); ?>">
+                                    </a>
+
+                                    <div class="product-actions">
+                                        <?php if (is_logged_in()): ?>
+                                            <button class="product-action-btn add-to-wishlist-btn"
+                                                data-product-id="<?php echo $product['id']; ?>" title="Add to Wishlist">
+                                                <i class="far fa-heart"></i>
+                                            </button>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="product-info">
+                                    <h6 class="product-title">
+                                        <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>"
+                                            class="text-decoration-none text-dark">
+                                            <?php echo htmlspecialchars($product['name']); ?>
+                                        </a>
+                                    </h6>
+                                    <div class="product-price">
+                                        <?php if ($product['sale_price']): ?>
+                                            <?php echo format_price($product['sale_price']); ?>
+                                            <span class="product-price-old"><?php echo format_price($product['price']); ?></span>
+                                        <?php else: ?>
+                                            <?php echo format_price($product['price']); ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="product-footer">
+                                    <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
+                                        data-product-id="<?php echo $product['id']; ?>">
+                                        <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <div class="product-info">
-                            <h6 class="product-title">
-                                <a href="<?php echo SITE_URL; ?>/product-detail.php?slug=<?php echo $product['slug']; ?>" class="text-decoration-none text-dark">
-                                    <?php echo htmlspecialchars($product['name']); ?>
-                                </a>
-                            </h6>
-                            <div class="product-price">
-                                <?php if ($product['sale_price']): ?>
-                                    <?php echo format_price($product['sale_price']); ?>
-                                    <span class="product-price-old"><?php echo format_price($product['price']); ?></span>
-                                <?php else: ?>
-                                    <?php echo format_price($product['price']); ?>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                        <div class="product-footer">
-                            <button class="btn btn-primary btn-sm w-100 add-to-cart-btn" data-product-id="<?php echo $product['id']; ?>">
-                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                            </button>
-                        </div>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
-                <?php endforeach; ?>
-            </div>
-            
-            <!-- Pagination -->
-            <?php if ($total_pages > 1): ?>
-            <?php 
-                // Build base URL for pagination
-                $query_params = build_query_params(['page']);
-                $pagination_base = '?' . ($query_params ? $query_params . '&' : '');
-            ?>
-            <nav class="mt-5">
-                <ul class="pagination justify-content-center">
-                    <?php if ($page > 1): ?>
-                    <li class="page-item">
-                        <a class="page-link" href="<?php echo $pagination_base; ?>page=<?php echo $page - 1; ?>">Previous</a>
-                    </li>
-                    <?php endif; ?>
-                    
-                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <?php if ($i == $page || $i == 1 || $i == $total_pages || ($i >= $page - 2 && $i <= $page + 2)): ?>
-                        <li class="page-item <?php echo $i == $page ? 'active' : ''; ?>">
-                            <a class="page-link" href="<?php echo $pagination_base; ?>page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                        </li>
-                        <?php elseif ($i == $page - 3 || $i == $page + 3): ?>
-                        <li class="page-item disabled"><span class="page-link">...</span></li>
-                        <?php endif; ?>
-                    <?php endfor; ?>
-                    
-                    <?php if ($page < $total_pages): ?>
-                    <li class="page-item">
-                        <a class="page-link" href="<?php echo $pagination_base; ?>page=<?php echo $page + 1; ?>">Next</a>
-                    </li>
-                    <?php endif; ?>
-                </ul>
-            </nav>
-            <?php endif; ?>
-            
+
+                <!-- Pagination -->
+                <?php if ($total_pages > 1): ?>
+                    <?php
+                    // Build base URL for pagination
+                    $query_params = build_query_params(['page']);
+                    $pagination_base = '?' . ($query_params ? $query_params . '&' : '');
+                    ?>
+                    <nav class="mt-5">
+                        <ul class="pagination justify-content-center">
+                            <?php if ($page > 1): ?>
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="<?php echo $pagination_base; ?>page=<?php echo $page - 1; ?>">Previous</a>
+                                </li>
+                            <?php endif; ?>
+
+                            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                <?php if ($i == $page || $i == 1 || $i == $total_pages || ($i >= $page - 2 && $i <= $page + 2)): ?>
+                                    <li class="page-item <?php echo $i == $page ? 'active' : ''; ?>">
+                                        <a class="page-link"
+                                            href="<?php echo $pagination_base; ?>page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                    </li>
+                                <?php elseif ($i == $page - 3 || $i == $page + 3): ?>
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                <?php endif; ?>
+                            <?php endfor; ?>
+
+                            <?php if ($page < $total_pages): ?>
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="<?php echo $pagination_base; ?>page=<?php echo $page + 1; ?>">Next</a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
+                    </nav>
+                <?php endif; ?>
+
             <?php else: ?>
-            <div class="text-center py-5">
-                <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
-                <h4>No products found</h4>
-                <p class="text-muted">Try adjusting your filters or search terms</p>
-                <a href="<?php echo SITE_URL; ?>/shop.php" class="btn btn-primary">View All Products</a>
-            </div>
+                <div class="text-center py-5">
+                    <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
+                    <h4>No products found</h4>
+                    <p class="text-muted">Try adjusting your filters or search terms</p>
+                    <a href="<?php echo SITE_URL; ?>/shop" class="btn btn-primary">View All Products</a>
+                </div>
             <?php endif; ?>
         </div>
     </div>

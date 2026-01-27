@@ -21,13 +21,13 @@
             <div class="col-md-3 mb-4">
                 <h5 class="mb-3">Quick Links</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/about.php"
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/about"
                             class="text-white-50 text-decoration-none">About Us</a></li>
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/shop.php"
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/shop"
                             class="text-white-50 text-decoration-none">Shop</a></li>
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/contact.php"
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/contact"
                             class="text-white-50 text-decoration-none">Contact Us</a></li>
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/faq.php"
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/faq"
                             class="text-white-50 text-decoration-none">FAQ</a></li>
                 </ul>
             </div>
@@ -36,15 +36,15 @@
             <div class="col-md-3 mb-4">
                 <h5 class="mb-3">Customer Service</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/my-account.php"
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/my-account"
                             class="text-white-50 text-decoration-none">My Account</a></li>
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/orders.php"
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/orders"
                             class="text-white-50 text-decoration-none">Track Order</a></li>
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/return-policy.php"
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/return-policy"
                             class="text-white-50 text-decoration-none">Return Policy</a></li>
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/shipping-policy.php"
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/shipping-policy"
                             class="text-white-50 text-decoration-none">Shipping Policy</a></li>
-                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/terms-conditions.php"
+                    <li class="mb-2"><a href="<?php echo SITE_URL; ?>/terms-conditions"
                             class="text-white-50 text-decoration-none">Terms & Conditions</a></li>
                 </ul>
             </div>

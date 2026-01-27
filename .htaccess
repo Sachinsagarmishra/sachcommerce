@@ -1,159 +1,18 @@
-# TrendsOne eCommerce .htaccess Configuration
-
-# ==============================================================================
-# CORE ROUTING
-# ==============================================================================
-# Enable Rewrite Engine
 RewriteEngine On
 
-# FIX: Changed from /trendsone/ to / because your site is at the domain root
-RewriteBase /
+# Ensure SITE_URL is consistent (Optional, but good for SEO)
+# RewriteCond %{HTTP_HOST} !^www\. [NC]
+# RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
 
-# Force HTTPS (Uncomment if you have SSL and want to force it)
-# RewriteCond %{HTTPS} off
-# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# Product Detail Page Rewrite: /products/{slug} -> product-detail.php?slug={slug}
+RewriteRule ^products/([a-zA-Z0-9-]+)/?$ product-detail.php?slug=$1 [L,QSA]
 
-# Allow access to existing files and directories
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^ - [L]
+# Remove .php extension
+# 1. Redirect /file.php to /file
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^.]+)\.php [NC]
+RewriteRule ^ %1 [R=301,L]
 
-# ==============================================================================
-# SEO-FRIENDLY URLs
-# ==============================================================================
-
-# Product Detail: /product/product-slug
-RewriteRule ^product/([a-zA-Z0-9-]+)$ product-detail.php?slug=$1 [L,QSA]
-
-# Category: /category/category-slug
-RewriteRule ^category/([a-zA-Z0-9-]+)$ shop.php?category=$1 [L,QSA]
-
-# Blog Post: /blog/post-slug
-RewriteRule ^blog/([a-zA-Z0-9-]+)$ blog-post.php?slug=$1 [L,QSA]
-
-# Blog Category: /blog-category/category-slug
-RewriteRule ^blog-category/([a-zA-Z0-9-]+)$ blog-category.php?slug=$1 [L,QSA]
-
-# ==============================================================================
-# SECURITY SETTINGS
-# ==============================================================================
-
-# Disable Directory Browsing (Prevents people from seeing file lists)
-Options -Indexes +FollowSymLinks
-
-# Protect sensitive configuration & system files
-<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql|conf|config|env|git)$">
-    Order Allow,Deny
-    Deny from all
-</FilesMatch>
-
-# Protect config directory
-<IfModule mod_rewrite.c>
-    RewriteRule ^config/ - [F,L]
-</IfModule>
-
-# Prevent access to git folders
-<IfModule mod_rewrite.c>
-    RewriteRule ^\.git - [F,L]
-</IfModule>
-
-# Block bad bots / scanners
-<IfModule mod_rewrite.c>
-    RewriteCond %{HTTP_USER_AGENT} ^$ [OR]
-    RewriteCond %{HTTP_USER_AGENT} ^(-|curl|wget|libwww-perl|python|nikto|scan) [NC]
-    RewriteRule .* - [F,L]
-</IfModule>
-
-# Prevent Image Hotlinking (Fixed to allow your specific domain)
-<IfModule mod_rewrite.c>
-    RewriteCond %{HTTP_REFERER} !^$
-    RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?localhost [NC]
-    RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?trendsone\.buildmyngo\.space [NC]
-    RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?trendsone\.com [NC]
-    RewriteRule \.(jpg|jpeg|png|gif|webp)$ - [F,NC,L]
-</IfModule>
-
-# ==============================================================================
-# PERFORMANCE OPTIMIZATIONS
-# ==============================================================================
-
-# Gzip Compression
-<IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html
-    AddOutputFilterByType DEFLATE text/css
-    AddOutputFilterByType DEFLATE text/javascript
-    AddOutputFilterByType DEFLATE text/xml
-    AddOutputFilterByType DEFLATE text/plain
-    AddOutputFilterByType DEFLATE application/javascript
-    AddOutputFilterByType DEFLATE application/x-javascript
-    AddOutputFilterByType DEFLATE application/json
-    AddOutputFilterByType DEFLATE application/xml
-    AddOutputFilterByType DEFLATE application/xhtml+xml
-    AddOutputFilterByType DEFLATE application/rss+xml
-    AddOutputFilterByType DEFLATE application/atom_xml
-    AddOutputFilterByType DEFLATE image/svg+xml
-</IfModule>
-
-# Browser Caching
-<IfModule mod_expires.c>
-    ExpiresActive On
-    
-    # Images
-    ExpiresByType image/jpg "access plus 1 year"
-    ExpiresByType image/jpeg "access plus 1 year"
-    ExpiresByType image/gif "access plus 1 year"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/webp "access plus 1 year"
-    ExpiresByType image/svg+xml "access plus 1 year"
-    ExpiresByType image/x-icon "access plus 1 year"
-    
-    # CSS and JavaScript
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
-    ExpiresByType text/javascript "access plus 1 month"
-    
-    # Fonts
-    ExpiresByType font/woff "access plus 1 year"
-    ExpiresByType font/woff2 "access plus 1 year"
-    
-    # Default
-    ExpiresDefault "access plus 2 days"
-</IfModule>
-
-# ==============================================================================
-# SECURITY HEADERS
-# ==============================================================================
-<IfModule mod_headers.c>
-    # X-Frame-Options: Protects against Clickjacking
-    Header always set X-Frame-Options "SAMEORIGIN"
-    
-    # X-Content-Type-Options: Protects against MIME sniffing
-    Header always set X-Content-Type-Options "nosniff"
-    
-    # X-XSS-Protection: Protects against XSS attacks
-    Header always set X-XSS-Protection "1; mode=block"
-    
-    # Referrer-Policy: Controls referrer information
-    Header always set Referrer-Policy "strict-origin-when-cross-origin"
-    
-    # Remove X-Powered-By header for security obscurity
-    Header unset X-Powered-By
-</IfModule>
-
-# ==============================================================================
-# PHP SETTINGS (If allowed by host)
-# ==============================================================================
-<IfModule mod_php7.c>
-    php_value upload_max_filesize 10M
-    php_value post_max_size 10M
-    php_value max_execution_time 300
-    php_value max_input_time 300
-</IfModule>
-
-# ==============================================================================
-# ERROR PAGES
-# ==============================================================================
-# FIX: Removed /trendsone/ prefix to match root deployment
-ErrorDocument 404 /404.php
-ErrorDocument 403 /404.php
-ErrorDocument 500 /404.php
+# 2. Map /file to /file.php internally
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*?)/?$ $1.php [L]

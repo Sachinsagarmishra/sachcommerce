@@ -4,8 +4,8 @@ require_once 'includes/functions.php';
 
 // Check if user is logged in
 if (!is_logged_in()) {
-    $_SESSION['redirect_after_login'] = SITE_URL . '/checkout.php';
-    header('Location: ' . SITE_URL . '/login.php');
+    $_SESSION['redirect_after_login'] = SITE_URL . '/checkout';
+    header('Location: ' . SITE_URL . '/login');
     exit;
 }
 
@@ -14,12 +14,12 @@ $page_title = 'Checkout';
 // Get cart items
 $cart_items = get_cart_items();
 if (empty($cart_items)) {
-    header('Location: ' . SITE_URL . '/cart.php');
+    header('Location: ' . SITE_URL . '/cart');
     exit;
 }
 
 $cart_total = get_cart_total();
-$shipping_cost = $cart_total >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
+$shipping_cost = $cart_total >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_CHARGE;
 $total = $cart_total + $shipping_cost;
 
 // Get user addresses
@@ -41,7 +41,7 @@ include 'includes/navbar.php';
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>">Home</a></li>
-                <li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>/cart.php">Cart</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>/cart">Cart</a></li>
                 <li class="breadcrumb-item active">Checkout</li>
             </ol>
         </nav>
@@ -49,7 +49,7 @@ include 'includes/navbar.php';
 </div>
 
 <div class="container my-5">
-    
+
     <!-- Notifications Section -->
     <?php if (!empty($error)): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -64,7 +64,7 @@ include 'includes/navbar.php';
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
-    
+
     <form method="POST" action="<?php echo SITE_URL; ?>/api/process-order.php">
         <div class="row">
             <!-- Checkout Form -->
@@ -73,7 +73,8 @@ include 'includes/navbar.php';
                 <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Shipping Address</h5>
-                        <a href="#" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal">
+                        <a href="#" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                            data-bs-target="#addAddressModal">
                             <i class="fas fa-plus me-1"></i>Add New
                         </a>
                     </div>
@@ -81,26 +82,30 @@ include 'includes/navbar.php';
                         <?php if (!empty($addresses)): ?>
                             <div class="row g-3">
                                 <?php foreach ($addresses as $address): ?>
-                                <div class="col-md-6">
-                                    <div class="form-check border rounded p-3">
-                                        <input class="form-check-input" type="radio" name="address_id" id="address<?php echo $address['id']; ?>" value="<?php echo $address['id']; ?>" <?php echo $address['is_default'] ? 'checked' : ''; ?> required>
-                                        <label class="form-check-label w-100" for="address<?php echo $address['id']; ?>">
-                                            <strong><?php echo htmlspecialchars($address['full_name']); ?></strong>
-                                            <?php if ($address['is_default']): ?>
-                                                <span class="badge bg-primary ms-2">Default</span>
-                                            <?php endif; ?>
-                                            <br>
-                                            <small class="text-muted">
-                                                <?php echo htmlspecialchars($address['address_line1']); ?><br>
-                                                <?php if ($address['address_line2']): ?>
-                                                    <?php echo htmlspecialchars($address['address_line2']); ?><br>
+                                    <div class="col-md-6">
+                                        <div class="form-check border rounded p-3">
+                                            <input class="form-check-input" type="radio" name="address_id"
+                                                id="address<?php echo $address['id']; ?>" value="<?php echo $address['id']; ?>"
+                                                <?php echo $address['is_default'] ? 'checked' : ''; ?> required>
+                                            <label class="form-check-label w-100" for="address<?php echo $address['id']; ?>">
+                                                <strong><?php echo htmlspecialchars($address['full_name']); ?></strong>
+                                                <?php if ($address['is_default']): ?>
+                                                    <span class="badge bg-primary ms-2">Default</span>
                                                 <?php endif; ?>
-                                                <?php echo htmlspecialchars($address['city']); ?>, <?php echo htmlspecialchars($address['state']); ?> - <?php echo htmlspecialchars($address['pincode']); ?><br>
-                                                Phone: <?php echo htmlspecialchars($address['phone']); ?>
-                                            </small>
-                                        </label>
+                                                <br>
+                                                <small class="text-muted">
+                                                    <?php echo htmlspecialchars($address['address_line1']); ?><br>
+                                                    <?php if ($address['address_line2']): ?>
+                                                        <?php echo htmlspecialchars($address['address_line2']); ?><br>
+                                                    <?php endif; ?>
+                                                    <?php echo htmlspecialchars($address['city']); ?>,
+                                                    <?php echo htmlspecialchars($address['state']); ?> -
+                                                    <?php echo htmlspecialchars($address['pincode']); ?><br>
+                                                    Phone: <?php echo htmlspecialchars($address['phone']); ?>
+                                                </small>
+                                            </label>
+                                        </div>
                                     </div>
-                                </div>
                                 <?php endforeach; ?>
                             </div>
                         <?php else: ?>
@@ -108,7 +113,7 @@ include 'includes/navbar.php';
                         <?php endif; ?>
                     </div>
                 </div>
-                
+
                 <!-- Payment Method -->
                 <div class="card">
                     <div class="card-header">
@@ -116,14 +121,16 @@ include 'includes/navbar.php';
                     </div>
                     <div class="card-body">
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="radio" name="payment_method" id="razorpay" value="razorpay" checked required>
+                            <input class="form-check-input" type="radio" name="payment_method" id="razorpay"
+                                value="razorpay" checked required>
                             <label class="form-check-label" for="razorpay">
                                 <strong>Razorpay (UPI, Cards, Wallets)</strong>
                                 <br><small class="text-muted">Pay securely using Razorpay payment gateway</small>
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="payment_method" id="cod" value="cod" required>
+                            <input class="form-check-input" type="radio" name="payment_method" id="cod" value="cod"
+                                required>
                             <label class="form-check-label" for="cod">
                                 <strong>Cash on Delivery (COD)</strong>
                                 <br><small class="text-muted">Pay when you receive the product</small>
@@ -132,7 +139,7 @@ include 'includes/navbar.php';
                     </div>
                 </div>
             </div>
-            
+
             <!-- Order Summary -->
             <div class="col-lg-4">
                 <div class="card">
@@ -143,20 +150,21 @@ include 'includes/navbar.php';
                         <!-- Cart Items -->
                         <div class="mb-3">
                             <?php foreach ($cart_items as $item): ?>
-                            <div class="d-flex mb-2">
-                                <img src="<?php echo $item['image'] ? PRODUCT_IMAGE_URL . $item['image'] : 'https://via.placeholder.com/50'; ?>" 
-                                     class="rounded me-2" style="width: 50px; height: 50px; object-fit: cover;">
-                                <div class="flex-grow-1">
-                                    <small class="d-block"><?php echo htmlspecialchars($item['name']); ?></small>
-                                    <small class="text-muted">Qty: <?php echo $item['quantity']; ?></small>
+                                <div class="d-flex mb-2">
+                                    <img src="<?php echo $item['image'] ? PRODUCT_IMAGE_URL . $item['image'] : 'https://via.placeholder.com/50'; ?>"
+                                        class="rounded me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <div class="flex-grow-1">
+                                        <small class="d-block"><?php echo htmlspecialchars($item['name']); ?></small>
+                                        <small class="text-muted">Qty: <?php echo $item['quantity']; ?></small>
+                                    </div>
+                                    <strong
+                                        class="text-nowrap"><?php echo format_price(($item['sale_price'] ?? $item['price']) * $item['quantity']); ?></strong>
                                 </div>
-                                <strong class="text-nowrap"><?php echo format_price(($item['sale_price'] ?? $item['price']) * $item['quantity']); ?></strong>
-                            </div>
                             <?php endforeach; ?>
                         </div>
-                        
+
                         <hr>
-                        
+
                         <!-- Totals -->
                         <div class="d-flex justify-content-between mb-2">
                             <span>Subtotal:</span>
@@ -172,18 +180,18 @@ include 'includes/navbar.php';
                                 <?php endif; ?>
                             </strong>
                         </div>
-                        
+
                         <hr>
-                        
+
                         <div class="d-flex justify-content-between mb-4">
                             <h5>Total:</h5>
                             <h5 class="text-primary"><?php echo format_price($total); ?></h5>
                         </div>
-                        
+
                         <button type="submit" class="btn btn-primary btn-lg w-100">
                             <i class="fas fa-lock me-2"></i>Place Order
                         </button>
-                        
+
                         <p class="text-center text-muted small mt-3 mb-0">
                             <i class="fas fa-shield-alt me-1"></i>Secure Checkout
                         </p>

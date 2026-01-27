@@ -6,7 +6,7 @@ require_once 'includes/functions.php';
 $slug = $_GET['slug'] ?? '';
 
 if (!$slug) {
-    header('Location: ' . SITE_URL . '/shop.php');
+    header('Location: ' . SITE_URL . '/shop');
     exit;
 }
 
@@ -14,7 +14,7 @@ if (!$slug) {
 $product = get_product_by_slug($slug);
 
 if (!$product) {
-    header('Location: ' . SITE_URL . '/404.php');
+    header('Location: ' . SITE_URL . '/404');
     exit;
 }
 
@@ -152,7 +152,7 @@ include 'includes/navbar.php';
         <a href="<?php echo SITE_URL; ?>" class="text-decoration-none text-muted">Home</a>
         <span class="mx-2">/</span>
         <?php if ($product['category_slug']): ?>
-            <a href="<?php echo SITE_URL; ?>/shop.php?category=<?php echo $product['category_slug']; ?>"
+            <a href="<?php echo SITE_URL; ?>/shop?category=<?php echo $product['category_slug']; ?>"
                 class="text-decoration-none text-muted"><?php echo htmlspecialchars($product['category_name']); ?></a>
             <span class="mx-2">/</span>
         <?php endif; ?>
@@ -406,7 +406,7 @@ include 'includes/navbar.php';
                             </form>
                         </div>
                     <?php else: ?>
-                        <p class="text-muted">Please <a href="<?php echo SITE_URL; ?>/login.php">login</a> to write a
+                        <p class="text-muted">Please <a href="<?php echo SITE_URL; ?>/login">login</a> to write a
                             review.</p>
                     <?php endif; ?>
                 </div>
@@ -424,14 +424,14 @@ include 'includes/navbar.php';
                         <div class="col-md-3">
                             <div class="card product-card">
                                 <div class="product-image-wrapper">
-                                    <a href="<?php echo SITE_URL; ?>/product-detail.php?slug=<?php echo $related['slug']; ?>">
+                                    <a href="<?php echo SITE_URL; ?>/products/<?php echo $related['slug']; ?>">
                                         <img src="<?php echo $related['primary_image'] ? PRODUCT_IMAGE_URL . $related['primary_image'] : 'https://via.placeholder.com/300x250'; ?>"
                                             class="product-image" alt="<?php echo htmlspecialchars($related['name']); ?>">
                                     </a>
                                 </div>
                                 <div class="product-info">
                                     <h6 class="product-title">
-                                        <a href="<?php echo SITE_URL; ?>/product-detail.php?slug=<?php echo $related['slug']; ?>"
+                                        <a href="<?php echo SITE_URL; ?>/products/<?php echo $related['slug']; ?>"
                                             class="text-decoration-none text-dark">
                                             <?php echo htmlspecialchars($related['name']); ?>
                                         </a>
