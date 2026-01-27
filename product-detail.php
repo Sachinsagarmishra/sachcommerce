@@ -192,68 +192,102 @@ include 'includes/navbar.php';
         </div>
 
         <!-- Info -->
-        <div class="col-lg-5">
-            <h1 class="display-6 fw-bold mb-3"><?php echo htmlspecialchars($product['name']); ?></h1>
+        <div class="col-lg-5 product-info-sidebar">
+            <h1 class="product-title-serif mb-2"><?php echo htmlspecialchars($product['name']); ?></h1>
 
-            <div class="price-section mb-3">
+            <div class="price-section d-flex align-items-baseline gap-3 mb-3">
                 <?php if ($product['sale_price']): ?>
-                    <h2 class="mb-0"><?php echo format_price($product['sale_price']); ?></h2>
-                    <p class="text-muted text-decoration-line-through mb-0"><?php echo format_price($product['price']); ?>
-                    </p>
+                    <h3 class="selling-price mb-0"><?php echo format_price($product['sale_price']); ?></h3>
+                    <span
+                        class="regular-price text-muted text-decoration-line-through"><?php echo format_price($product['price']); ?></span>
                 <?php else: ?>
-                    <h2 class="mb-0"><?php echo format_price($product['price']); ?></h2>
+                    <h3 class="selling-price mb-0"><?php echo format_price($product['price']); ?></h3>
                 <?php endif; ?>
             </div>
 
-            <div class="mb-4">
+            <div class="rating-section mb-3">
+                <div class="d-flex align-items-center">
+                    <div class="stars me-2">
+                        <?php
+                        $rating = get_product_rating($product['id']);
+                        for ($i = 1; $i <= 5; $i++) {
+                            if ($i <= $rating) {
+                                echo '<i class="fas fa-star"></i>';
+                            } else {
+                                echo '<i class="far fa-star"></i>';
+                            }
+                        }
+                        ?>
+                    </div>
+                    <span class="text-muted small">No reviews</span>
+                </div>
+            </div>
+
+            <div class="short-description mb-4">
                 <p class="text-muted"><?php echo nl2br(htmlspecialchars($product['short_description'])); ?></p>
             </div>
 
-            <div class="mb-4">
-                <p class="stock-info mb-1"><i class="fas fa-check me-2"></i><?php echo $product['stock_quantity']; ?> in
-                    stock</p>
-            </div>
-
             <?php if ($product['stock_quantity'] > 0): ?>
-                <div class="d-flex align-items-center gap-3 mb-4">
-                    <div class="input-group qty-selector">
-                        <button class="btn btn-outline-secondary qty-btn-minus" type="button">-</button>
-                        <input type="number" class="form-control text-center qty-input" value="1" min="1"
-                            max="<?php echo $product['stock_quantity']; ?>" id="productQuantity">
-                        <button class="btn btn-outline-secondary qty-btn-plus" type="button">+</button>
+                <div class="cart-controls-wrapper mb-4">
+                    <div class="d-flex gap-2">
+                        <div class="quantity-picker-custom d-flex align-items-center">
+                            <button class="qty-btn qty-btn-minus">-</button>
+                            <input type="number" value="1" min="1" max="<?php echo $product['stock_quantity']; ?>"
+                                id="productQuantity" class="qty-input">
+                            <button class="qty-btn qty-btn-plus">+</button>
+                        </div>
+                        <button class="btn btn-orange-custom add-to-cart-btn flex-grow-1"
+                            data-product-id="<?php echo $product['id']; ?>">
+                            ADD TO CART
+                        </button>
                     </div>
-                    <button class="btn btn-add-cart add-to-cart-btn px-4 py-2"
+                    <button class="btn btn-black-custom buy-now-btn w-100 mt-2"
                         data-product-id="<?php echo $product['id']; ?>">
-                        ADD TO CART
-                    </button>
-                    <button class="btn btn-buy-now buy-now-btn px-4 py-2" data-product-id="<?php echo $product['id']; ?>">
-                        BUY NOW
+                        BUY IT NOW
                     </button>
                 </div>
             <?php else: ?>
-                <div class="alert alert-danger">Out of Stock</div>
+                <div class="alert alert-danger mb-4">Out of Stock</div>
             <?php endif; ?>
 
-            <div class="d-flex gap-4 mb-4 border-bottom pb-4">
-                <a href="#" class="text-decoration-none text-dark small add-to-compare-btn"><i
-                        class="fas fa-random me-2"></i>Add to compare</a>
-                <a href="#" class="text-decoration-none text-dark small add-to-wishlist-btn-detail"
-                    data-product-id="<?php echo $product['id']; ?>"><i class="far fa-heart me-2"></i>Add to wishlist</a>
+            <div class="delivery-message mb-3">
+                <p class="mb-1"><i class="far fa-clock me-2"></i>Order today within <span
+                        class="countdown-timer text-orange fw-bold">00:43:05</span>, you'll receive your package between
+                    <span class="delivery-dates text-orange fw-bold">Jan 29, 2026 to Jan 30, 2026</span>
+                </p>
             </div>
 
-            <div class="product-meta small text-muted">
-                <p class="mb-1"><strong>SKU:</strong> <?php echo htmlspecialchars($product['sku']); ?></p>
-                <p class="mb-1"><strong>Category:</strong> <a
-                        href="<?php echo SITE_URL; ?>/shop.php?category=<?php echo $product['category_slug']; ?>"
-                        class="text-decoration-none text-muted"><?php echo htmlspecialchars($product['category_name']); ?></a>
-                </p>
-                <div class="d-flex align-items-center gap-2 mt-3">
-                    <strong>Share:</strong>
-                    <a href="#" class="text-muted"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="text-muted"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="text-muted"><i class="fab fa-pinterest"></i></a>
-                    <a href="#" class="text-muted"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#" class="text-muted"><i class="fab fa-telegram-plane"></i></a>
+            <!-- Timeline Box -->
+            <div class="timeline-box p-3 mb-4">
+                <div class="timeline-line">
+                    <div class="timeline-point active">
+                        <div class="icon-circle"><i class="fas fa-shopping-bag"></i></div>
+                        <span class="label">Purchased</span>
+                        <span class="date">Jan 27</span>
+                    </div>
+                    <div class="timeline-point">
+                        <div class="icon-circle"><i class="fas fa-truck"></i></div>
+                        <span class="label">Processing</span>
+                        <span class="date">Jan 27 - 28</span>
+                    </div>
+                    <div class="timeline-point">
+                        <div class="icon-circle"><i class="fas fa-map-marker-alt"></i></div>
+                        <span class="label">Delivered</span>
+                        <span class="date">Jan 29 - 30</span>
+                    </div>
+                    <div class="line-hr"></div>
+                </div>
+            </div>
+
+            <div class="product-footer-meta small py-3 border-top">
+                <p class="mb-2 text-muted"><strong>SKU:</strong> <?php echo htmlspecialchars($product['sku']); ?></p>
+                <div class="share-links-custom d-flex align-items-center gap-3">
+                    <span class="text-muted"><strong>Share:</strong></span>
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-pinterest"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-telegram-plane"></i></a>
                 </div>
             </div>
         </div>
