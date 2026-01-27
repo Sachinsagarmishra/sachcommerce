@@ -114,7 +114,7 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
 <!-- Custom JS -->
-<script src="<?php echo SITE_URL; ?>/assets/js/main.js"></script>
+<script src="<?php echo SITE_URL; ?>/assets/js/main.js?v=<?php echo time(); ?>"></script>
 
 <?php if (isset($extra_js)): ?>
     <?php foreach ($extra_js as $js): ?>

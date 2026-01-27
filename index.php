@@ -566,26 +566,36 @@ include 'includes/navbar.php';
     const dots = document.querySelectorAll('.slider-dot');
 
     function showSlide(n) {
-        slides.forEach(slide => slide.classList.remove('active'));
-        dots.forEach(dot => dot.classList.remove('active'));
+        if (!slides || slides.length === 0) return;
+
+        slides.forEach(slide => {
+            if (slide && slide.classList) slide.classList.remove('active');
+        });
+        dots.forEach(dot => {
+            if (dot && dot.classList) dot.classList.remove('active');
+        });
 
         currentSlide = (n + slides.length) % slides.length;
-        slides[currentSlide].classList.add('active');
-        dots[currentSlide].classList.add('active');
+        if (slides[currentSlide]) slides[currentSlide].classList.add('active');
+        if (dots[currentSlide]) dots[currentSlide].classList.add('active');
     }
 
     // Auto slide
-    setInterval(() => {
-        showSlide(currentSlide + 1);
-    }, 5000);
+    if (slides.length > 0) {
+        setInterval(() => {
+            showSlide(currentSlide + 1);
+        }, 5000);
+    }
 
     // Dot navigation
     document.addEventListener('DOMContentLoaded', function () {
-        dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-                showSlide(index);
+        if (dots.length > 0) {
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    showSlide(index);
+                });
             });
-        });
+        }
     });
 </script>
 

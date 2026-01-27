@@ -52,7 +52,7 @@
     <?php endif; ?>
 
     <script>
-        window.siteConfigUrl = '<?php echo SITE_URL; ?>';
+        window.baseSiteUrl = '<?php echo SITE_URL; ?>';
     </script>
 </head>
 

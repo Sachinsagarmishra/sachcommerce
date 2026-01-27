@@ -36,7 +36,7 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: siteConfigUrl + '/api/add-to-cart.php',
+            url: baseSiteUrl + '/api/add-to-cart.php',
             method: 'POST',
             data: {
                 product_id: productId,
@@ -51,7 +51,7 @@ $(document).ready(function () {
 
                     // Redirect to cart page after a short delay
                     setTimeout(function () {
-                        window.location.href = siteConfigUrl + '/cart.php';
+                        window.location.href = baseSiteUrl + '/cart.php';
                     }, 500);
                 } else {
                     showToast('Error', response.message || 'Failed to add product', 'error');
@@ -70,7 +70,7 @@ $(document).ready(function () {
         const btn = $(this);
 
         $.ajax({
-            url: siteConfigUrl + '/api/add-to-wishlist.php',
+            url: baseSiteUrl + '/api/add-to-wishlist.php',
             method: 'POST',
             data: {
                 product_id: productId
@@ -85,7 +85,7 @@ $(document).ready(function () {
                     if (response.login_required) {
                         showToast('Login Required', 'Please login to add items to wishlist', 'error');
                         setTimeout(function () {
-                            window.location.href = siteConfigUrl + '/login.php';
+                            window.location.href = baseSiteUrl + '/login.php';
                         }, 2000);
                     } else {
                         showToast('Error', response.message || 'Failed to add to wishlist', 'error');
@@ -96,7 +96,7 @@ $(document).ready(function () {
                 if (xhr.status === 401) {
                     showToast('Login Required', 'Please login to add items to wishlist', 'error');
                     setTimeout(function () {
-                        window.location.href = siteConfigUrl + '/login.php';
+                        window.location.href = baseSiteUrl + '/login.php';
                     }, 2000);
                 } else {
                     showToast('Error', 'Something went wrong. Please try again.', 'error');
@@ -115,7 +115,7 @@ $(document).ready(function () {
         btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Adding...');
 
         $.ajax({
-            url: siteConfigUrl + '/api/add-to-wishlist.php',
+            url: baseSiteUrl + '/api/add-to-wishlist.php',
             method: 'POST',
             data: {
                 product_id: productId
@@ -131,7 +131,7 @@ $(document).ready(function () {
                     setTimeout(function () {
                         btn.html('<i class="fas fa-heart me-2"></i>View Wishlist');
                         btn.off('click').on('click', function () {
-                            window.location.href = siteConfigUrl + '/wishlist.php';
+                            window.location.href = baseSiteUrl + '/wishlist.php';
                         });
                     }, 2000);
                 } else {
@@ -139,7 +139,7 @@ $(document).ready(function () {
                     if (response.login_required) {
                         showToast('Login Required', 'Please login to add items to wishlist', 'error');
                         setTimeout(function () {
-                            window.location.href = siteConfigUrl + '/login.php';
+                            window.location.href = baseSiteUrl + '/login.php';
                         }, 2000);
                     } else {
                         showToast('Error', response.message || 'Failed to add to wishlist', 'error');
@@ -151,7 +151,7 @@ $(document).ready(function () {
                 if (xhr.status === 401) {
                     showToast('Login Required', 'Please login to add items to wishlist', 'error');
                     setTimeout(function () {
-                        window.location.href = siteConfigUrl + '/login.php';
+                        window.location.href = baseSiteUrl + '/login.php';
                     }, 2000);
                 } else {
                     showToast('Error', 'Something went wrong. Please try again.', 'error');
@@ -166,7 +166,7 @@ $(document).ready(function () {
         const quantity = $(this).val();
 
         $.ajax({
-            url: siteConfigUrl + '/api/update-cart.php',
+            url: baseSiteUrl + '/api/update-cart.php',
             method: 'POST',
             data: {
                 cart_id: cartId,
@@ -189,7 +189,7 @@ $(document).ready(function () {
 
         if (confirm('Remove this item from cart?')) {
             $.ajax({
-                url: siteConfigUrl + '/api/remove-from-cart.php',
+                url: baseSiteUrl + '/api/remove-from-cart.php',
                 method: 'POST',
                 data: {
                     cart_id: cartId
@@ -274,7 +274,7 @@ $(document).ready(function () {
 // Update Cart Count
 function updateCartCount() {
     $.ajax({
-        url: siteConfigUrl + '/api/get-cart-count.php',
+        url: baseSiteUrl + '/api/get-cart-count.php',
         method: 'GET',
         success: function (response) {
             if (response.count) {
@@ -309,4 +309,4 @@ function showToast(title, message, type) {
     }, 5000);
 }
 
-// siteConfigUrl is defined globally in header.php
+// baseSiteUrl is defined globally in header.php
