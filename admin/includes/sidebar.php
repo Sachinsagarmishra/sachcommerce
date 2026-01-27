@@ -87,26 +87,6 @@ $user = get_logged_user();
                 </a>
             </li>
 
-            <!-- Blog -->
-            <li class="nav-item">
-                <a class="nav-link <?php echo (in_array($current_page, ['blog-posts.php', 'add-blog-post.php', 'edit-blog-post.php', 'blog-categories.php'])) ? 'active' : ''; ?>"
-                    data-bs-toggle="collapse" href="#blogMenu" role="button" aria-expanded="false">
-                    <i class="fas fa-blog"></i> Blog <i class="fas fa-chevron-down float-end"></i>
-                </a>
-                <div class="collapse" id="blogMenu">
-                    <ul class="nav flex-column ms-3">
-                        <li class="nav-item">
-                            <a class="nav-link" href="blog-posts.php"><i class="fas fa-list"></i> All Posts</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="add-blog-post.php"><i class="fas fa-plus"></i> Add Post</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="blog-categories.php"><i class="fas fa-folder"></i> Categories</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
 
             <!-- Reports -->
             <li class="nav-item">

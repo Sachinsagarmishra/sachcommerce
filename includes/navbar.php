@@ -45,16 +45,17 @@ $menu_categories = get_menu_categories(8);
         <a class="navbar-brand fw-bold" href="<?php echo SITE_URL; ?>">
             <i class="fas fa-store text-primary"></i> <?php echo SITE_NAME; ?>
         </a>
-        
+
         <!-- Mobile Toggle -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
             <span class="navbar-toggler-icon"></span>
         </button>
-        
+
         <!-- Navbar Content -->
         <div class="collapse navbar-collapse" id="navbarMain">
             <!-- Search Bar (Desktop) -->
-            <form class="d-none d-lg-flex mx-auto" style="width: 40%;" action="<?php echo SITE_URL; ?>/search.php" method="GET">
+            <form class="d-none d-lg-flex mx-auto" style="width: 40%;" action="<?php echo SITE_URL; ?>/search.php"
+                method="GET">
                 <div class="input-group">
                     <input type="text" class="form-control" name="q" placeholder="Search products..." required>
                     <button class="btn btn-primary" type="submit">
@@ -62,7 +63,7 @@ $menu_categories = get_menu_categories(8);
                     </button>
                 </div>
             </form>
-            
+
             <!-- Right Menu -->
             <ul class="navbar-nav ms-auto align-items-lg-center">
                 <!-- Search (Mobile) -->
@@ -71,12 +72,12 @@ $menu_categories = get_menu_categories(8);
                         <i class="fas fa-search"></i> Search
                     </a>
                 </li>
-                
+
                 <!-- Home -->
                 <li class="nav-item">
                     <a class="nav-link" href="<?php echo SITE_URL; ?>">Home</a>
                 </li>
-                
+
                 <!-- Shop Dropdown -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
@@ -84,35 +85,34 @@ $menu_categories = get_menu_categories(8);
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/shop.php">All Products</a></li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <?php foreach ($menu_categories as $category): ?>
-                            <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/shop.php?category=<?php echo $category['slug']; ?>">
-                                <?php echo htmlspecialchars($category['name']); ?>
-                            </a></li>
+                            <li><a class="dropdown-item"
+                                    href="<?php echo SITE_URL; ?>/shop.php?category=<?php echo $category['slug']; ?>">
+                                    <?php echo htmlspecialchars($category['name']); ?>
+                                </a></li>
                         <?php endforeach; ?>
                     </ul>
                 </li>
-                
-                <!-- Blog -->
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo SITE_URL; ?>/blog.php">Blog</a>
-                </li>
-                
+
+
                 <!-- Contact -->
                 <li class="nav-item">
                     <a class="nav-link" href="<?php echo SITE_URL; ?>/contact.php">Contact</a>
                 </li>
-                
+
                 <!-- Wishlist -->
                 <?php if (is_logged_in()): ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo SITE_URL; ?>/wishlist.php">
-                        <i class="fas fa-heart"></i>
-                        <span class="d-lg-none">Wishlist</span>
-                    </a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo SITE_URL; ?>/wishlist.php">
+                            <i class="fas fa-heart"></i>
+                            <span class="d-lg-none">Wishlist</span>
+                        </a>
+                    </li>
                 <?php endif; ?>
-                
+
                 <!-- Cart -->
                 <li class="nav-item">
                     <a class="nav-link position-relative" href="<?php echo SITE_URL; ?>/cart.php">
@@ -125,27 +125,29 @@ $menu_categories = get_menu_categories(8);
                         <span class="d-lg-none">Cart</span>
                     </a>
                 </li>
-                
+
                 <!-- User Account -->
                 <?php if (is_logged_in()): ?>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                        <i class="fas fa-user"></i> Account
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/my-account.php">My Account</a></li>
-                        <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/orders.php">My Orders</a></li>
-                        <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/wishlist.php">Wishlist</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/logout.php">Logout</a></li>
-                    </ul>
-                </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> Account
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/my-account.php">My Account</a></li>
+                            <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/orders.php">My Orders</a></li>
+                            <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/wishlist.php">Wishlist</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/logout.php">Logout</a></li>
+                        </ul>
+                    </li>
                 <?php else: ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo SITE_URL; ?>/login.php">
-                        <i class="fas fa-sign-in-alt"></i> Login
-                    </a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo SITE_URL; ?>/login.php">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    </li>
                 <?php endif; ?>
             </ul>
         </div>

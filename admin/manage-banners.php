@@ -81,7 +81,7 @@ include 'includes/sidebar.php';
                                 <th>Sort</th>
                                 <th>Desktop Image</th>
                                 <th>Mobile Image</th>
-                                <th>Title/Links</th>
+                                <th>Link URL</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -101,9 +101,6 @@ include 'includes/sidebar.php';
                                             style="height: 60px; border-radius: 4px;">
                                     </td>
                                     <td>
-                                        <strong>
-                                            <?php echo htmlspecialchars($banner['title']); ?>
-                                        </strong><br>
                                         <small class="text-muted">
                                             <?php echo htmlspecialchars($banner['link']); ?>
                                         </small>

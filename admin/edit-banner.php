@@ -23,8 +23,6 @@ if (!$banner) {
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $title = sanitize_input($_POST['title']);
-    $subtitle = sanitize_input($_POST['subtitle']);
     $link = sanitize_input($_POST['link']);
     $sort_order = (int) $_POST['sort_order'];
     $status = isset($_POST['status']) ? 1 : 0;
@@ -60,8 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        $stmt = $pdo->prepare("UPDATE banners SET image_desktop = ?, image_mobile = ?, title = ?, subtitle = ?, link = ?, sort_order = ?, status = ? WHERE id = ?");
-        $stmt->execute([$image_desktop, $image_mobile, $title, $subtitle, $link, $sort_order, $status, $id]);
+        $stmt = $pdo->prepare("UPDATE banners SET image_desktop = ?, image_mobile = ?, link = ?, sort_order = ?, status = ? WHERE id = ?");
+        $stmt->execute([$image_desktop, $image_mobile, $link, $sort_order, $status, $id]);
 
         $_SESSION['success'] = 'Banner updated successfully';
         header('Location: manage-banners.php');
@@ -116,19 +114,6 @@ include 'includes/sidebar.php';
                             </div>
                             <input type="file" class="form-control" name="image_mobile" accept="image/*">
                             <small class="text-muted">Leave empty to keep current image. Recommended: 600x800px</small>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Title (Optional)</label>
-                            <input type="text" class="form-control" name="title"
-                                value="<?php echo htmlspecialchars($banner['title']); ?>">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Subtitle (Optional)</label>
-                            <input type="text" class="form-control" name="subtitle"
-                                value="<?php echo htmlspecialchars($banner['subtitle']); ?>">
                         </div>
                     </div>
 
