@@ -292,3 +292,45 @@
     color: #ff6a39;
     font-weight: 700;
 }
+
+/* Custom Product Tabs Styles */
+.custom-product-tabs {
+    border: none !important;
+    gap: 30px;
+}
+
+.custom-product-tabs .nav-link {
+    border: none !important;
+    background: none !important;
+    color: #888 !important;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 10px 5px !important;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.custom-product-tabs .nav-link:hover {
+    color: #000 !important;
+}
+
+.custom-product-tabs .nav-link.active {
+    color: #000 !important;
+}
+
+.custom-product-tabs .nav-link.active::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #000;
+}
+
+.custom-tab-content {
+    background: #fff;
+    border: 1px solid #eee !important;
+    border-radius: 12px !important;
+    margin-top: 10px;
+}
