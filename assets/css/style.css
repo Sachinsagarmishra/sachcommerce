@@ -703,49 +703,30 @@ h6,
     }
 }
 
-/* Premium Cart Quantity Control */
-.cart-qty-control {
+/* Sync Cart Quantity Style with Product Page */
+.cart-qty-control.quantity-picker-custom {
     display: flex;
     align-items: center;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    width: fit-content;
-    overflow: hidden;
-    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    height: 40px;
+    /* Slightly smaller for table but same style */
+    width: 120px;
     margin: 0 auto;
+    /* Center in table */
+    background: #fff;
 }
 
-.cart-qty-control .qty-btn {
-    border: none;
-    background: transparent;
-    padding: 8px 12px;
-    color: #495057;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+.cart-qty-control.quantity-picker-custom .qty-btn {
+    font-size: 1.1rem;
+    font-weight: 500;
+    width: 35px;
+    color: #333;
 }
 
-.cart-qty-control .qty-btn:hover {
-    background: #f8f9fa;
-    color: var(--primary-color);
-}
-
-.cart-qty-control .qty-input {
-    width: 45px;
-    border: none !important;
-    border-left: 1px solid #dee2e6 !important;
-    border-right: 1px solid #dee2e6 !important;
-    text-align: center;
-    font-weight: 600;
-    padding: 5px 0;
-    -moz-appearance: textfield;
-    appearance: textfield;
-}
-
-.cart-qty-control .qty-input::-webkit-outer-spin-button,
-.cart-qty-control .qty-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+.cart-qty-control.quantity-picker-custom .qty-input {
+    border-left: 1px solid #ddd !important;
+    border-right: 1px solid #ddd !important;
+    width: 50px !important;
+    font-size: 0.95rem;
 }

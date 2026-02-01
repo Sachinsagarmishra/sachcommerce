@@ -77,20 +77,16 @@ include 'includes/navbar.php';
                                                 <?php echo format_price($item_price); ?>
                                             </td>
                                             <td class="align-middle">
-                                                <div class="cart-qty-control">
+                                                <div class="cart-qty-control quantity-picker-custom">
                                                     <button class="qty-btn" type="button"
-                                                        onclick="updateQuantity(<?php echo $item['id']; ?>, <?php echo (int) $item['quantity'] - 1; ?>)">
-                                                        <i class="fas fa-minus"></i>
-                                                    </button>
+                                                        onclick="updateQuantity(<?php echo $item['id']; ?>, <?php echo (int) $item['quantity'] - 1; ?>)">-</button>
                                                     <input type="number" class="qty-input"
                                                         value="<?php echo $item['quantity']; ?>" min="1"
                                                         max="<?php echo $item['stock_quantity']; ?>"
                                                         onchange="updateQuantity(<?php echo $item['id']; ?>, this.value)"
                                                         readonly>
                                                     <button class="qty-btn" type="button"
-                                                        onclick="updateQuantity(<?php echo $item['id']; ?>, <?php echo (int) $item['quantity'] + 1; ?>)">
-                                                        <i class="fas fa-plus"></i>
-                                                    </button>
+                                                        onclick="updateQuantity(<?php echo $item['id']; ?>, <?php echo (int) $item['quantity'] + 1; ?>)">+</button>
                                                 </div>
                                             </td>
                                             <td class="align-middle">
