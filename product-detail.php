@@ -209,19 +209,22 @@ include 'includes/navbar.php';
 
             <div class="rating-section mb-3">
                 <div class="d-flex align-items-center">
-                    <div class="stars me-2">
-                        <?php
-                        $rating = get_product_rating($product['id']);
-                        for ($i = 1; $i <= 5; $i++) {
-                            if ($i <= $rating) {
-                                echo '<i class="fas fa-star"></i>';
-                            } else {
-                                echo '<i class="far fa-star"></i>';
-                            }
-                        }
-                        ?>
-                    </div>
-                    <span class="text-muted small">No reviews</span>
+                    <?php if ($rating_data && $rating_data['total_reviews'] > 0): ?>
+                        <span class="me-2 fw-bold"><?php echo number_format($rating_data['avg_rating'], 1); ?></span>
+                        <div class="stars me-2">
+                            <?php echo display_rating($rating_data['avg_rating'], false); ?>
+                        </div>
+                        <span class="text-muted small">(<?php echo $rating_data['total_reviews']; ?>)</span>
+                    <?php else: ?>
+                        <div class="stars me-2">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <span class="text-muted small">5 star rating</span>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -487,7 +490,7 @@ include 'includes/navbar.php';
                                     if ($display_name === 'Admin User')
                                         $display_name = 'Customer';
                                     ?>
-                                            <div class="mb-4 pb-4 border-bottom">
+                                    <div class="mb-4 pb-4 border-bottom">
                                         <div class="d-flex justify-content-between mb-2">
                                             <span
                                                 class="fw-bold text-dark"><?php echo htmlspecialchars($display_name); ?></span>
