@@ -144,19 +144,6 @@ if (!isset($site_settings)) {
                     <?php endif; ?>
                 </ul>
 
-                <!-- Newsletter -->
-                <div class="mt-3">
-                    <h6>Newsletter</h6>
-                    <form action="<?php echo SITE_URL; ?>/api/newsletter-subscribe.php" method="POST"
-                        class="newsletter-form">
-                        <div class="input-group input-group-sm">
-                            <input type="email" class="form-control" name="email" placeholder="Your email" required>
-                            <button class="btn btn-primary" type="submit">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
             </div>
         </div>
 
@@ -171,8 +158,8 @@ if (!isset($site_settings)) {
                 </p>
             </div>
             <div class="col-md-6 text-center text-md-end">
-                <img src="<?php echo SITE_URL; ?>/assets/images/payment-methods.png" alt="Payment Methods" height="30"
-                    class="opacity-75">
+                <img src="<?php echo SITE_URL; ?>/uploads/img/payments.webp" alt="Payment Methods" height="15"
+                    class="opacity-105">
             </div>
         </div>
     </div>
