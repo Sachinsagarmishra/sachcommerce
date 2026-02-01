@@ -138,6 +138,10 @@ $user = get_logged_user();
                         <li class="nav-item">
                             <a class="nav-link" href="seo-settings.php"><i class="fas fa-search"></i> SEO</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="theme-settings.php"><i class="fas fa-palette"></i> Theme
+                                Settings</a>
+                        </li>
                     </ul>
                 </div>
             </li>
