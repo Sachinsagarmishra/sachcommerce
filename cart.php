@@ -77,17 +77,18 @@ include 'includes/navbar.php';
                                                 <?php echo format_price($item_price); ?>
                                             </td>
                                             <td class="align-middle">
-                                                <div class="input-group" style="width: 130px;">
-                                                    <button class="btn btn-outline-secondary btn-sm" type="button"
-                                                        onclick="updateQuantity(<?php echo $item['id']; ?>, <?php echo $item['quantity'] - 1; ?>)">
+                                                <div class="cart-qty-control">
+                                                    <button class="qty-btn" type="button"
+                                                        onclick="updateQuantity(<?php echo $item['id']; ?>, <?php echo (int) $item['quantity'] - 1; ?>)">
                                                         <i class="fas fa-minus"></i>
                                                     </button>
-                                                    <input type="number" class="form-control form-control-sm text-center"
+                                                    <input type="number" class="qty-input"
                                                         value="<?php echo $item['quantity']; ?>" min="1"
                                                         max="<?php echo $item['stock_quantity']; ?>"
-                                                        onchange="updateQuantity(<?php echo $item['id']; ?>, this.value)">
-                                                    <button class="btn btn-outline-secondary btn-sm" type="button"
-                                                        onclick="updateQuantity(<?php echo $item['id']; ?>, <?php echo $item['quantity'] + 1; ?>)">
+                                                        onchange="updateQuantity(<?php echo $item['id']; ?>, this.value)"
+                                                        readonly>
+                                                    <button class="qty-btn" type="button"
+                                                        onclick="updateQuantity(<?php echo $item['id']; ?>, <?php echo (int) $item['quantity'] + 1; ?>)">
                                                         <i class="fas fa-plus"></i>
                                                     </button>
                                                 </div>
