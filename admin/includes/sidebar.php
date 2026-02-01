@@ -164,10 +164,6 @@ $settings_open = in_array($current_page, $settings_pages) || strpos($current_pag
                                 href="tax-settings.php"><i class="fas fa-percent"></i> Tax</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo ($current_page == 'seo-settings.php') ? 'active' : ''; ?>"
-                                href="seo-settings.php"><i class="fas fa-search"></i> SEO</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link <?php echo ($current_page == 'theme-settings.php') ? 'active' : ''; ?>"
                                 href="theme-settings.php"><i class="fas fa-palette"></i> Theme
                                 Settings</a>

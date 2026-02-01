@@ -473,6 +473,10 @@ function delete_file($file_path)
 
 /**
  * Send email using PHPMailer with dynamic settings from database
+ * @param string $to Recipient email
+ * @param string $subject Email subject
+ * @param string $template Template name (leave empty to use data['body'])
+ * @param array $data Data array - if template is empty, use $data['body'] for HTML content
  */
 function send_email($to, $subject, $template, $data = [])
 {
@@ -508,6 +512,9 @@ function send_email($to, $subject, $template, $data = [])
         $mail->CharSet = 'UTF-8';
         $mail->Encoding = 'base64';
 
+        // Enable debug for troubleshooting (set to 0 in production)
+        $mail->SMTPDebug = 0;
+
         $mail->isSMTP();
         $mail->Host = $smtp_host;
         $mail->SMTPAuth = true;
@@ -522,20 +529,27 @@ function send_email($to, $subject, $template, $data = [])
         $mail->isHTML(true);
         $mail->Subject = $subject;
 
-        $template_file = EMAIL_TEMPLATE_PATH . $template . '.php';
-        if (file_exists($template_file)) {
-            ob_start();
-            extract($data);
-            include $template_file;
-            $mail->Body = ob_get_clean();
+        // If template is provided, use it; otherwise use body from data
+        if (!empty($template)) {
+            $template_file = EMAIL_TEMPLATE_PATH . $template . '.php';
+            if (file_exists($template_file)) {
+                ob_start();
+                extract($data);
+                include $template_file;
+                $mail->Body = ob_get_clean();
+            } else {
+                $mail->Body = isset($data['body']) ? $data['body'] : 'Template not found';
+            }
         } else {
-            $mail->Body = 'Template not found';
+            // Use body directly from data
+            $mail->Body = isset($data['body']) ? $data['body'] : '';
         }
 
         $mail->send();
+        error_log("Email sent successfully to: $to");
         return ['success' => true, 'message' => 'Email sent successfully'];
     } catch (Exception $e) {
-        error_log("Email Error: {$mail->ErrorInfo}");
+        error_log("Email Error to $to: " . $mail->ErrorInfo);
         return ['success' => false, 'message' => "Email could not be sent. Error: {$mail->ErrorInfo}"];
     }
 }

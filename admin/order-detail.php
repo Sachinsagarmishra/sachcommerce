@@ -7,7 +7,7 @@ require_once 'includes/auth-check.php';
 $page_title = 'Order Details';
 
 // Get order ID
-$order_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$order_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
 if (!$order_id) {
     header('Location: orders.php');
@@ -44,6 +44,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
     }
 }
 
+// Handle resend confirmation email
+if (isset($_POST['resend_email'])) {
+    try {
+        $items = $pdo->prepare("SELECT * FROM order_items WHERE order_id = ?");
+        $items->execute([$order_id]);
+        $order_items = $items->fetchAll();
+
+        $success = sendOrderConfirmationEmail(
+            $order['id'],
+            $order['order_number'],
+            $order['customer_email'],
+            $order['customer_name'],
+            $order['total_amount'],
+            $order_items
+        );
+
+        if ($success) {
+            $_SESSION['success'] = 'Confirmation email resent successfully to ' . $order['customer_email'];
+        } else {
+            $_SESSION['error'] = 'Failed to send confirmation email. Please check SMTP settings.';
+        }
+    } catch (Exception $e) {
+        $_SESSION['error'] = 'Error: ' . $e->getMessage();
+    }
+    header('Location: order-detail.php?id=' . $order_id);
+    exit;
+}
+
 include 'includes/header.php';
 include 'includes/sidebar.php';
 ?>
@@ -55,6 +83,12 @@ include 'includes/sidebar.php';
                 <h1 class="h3 mb-0">Order #<?php echo htmlspecialchars($order['order_number']); ?></h1>
             </div>
             <div class="col-md-6 text-end">
+                <form method="POST" class="d-inline">
+                    <button type="submit" name="resend_email" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-paper-plane me-2"></i>Resend Confirmation Email
+                    </button>
+                    <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
+                </form>
                 <a href="orders.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Back to Orders
                 </a>
@@ -63,7 +97,16 @@ include 'includes/sidebar.php';
 
         <?php if (isset($_SESSION['success'])): ?>
             <div class="alert alert-success alert-dismissible fade show">
-                <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+                <?php echo $_SESSION['success'];
+                unset($_SESSION['success']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
+
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show">
+                <?php echo $_SESSION['error'];
+                unset($_SESSION['error']); ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
@@ -88,12 +131,12 @@ include 'includes/sidebar.php';
                                 </thead>
                                 <tbody>
                                     <?php foreach ($order_items as $item): ?>
-                                    <tr>
-                                        <td><?php echo htmlspecialchars($item['product_name']); ?></td>
-                                        <td><?php echo $item['quantity']; ?></td>
-                                        <td><?php echo format_price($item['price']); ?></td>
-                                        <td><?php echo format_price($item['subtotal']); ?></td>
-                                    </tr>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($item['product_name']); ?></td>
+                                            <td><?php echo $item['quantity']; ?></td>
+                                            <td><?php echo format_price($item['price']); ?></td>
+                                            <td><?php echo format_price($item['subtotal']); ?></td>
+                                        </tr>
                                     <?php endforeach; ?>
                                 </tbody>
                                 <tfoot>
@@ -107,7 +150,9 @@ include 'includes/sidebar.php';
                                     </tr>
                                     <tr class="table-active">
                                         <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                        <td><strong class="text-primary"><?php echo format_price($order['total_amount']); ?></strong></td>
+                                        <td><strong
+                                                class="text-primary"><?php echo format_price($order['total_amount']); ?></strong>
+                                        </td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -123,9 +168,16 @@ include 'includes/sidebar.php';
                     <div class="card-body">
                         <p class="mb-1"><strong><?php echo htmlspecialchars($order['customer_name']); ?></strong></p>
                         <p class="mb-1"><?php echo htmlspecialchars($order['shipping_address']); ?></p>
-                        <p class="mb-1"><?php echo htmlspecialchars($order['shipping_city']); ?>, <?php echo htmlspecialchars($order['shipping_state']); ?> - <?php echo htmlspecialchars($order['shipping_pincode']); ?></p>
-                        <p class="mb-0"><i class="fas fa-phone me-2"></i><?php echo htmlspecialchars($order['customer_phone']); ?></p>
-                        <p class="mb-0"><i class="fas fa-envelope me-2"></i><?php echo htmlspecialchars($order['customer_email']); ?></p>
+                        <p class="mb-1"><?php echo htmlspecialchars($order['shipping_city']); ?>,
+                            <?php echo htmlspecialchars($order['shipping_state']); ?> -
+                            <?php echo htmlspecialchars($order['shipping_pincode']); ?>
+                        </p>
+                        <p class="mb-0"><i
+                                class="fas fa-phone me-2"></i><?php echo htmlspecialchars($order['customer_phone']); ?>
+                        </p>
+                        <p class="mb-0"><i
+                                class="fas fa-envelope me-2"></i><?php echo htmlspecialchars($order['customer_email']); ?>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -161,11 +213,15 @@ include 'includes/sidebar.php';
                         <h5 class="mb-0">Order Information</h5>
                     </div>
                     <div class="card-body">
-                        <p class="mb-2"><strong>Order Date:</strong><br><?php echo date('M d, Y h:i A', strtotime($order['created_at'])); ?></p>
-                        <p class="mb-2"><strong>Payment Method:</strong><br><?php echo strtoupper($order['payment_method']); ?></p>
+                        <p class="mb-2"><strong>Order
+                                Date:</strong><br><?php echo date('M d, Y h:i A', strtotime($order['created_at'])); ?>
+                        </p>
+                        <p class="mb-2"><strong>Payment
+                                Method:</strong><br><?php echo strtoupper($order['payment_method']); ?></p>
                         <p class="mb-0">
                             <strong>Payment Status:</strong><br>
-                            <span class="badge <?php echo $order['payment_status'] === 'paid' ? 'bg-success' : 'bg-warning'; ?>">
+                            <span
+                                class="badge <?php echo $order['payment_status'] === 'paid' ? 'bg-success' : 'bg-warning'; ?>">
                                 <?php echo ucfirst($order['payment_status']); ?>
                             </span>
                         </p>

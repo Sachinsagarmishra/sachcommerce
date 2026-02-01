@@ -9,6 +9,45 @@ date_default_timezone_set('Asia/Kolkata');
 
 $page_title = 'Orders';
 
+// Handle resend confirmation email
+if (isset($_POST['resend_email'])) {
+    $order_id = (int) $_POST['order_id'];
+    try {
+        // Get order details
+        $stmt = $pdo->prepare("SELECT o.*, u.name as customer_name, u.email as customer_email 
+                               FROM orders o 
+                               LEFT JOIN users u ON o.user_id = u.id 
+                               WHERE o.id = ?");
+        $stmt->execute([$order_id]);
+        $order = $stmt->fetch();
+
+        if ($order) {
+            $items = $pdo->prepare("SELECT * FROM order_items WHERE order_id = ?");
+            $items->execute([$order_id]);
+            $order_items = $items->fetchAll();
+
+            $success = sendOrderConfirmationEmail(
+                $order['id'],
+                $order['order_number'],
+                $order['customer_email'],
+                $order['customer_name'],
+                $order['total_amount'],
+                $order_items
+            );
+
+            if ($success) {
+                $_SESSION['success'] = 'Confirmation email resent to ' . $order['customer_email'];
+            } else {
+                $_SESSION['error'] = 'Failed to send confirmation email. Check SMTP settings.';
+            }
+        }
+    } catch (Exception $e) {
+        $_SESSION['error'] = 'Error: ' . $e->getMessage();
+    }
+    header('Location: orders.php');
+    exit;
+}
+
 // Handle bulk delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_delete'])) {
     $order_ids = $_POST['order_ids'] ?? [];
@@ -247,11 +286,17 @@ include 'includes/sidebar.php';
                                                 <?php echo ucfirst($order['order_status']); ?>
                                             </span>
                                         </td>
-                                        <td>
+                                        <td class="text-nowrap">
                                             <a href="order-detail.php?id=<?php echo $order['id']; ?>"
-                                                class="btn btn-sm btn-primary" title="View Details">
-                                                <i class="fas fa-eye"></i>
+                                                class="btn btn-sm btn-info" title="View Details">
+                                                <i class="fas fa-eye text-white"></i>
                                             </a>
+                                            <form method="POST" class="d-inline" onsubmit="return confirm('Resend confirmation email?')">
+                                                <input type="hidden" name="order_id" value="<?php echo $order['id']; ?>">
+                                                <button type="submit" name="resend_email" class="btn btn-sm btn-success" title="Resend Email">
+                                                    <i class="fas fa-envelope"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

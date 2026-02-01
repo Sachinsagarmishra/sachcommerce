@@ -121,32 +121,20 @@ try {
             if ($email_enabled === '1' && !empty($order['customer_email'])) {
                 try {
                     // Get order items
-                    $items_stmt = $pdo->prepare("
-                        SELECT oi.*, p.name 
-                        FROM order_items oi 
-                        JOIN products p ON oi.product_id = p.id 
-                        WHERE oi.order_id = ?
-                    ");
+                    $items_stmt = $pdo->prepare("SELECT * FROM order_items WHERE order_id = ?");
                     $items_stmt->execute([$order_id]);
                     $order_items = $items_stmt->fetchAll();
 
-                    // Include process-order.php to get the email function
-                    if (!function_exists('sendOrderConfirmationEmail')) {
-                        require_once __DIR__ . '/process-order.php';
-                    }
-
-                    if (function_exists('sendOrderConfirmationEmail')) {
-                        sendOrderConfirmationEmail(
-                            $order_id,
-                            $order['order_number'],
-                            $order['customer_email'],
-                            $order['customer_name'],
-                            $order['total_amount'],
-                            $order_items
-                        );
-                    }
+                    sendOrderConfirmationEmail(
+                        $order_id,
+                        $order['order_number'],
+                        $order['customer_email'],
+                        $order['customer_name'],
+                        $order['total_amount'],
+                        $order_items
+                    );
                 } catch (Exception $e) {
-                    error_log("Failed to send order confirmation email: " . $e->getMessage());
+                    error_log("Failed to send Razorpay order email: " . $e->getMessage());
                 }
             }
 
