@@ -125,21 +125,10 @@ include 'includes/navbar.php';
                 <?php foreach ($featured_products as $product): ?>
                     <div class="col-6 col-md-4 col-lg-3">
                         <div class="card product-card h-100">
-                            <div class="position-relative">
-                                <?php if ($product['discount_percentage'] > 0): ?>
-                                    <span class="badge-discount"><?php echo $product['discount_percentage']; ?>% OFF</span>
-                                <?php endif; ?>
-                                <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>">
-                                    <img src="<?php echo $product['primary_image'] ? PRODUCT_IMAGE_URL . $product['primary_image'] : 'https://via.placeholder.com/300x250?text=No+Image'; ?>"
-                                        class="product-image" alt="<?php echo htmlspecialchars($product['name']); ?>">
-                                </a>
-                                <?php if (is_logged_in()): ?>
-                                    <button class="add-to-wishlist-btn" data-product-id="<?php echo $product['id']; ?>"
-                                        title="Add to Wishlist">
-                                        <i class="far fa-heart"></i>
-                                    </button>
-                                <?php endif; ?>
-                            </div>
+                            <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>">
+                                <img src="<?php echo $product['primary_image'] ? PRODUCT_IMAGE_URL . $product['primary_image'] : 'https://via.placeholder.com/300x250?text=No+Image'; ?>"
+                                    class="product-image" alt="<?php echo htmlspecialchars($product['name']); ?>">
+                            </a>
                             <div class="card-body d-flex flex-column">
                                 <h6 class="card-title">
                                     <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>"
@@ -192,22 +181,10 @@ include 'includes/navbar.php';
                 <?php foreach ($new_arrivals as $product): ?>
                     <div class="col-6 col-md-4 col-lg-3">
                         <div class="card product-card h-100">
-                            <div class="position-relative">
-                                <span class="badge bg-success position-absolute top-0 start-0 m-2">NEW</span>
-                                <?php if ($product['discount_percentage'] > 0): ?>
-                                    <span class="badge-discount"><?php echo $product['discount_percentage']; ?>% OFF</span>
-                                <?php endif; ?>
-                                <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>">
-                                    <img src="<?php echo $product['primary_image'] ? PRODUCT_IMAGE_URL . $product['primary_image'] : 'https://via.placeholder.com/300x250?text=No+Image'; ?>"
-                                        class="product-image" alt="<?php echo htmlspecialchars($product['name']); ?>">
-                                </a>
-                                <?php if (is_logged_in()): ?>
-                                    <button class="add-to-wishlist-btn with-new-badge"
-                                        data-product-id="<?php echo $product['id']; ?>" title="Add to Wishlist">
-                                        <i class="far fa-heart"></i>
-                                    </button>
-                                <?php endif; ?>
-                            </div>
+                            <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>">
+                                <img src="<?php echo $product['primary_image'] ? PRODUCT_IMAGE_URL . $product['primary_image'] : 'https://via.placeholder.com/300x250?text=No+Image'; ?>"
+                                    class="product-image" alt="<?php echo htmlspecialchars($product['name']); ?>">
+                            </a>
                             <div class="card-body d-flex flex-column">
                                 <h6 class="card-title">
                                     <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>"

@@ -30,7 +30,7 @@ $user = get_logged_user();
                             <a class="nav-link" href="products.php"><i class="fas fa-list"></i> All Products</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="add-product.php"><i class="fas fa-plus"></i> Add Product</a>
+                            <a class="nav-link" href="product-add.php"><i class="fas fa-plus"></i> Add Product</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="bulk-upload-products.php"><i class="fas fa-upload"></i> Bulk

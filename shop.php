@@ -196,29 +196,10 @@ include 'includes/navbar.php';
                     <?php foreach ($products as $product): ?>
                         <div class="col-md-4 col-sm-6">
                             <div class="card product-card">
-                                <div class="product-image-wrapper">
-                                    <?php if ($product['discount_percentage'] > 0): ?>
-                                        <span class="product-badge badge-sale"><?php echo $product['discount_percentage']; ?>%
-                                            OFF</span>
-                                    <?php endif; ?>
-                                    <?php if ($product['is_new_arrival']): ?>
-                                        <span class="product-badge badge-new" style="top: 10px; left: 10px; right: auto;">NEW</span>
-                                    <?php endif; ?>
-
-                                    <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>">
-                                        <img src="<?php echo $product['primary_image'] ? PRODUCT_IMAGE_URL . $product['primary_image'] : 'https://via.placeholder.com/300x250?text=No+Image'; ?>"
-                                            class="product-image" alt="<?php echo htmlspecialchars($product['name']); ?>">
-                                    </a>
-
-                                    <div class="product-actions">
-                                        <?php if (is_logged_in()): ?>
-                                            <button class="product-action-btn add-to-wishlist-btn"
-                                                data-product-id="<?php echo $product['id']; ?>" title="Add to Wishlist">
-                                                <i class="far fa-heart"></i>
-                                            </button>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
+                                <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>">
+                                    <img src="<?php echo $product['primary_image'] ? PRODUCT_IMAGE_URL . $product['primary_image'] : 'https://via.placeholder.com/300x250?text=No+Image'; ?>"
+                                        class="product-image" alt="<?php echo htmlspecialchars($product['name']); ?>">
+                                </a>
                                 <div class="product-info">
                                     <h6 class="product-title">
                                         <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>"
