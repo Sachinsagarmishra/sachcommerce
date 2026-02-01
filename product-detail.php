@@ -76,8 +76,8 @@ include 'includes/navbar.php';
     }
 
     .product-thumb-item.active {
-        border-color: #82b440;
-        box-shadow: 0 0 5px rgba(130, 180, 64, 0.3);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 5px rgba(var(--primary-color-rgb), 0.3);
     }
 
     .product-main-image {
@@ -101,8 +101,9 @@ include 'includes/navbar.php';
         transform: scale(1.05);
     }
 
-    .price-section h2 {
-        color: #82b440;
+    .price-section h2,
+    .selling-price {
+        color: var(--primary-color);
         font-weight: 700;
     }
 
@@ -122,7 +123,7 @@ include 'includes/navbar.php';
     }
 
     .btn-add-cart {
-        background-color: #82b440;
+        background-color: var(--primary-color);
         color: #fff;
         border: none;
         padding: 12px 25px;
@@ -132,14 +133,15 @@ include 'includes/navbar.php';
     }
 
     .btn-add-cart:hover {
-        background-color: #6e9a36;
+        opacity: 0.9;
         color: #fff;
     }
 
     .stock-info {
-        color: #82b440;
+        color: var(--primary-color);
         font-weight: 500;
     }
+
 
     .qty-selector {
         max-width: 120px;

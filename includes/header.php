@@ -1,52 +1,68 @@
+<?php
+// Determine the current site URL
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+$host = $_SERVER['HTTP_HOST'];
+$script_name = $_SERVER['SCRIPT_NAME'];
+$current_dir = dirname($script_name);
+// SITE_URL is defined in config.php, but we might need to use BASE_PATH or similar
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="<?php echo isset($meta_description) ? $meta_description : DEFAULT_META_DESCRIPTION; ?>">
-    <meta name="keywords" content="<?php echo isset($meta_keywords) ? $meta_keywords : DEFAULT_META_KEYWORDS; ?>">
-    <meta name="author" content="<?php echo SITE_NAME; ?>">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><?php echo isset($page_title) ? $page_title . ' - ' : ''; ?><?php echo SITE_NAME; ?></title>
 
-    <!-- Open Graph Tags -->
-    <meta property="og:title" content="<?php echo isset($page_title) ? $page_title . ' - ' . SITE_NAME : SITE_NAME; ?>">
-    <meta property="og:description"
-        content="<?php echo isset($meta_description) ? $meta_description : DEFAULT_META_DESCRIPTION; ?>">
-    <meta property="og:image" content="<?php echo SITE_URL; ?>/assets/images/og-image.jpg">
-    <meta property="og:url" content="<?php echo SITE_URL . $_SERVER['REQUEST_URI']; ?>">
-    <meta property="og:type" content="website">
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title"
-        content="<?php echo isset($page_title) ? $page_title . ' - ' . SITE_NAME : SITE_NAME; ?>">
-    <meta name="twitter:description"
-        content="<?php echo isset($meta_description) ? $meta_description : DEFAULT_META_DESCRIPTION; ?>">
-
-    <title><?php echo isset($page_title) ? $page_title . ' - ' . SITE_NAME : SITE_NAME; ?></title>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="<?php echo SITE_URL; ?>/assets/images/favicon.ico">
-
-    <!-- Dynamic Theme Settings -->
     <?php
+    // Helper function for hex to rgb
+    function hexToRgb($hex) {
+        $hex = str_replace("#", "", $hex);
+        if(strlen($hex) == 3) {
+            $r = hexdec(substr($hex,0,1).substr($hex,0,1));
+            $g = hexdec(substr($hex,1,1).substr($hex,1,1));
+            $b = hexdec(substr($hex,2,1).substr($hex,2,1));
+        } else {
+            $r = hexdec(substr($hex,0,2));
+            $g = hexdec(substr($hex,2,2));
+            $b = hexdec(substr($hex,4,2));
+        }
+        return "$r, $g, $b";
+    }
+    
+    // Fetch Theme Settings
     $primary_color = get_site_setting('primary_color', '#83b735');
     $secondary_color = get_site_setting('secondary_color', '#858796');
-    $btn_primary_bg = get_site_setting('btn_primary_bg', '#83b735');
-    $btn_primary_text = get_site_setting('btn_primary_text', '#ffffff');
-    $header_bg = get_site_setting('header_bg', '#ffffff');
-    $footer_bg = get_site_setting('footer_bg', '#2c3e50');
+    $body_text_color = get_site_setting('body_text_color', '#333333');
+    $heading_text_color = get_site_setting('heading_text_color', '#2c3e50');
 
     $body_font = get_site_setting('body_font_family', "'Inter', sans-serif");
     $heading_font = get_site_setting('heading_font_family', "'Jost', sans-serif");
-    $fonts_url = get_site_setting('google_fonts_url', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Jost:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+    $google_fonts_url = get_site_setting('google_fonts_url', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Jost:wght@400;500;600;700&display=swap');
+
+    $navbar_bg = get_site_setting('navbar_bg', '#ffffff');
+    $nav_link_color = get_site_setting('nav_link_color', '#333333');
+    $nav_link_hover_color = get_site_setting('nav_link_hover_color', '#83b735');
+
+    $product_title_color = get_site_setting('product_title_color', '#2c3e50');
+    $product_price_color = get_site_setting('product_price_color', '#83b735');
+    $sale_badge_bg = get_site_setting('sale_badge_bg', '#e74a3b');
+    $new_badge_bg = get_site_setting('new_badge_bg', '#1cc88a');
+    $btn_primary_bg = get_site_setting('btn_primary_bg', '#83b735');
+    $btn_primary_text = get_site_setting('btn_primary_text', '#ffffff');
+
+    $footer_bg = get_site_setting('footer_bg', '#2c3e50');
+    $footer_text_color = get_site_setting('footer_text_color', '#ffffff');
+    $footer_heading_color = get_site_setting('footer_heading_color', '#ffffff');
+
+    $primary_rgb = hexToRgb($primary_color);
     ?>
 
-    <!-- Google Fonts -->
+    <!-- Dynamic Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="<?php echo $fonts_url; ?>" rel="stylesheet">
+    <link href="<?php echo $google_fonts_url; ?>" rel="stylesheet">
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -54,120 +70,117 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/style.css?v=<?php echo time(); ?>">
+    <!-- Custom Frontend CSS -->
+    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/style.css">
 
     <style>
         :root {
-            --primary-color:
-                <?php echo $primary_color; ?>
-            ;
-            --secondary-color:
-                <?php echo $secondary_color; ?>
-            ;
-            --btn-primary-bg:
-                <?php echo $btn_primary_bg; ?>
-            ;
-            --btn-primary-text:
-                <?php echo $btn_primary_text; ?>
-            ;
-            --header-bg:
-                <?php echo $header_bg; ?>
-            ;
-            --footer-bg:
-                <?php echo $footer_bg; ?>
-            ;
+            --primary-color: <?php echo $primary_color; ?>;
+            --primary-rgb: <?php echo $primary_rgb; ?>;
+            --secondary-color: <?php echo $secondary_color; ?>;
+            --dark-color: <?php echo $heading_text_color; ?>;
+            /* Update dark color to match heading color */
         }
 
         body {
-            font-family:
-                <?php echo $body_font; ?>
-                !important;
+            font-family: <?php echo $body_font; ?> !important;
+            color: <?php echo $body_text_color; ?>;
         }
 
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        .section-title,
-        .navbar-brand {
-            font-family:
-                <?php echo $heading_font; ?>
-                !important;
+        h1, h2, h3, h4, h5, h6, .section-title, .navbar-brand {
+            font-family: <?php echo $heading_font; ?> !important;
+            color: <?php echo $heading_text_color; ?>;
         }
 
-        .btn-primary {
-            background-color: var(--btn-primary-bg) !important;
-            border-color: var(--btn-primary-bg) !important;
-            color: var(--btn-primary-text) !important;
-        }
-
-        .btn-primary:hover {
-            opacity: 0.9;
-            background-color: var(--btn-primary-bg) !important;
-            filter: brightness(90%);
-        }
-
+        /* Navbar Customization */
         .navbar {
-            background-color: var(--header-bg) !important;
+            background-color: <?php echo $navbar_bg; ?> !important;
         }
 
+        .navbar-nav .nav-link {
+            color: <?php echo $nav_link_color; ?> !important;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: <?php echo $nav_link_hover_color; ?> !important;
+        }
+
+        .navbar-brand {
+            color: <?php echo $nav_link_color; ?> !important;
+        }
+
+        /* Product Card Customization */
+        .product-title, .product-title a {
+            color: <?php echo $product_title_color; ?> !important;
+        }
+
+        .product-price {
+            color: <?php echo $product_price_color; ?> !important;
+        }
+
+        .badge-sale, .badge-discount {
+            background-color: <?php echo $sale_badge_bg; ?> !important;
+        }
+
+        .badge-new {
+            background-color: <?php echo $new_badge_bg; ?> !important;
+        }
+
+        /* Button Customization */
+        .btn-primary, .add-to-cart-btn {
+            background-color: <?php echo $btn_primary_bg; ?> !important;
+            border-color: <?php echo $btn_primary_bg; ?> !important;
+            color: <?php echo $btn_primary_text; ?> !important;
+        }
+
+        .btn-primary:hover, .add-to-cart-btn:hover {
+            opacity: 0.9;
+            background-color: <?php echo $btn_primary_bg; ?> !important;
+            border-color: <?php echo $btn_primary_bg; ?> !important;
+        }
+        .btn-outline-primary {
+            color: <?php echo $btn_primary_bg; ?> !important;
+            border-color: <?php echo $btn_primary_bg; ?> !important;
+        }
+        .btn-outline-primary:hover {
+            background-color: <?php echo $btn_primary_bg; ?> !important;
+            color: <?php echo $btn_primary_text; ?> !important;
+        }
+
+        /* Footer Customization */
         .footer {
-            background-color: var(--footer-bg) !important;
+            background-color: <?php echo $footer_bg; ?> !important;
         }
 
-        .product-price,
-        .selling-price {
-            color: var(--primary-color) !important;
+        .footer h4, .footer h5, .footer .footer-title, .footer .widget-title {
+            color: <?php echo $footer_heading_color; ?> !important;
         }
 
-        .btn-orange-custom,
-        .btn-add-cart,
-        .product-thumb-item.active {
-            background-color: var(--btn-primary-bg) !important;
-            border-color: var(--btn-primary-bg) !important;
-            color: var(--btn-primary-text) !important;
+        .footer p, .footer span, .footer div, .footer li, .footer small {
+            color: <?php echo $footer_text_color; ?> !important;
         }
 
-        .text-orange,
-        .countdown-timer,
-        .delivery-dates,
-        .timeline-point .label,
-        .timeline-point .date,
-        .timeline-point .icon-circle {
-            color: var(--primary-color) !important;
+        .footer a {
+            color: <?php echo $footer_text_color; ?> !important;
+            opacity: 0.8;
+            text-decoration: none;
         }
 
-        .timeline-box {
-            border-color: var(--primary-color) !important;
-            background-color: rgba(var(--primary-color-rgb, 131, 183, 53), 0.05) !important;
+        .footer a:hover {
+            color: <?php echo $primary_color; ?> !important;
+            opacity: 1;
         }
 
-        .timeline-point .icon-circle {
-            border-color: var(--primary-color) !important;
-        }
-
-        .timeline-point.active .icon-circle {
-            background-color: var(--primary-color) !important;
-            color: #fff !important;
-        }
-
-        .line-hr {
-            background-color: var(--primary-color) !important;
+        /* Timeline & Other details */
+        .product-price-detail {
+            color:
+                <?php echo $product_price_color; ?>
+            ;
         }
     </style>
 
-    <?php if (isset($extra_css)): ?>
-        <?php foreach ($extra_css as $css): ?>
-            <link rel="stylesheet" href="<?php echo $css; ?>">
-        <?php endforeach; ?>
-    <?php endif; ?>
-
-    <script>
-        window.baseSiteUrl = '<?php echo SITE_URL; ?>';
-    </script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="<?php echo SITE_URL; ?>/assets/images/favicon.ico">
 </head>
 
 <body>
