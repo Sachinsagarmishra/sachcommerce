@@ -2,6 +2,8 @@
 require_once '../config/config.php';
 require_once '../includes/functions.php';
 
+// Set timezone to Indian Standard Time (IST)
+date_default_timezone_set('Asia/Kolkata');
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ' . SITE_URL . '/checkout');
     exit;

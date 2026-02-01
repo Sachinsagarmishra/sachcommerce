@@ -4,6 +4,9 @@ require_once '../includes/functions.php';
 require_once 'includes/functions.php';
 require_once 'includes/auth-check.php';
 
+// Set timezone to Indian Standard Time (IST)
+date_default_timezone_set('Asia/Kolkata');
+
 $page_title = 'Orders';
 
 // Handle bulk delete
@@ -206,7 +209,7 @@ include 'includes/sidebar.php';
                                                 class="text-muted"><?php echo htmlspecialchars($order['customer_email']); ?></small>
                                         </td>
                                         <td>
-                                                <?php echo date('M d, Y', strtotime($order['created_at'])); ?><br>
+                                            <?php echo date('M d, Y', strtotime($order['created_at'])); ?><br>
                                             <small
                                                 class="text-muted"><?php echo date('h:i A', strtotime($order['created_at'])); ?></small>
                                         </td>
@@ -240,8 +243,8 @@ include 'includes/sidebar.php';
                                                     break;
                                             }
                                             ?>
-                                             <span class="badge <?php echo $badge_class; ?>">
-                                                    <?php echo ucfirst($order['order_status']); ?>
+                                            <span class="badge <?php echo $badge_class; ?>">
+                                                <?php echo ucfirst($order['order_status']); ?>
                                             </span>
                                         </td>
                                         <td>
@@ -251,7 +254,7 @@ include 'includes/sidebar.php';
                                             </a>
                                         </td>
                                     </tr>
-                                    <?php endforeach; ?>
+                                <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
