@@ -5,7 +5,7 @@ $user = get_logged_user();
 // Check which dropdown should be open
 $products_pages = ['products.php', 'product-add.php', 'product-edit.php', 'bulk-upload-products.php'];
 $reports_pages = ['sales-report.php', 'product-report.php', 'customer-report.php'];
-$settings_pages = ['general-settings.php', 'payment-settings.php', 'email-settings.php', 'shipping-settings.php', 'tax-settings.php', 'seo-settings.php', 'theme-settings.php'];
+$settings_pages = ['general-settings.php', 'payment-settings.php', 'email-settings.php', 'shipping-settings.php', 'tax-settings.php', 'seo-settings.php', 'theme-settings.php', 'marketing-settings.php'];
 
 $products_open = in_array($current_page, $products_pages);
 $reports_open = in_array($current_page, $reports_pages);
@@ -166,6 +166,11 @@ $settings_open = in_array($current_page, $settings_pages) || strpos($current_pag
                         <li class="nav-item">
                             <a class="nav-link <?php echo ($current_page == 'theme-settings.php') ? 'active' : ''; ?>"
                                 href="theme-settings.php"><i class="fas fa-palette"></i> Theme
+                                Settings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?php echo ($current_page == 'marketing-settings.php') ? 'active' : ''; ?>"
+                                href="marketing-settings.php"><i class="fas fa-bullhorn"></i> Marketing
                                 Settings</a>
                         </li>
                     </ul>

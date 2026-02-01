@@ -190,6 +190,246 @@ if (!isset($site_settings)) {
     <?php echo $site_settings['custom_footer_scripts']; ?>
 <?php endif; ?>
 
+<!-- Fake Purchase Notifications -->
+<?php
+$fake_enabled = get_site_setting('fake_notif_enabled', '0');
+$fake_products_ids = get_site_setting('fake_notif_products', '');
+$fake_interval = get_site_setting('fake_notif_interval', '10');
+$fake_duration = get_site_setting('fake_notif_duration', '5');
+
+if ($fake_enabled === '1' && !empty($fake_products_ids)):
+    $ids = explode(',', $fake_products_ids);
+    $placeholders = str_repeat('?,', count($ids) - 1) . '?';
+    $stmt = $pdo->prepare("SELECT id, name, slug, 
+                         (SELECT image_path FROM product_images WHERE product_id = p.id AND is_primary = 1 LIMIT 1) as image
+                         FROM products p WHERE id IN ($placeholders) AND status = 'active'");
+    $stmt->execute($ids);
+    $fake_products_list = $stmt->fetchAll();
+
+    if (!empty($fake_products_list)):
+        ?>
+        <div id="fakeNotification" class="fake-notification">
+            <div class="fake-notif-content">
+                <div class="fake-notif-image">
+                    <img id="fakeNotifImg" src="" alt="Product">
+                    <span class="fake-notif-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="fake-notif-details">
+                    <p class="fake-notif-title">Someone recently bought</p>
+                    <a id="fakeNotifLink" href="#" class="fake-notif-product-name text-truncate d-block"></a>
+                    <p class="fake-notif-location">in <span id="fakeNotifLoc"></span></p>
+                    <div class="fake-notif-meta">
+                        <span class="fake-notif-verified text-success">Verified</span>
+                        <span id="fakeNotifTime" class="fake-notif-time text-muted ms-2">just now</span>
+                    </div>
+                </div>
+                <button type="button" class="fake-notif-close" onclick="closeFakeNotif()">&times;</button>
+            </div>
+            <div class="fake-notif-progress">
+                <div id="fakeNotifProgress"></div>
+            </div>
+        </div>
+
+        <style>
+            .fake-notification {
+                position: fixed;
+                bottom: -150px;
+                left: 20px;
+                width: 330px;
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+                z-index: 9999;
+                transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                overflow: hidden;
+                border: 1px solid #eee;
+            }
+
+            .fake-notification.show {
+                bottom: 20px;
+            }
+
+            .fake-notif-content {
+                display: flex;
+                align-items: center;
+                padding: 12px 15px;
+                gap: 12px;
+                position: relative;
+            }
+
+            .fake-notif-image {
+                width: 60px;
+                height: 60px;
+                flex-shrink: 0;
+                position: relative;
+            }
+
+            .fake-notif-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 8px;
+            }
+
+            .fake-notif-badge {
+                position: absolute;
+                top: -5px;
+                left: -5px;
+                background: #28a745;
+                color: #fff;
+                width: 18px;
+                height: 18px;
+                font-size: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                border: 2px solid #fff;
+            }
+
+            .fake-notif-details {
+                flex-grow: 1;
+                min-width: 0;
+            }
+
+            .fake-notif-title {
+                margin: 0;
+                font-size: 11px;
+                color: #666;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .fake-notif-product-name {
+                margin: 2px 0;
+                font-weight: 700;
+                color: #333;
+                text-decoration: none;
+                font-size: 14px;
+            }
+
+            .fake-notif-product-name:hover {
+                color: var(--primary-color, #007bff);
+            }
+
+            .fake-notif-location {
+                margin: 0;
+                font-size: 12px;
+                color: #444;
+            }
+
+            .fake-notif-location strong {
+                color: #000;
+            }
+
+            .fake-notif-meta {
+                margin-top: 3px;
+                display: flex;
+                align-items: center;
+            }
+
+            .fake-notif-verified {
+                font-size: 10px;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+
+            .fake-notif-time {
+                font-size: 10px;
+            }
+
+            .fake-notif-close {
+                position: absolute;
+                top: 5px;
+                right: 8px;
+                background: none;
+                border: none;
+                font-size: 18px;
+                color: #ccc;
+                cursor: pointer;
+                padding: 0;
+                line-height: 1;
+            }
+
+            .fake-notif-close:hover {
+                color: #333;
+            }
+
+            .fake-notif-progress {
+                height: 3px;
+                width: 100%;
+                background: #f0f0f0;
+            }
+
+            #fakeNotifProgress {
+                height: 100%;
+                width: 0%;
+                background: var(--primary-color, #007bff);
+            }
+
+            @media (max-width: 480px) {
+                .fake-notification {
+                    width: calc(100% - 40px);
+                    left: 20px;
+                }
+            }
+        </style>
+
+        <script>
+            const fakeProducts = <?php echo json_encode($fake_products_list); ?>;
+            const fakeCities = ["Mumbai, Maharashtra", "Delhi, NCR", "Bengaluru, Karnataka", "Hyderabad, Telangana", "Ahmedabad, Gujarat", "Chennai, Tamil Nadu", "Kolkata, West Bengal", "Surat, Gujarat", "Pune, Maharashtra", "Jaipur, Rajasthan", "Lucknow, Uttar Pradesh", "Kanpur, Uttar Pradesh", "Nagpur, Maharashtra", "Indore, Madhya Pradesh", "Thane, Maharashtra", "Bhopal, Madhya Pradesh", "Visakhapatnam, Andhra Pradesh", "Pimpri-Chinchwad, Maharashtra", "Patna, Bihar", "Vadodara, Gujarat", "Ghaziabad, Uttar Pradesh", "Ludhiana, Punjab", "Agra, Uttar Pradesh", "Nashik, Maharashtra", "Faridabad, Haryana", "Meerut, Uttar Pradesh", "Rajkot, Gujarat", "Kalyan-Dombivli, Maharashtra", "Vasai-Virar, Maharashtra", "Varanasi, Uttar Pradesh"];
+            const fakeInterval = <?php echo (int) $fake_interval * 1000; ?>;
+            const fakeDuration = <?php echo (int) $fake_duration * 1000; ?>;
+            let fakeNotifTimer;
+
+            function showFakeNotif() {
+                if (fakeProducts.length === 0) return;
+
+                const product = fakeProducts[Math.floor(Math.random() * fakeProducts.length)];
+                const city = fakeCities[Math.floor(Math.random() * fakeCities.length)];
+                const timeAgo = (Math.floor(Math.random() * 20) + 1) + " minutes ago";
+
+                document.getElementById('fakeNotifImg').src = product.image ? '<?php echo PRODUCT_IMAGE_URL; ?>' + product.image : 'https://via.placeholder.com/60';
+                document.getElementById('fakeNotifLink').href = '<?php echo SITE_URL; ?>/products/' + product.slug;
+                document.getElementById('fakeNotifLink').innerText = product.name;
+                document.getElementById('fakeNotifLoc').innerHTML = '<strong>' + city + '</strong>';
+                document.getElementById('fakeNotifTime').innerText = Math.random() > 0.5 ? 'just now' : timeAgo;
+
+                const notif = document.getElementById('fakeNotification');
+                const progress = document.getElementById('fakeNotifProgress');
+
+                notif.classList.add('show');
+
+                // Progress Bar Animation
+                progress.style.transition = 'none';
+                progress.style.width = '0%';
+                setTimeout(() => {
+                    progress.style.transition = `width ${fakeDuration}ms linear`;
+                    progress.style.width = '100%';
+                }, 50);
+
+                setTimeout(() => {
+                    notif.classList.remove('show');
+                }, fakeDuration);
+            }
+
+            function closeFakeNotif() {
+                document.getElementById('fakeNotification').classList.remove('show');
+            }
+
+            function startFakeNotifLoop() {
+                // Initial delay
+                setTimeout(() => {
+                    showFakeNotif();
+                    setInterval(showFakeNotif, fakeInterval + fakeDuration);
+                }, 5000); // Start after 5 seconds on page load
+            }
+
+            document.addEventListener('DOMContentLoaded', startFakeNotifLoop);
+        </script>
+    <?php endif; ?>
+<?php endif; ?>
+
 </body>
 
 </html>
