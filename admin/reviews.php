@@ -24,10 +24,16 @@ try {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (review_id) REFERENCES reviews(id) ON DELETE CASCADE
     )");
-    
+
     // Also ensure admin_reply and status columns exist in reviews
-    try { $pdo->exec("ALTER TABLE reviews ADD COLUMN status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending'"); } catch (Exception $ex) {}
-    try { $pdo->exec("ALTER TABLE reviews ADD COLUMN admin_reply TEXT DEFAULT NULL"); } catch (Exception $ex) {}
+    try {
+        $pdo->exec("ALTER TABLE reviews ADD COLUMN status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending'");
+    } catch (Exception $ex) {
+    }
+    try {
+        $pdo->exec("ALTER TABLE reviews ADD COLUMN admin_reply TEXT DEFAULT NULL");
+    } catch (Exception $ex) {
+    }
 }
 
 
@@ -35,7 +41,7 @@ try {
 
 // 1. DELETE
 if (isset($_GET['delete'])) {
-    $id = (int)$_GET['delete'];
+    $id = (int) $_GET['delete'];
     try {
         $stmt = $pdo->prepare("DELETE FROM reviews WHERE id = ?");
         $stmt->execute([$id]);
@@ -49,9 +55,9 @@ if (isset($_GET['delete'])) {
 
 // 2. UPDATE STATUS (Approve/Reject)
 if (isset($_GET['status_id']) && isset($_GET['new_status'])) {
-    $id = (int)$_GET['status_id'];
+    $id = (int) $_GET['status_id'];
     $new_status = sanitize_input($_GET['new_status']);
-    
+
     if (in_array($new_status, ['pending', 'approved', 'rejected'])) {
         try {
             $stmt = $pdo->prepare("UPDATE reviews SET status = ?, updated_at = NOW() WHERE id = ?");
@@ -67,18 +73,21 @@ if (isset($_GET['status_id']) && isset($_GET['new_status'])) {
 
 // 3. EDIT (Admin Reply) FORM SUBMISSION
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['review_id'])) {
-    $review_id = (int)$_POST['review_id'];
-    $admin_reply = $_POST['admin_reply']; // Allow text/HTML
+    $review_id = (int) $_POST['review_id'];
+    $admin_reply = $_POST['admin_reply'];
     $status = sanitize_input($_POST['status']);
-    
+    $rating = (int) $_POST['rating'];
+    $title = sanitize_input($_POST['title']);
+    $comment = $_POST['comment']; // Allow raw text/HTML if admin wants
+
     try {
         $stmt = $pdo->prepare("UPDATE reviews SET 
-                admin_reply = ?, status = ?, updated_at = NOW() 
+                admin_reply = ?, status = ?, rating = ?, title = ?, comment = ?, updated_at = NOW() 
                 WHERE id = ?");
-        
-        $stmt->execute([$admin_reply, $status, $review_id]);
-        
-        $_SESSION['success'] = 'Review and reply updated successfully';
+
+        $stmt->execute([$admin_reply, $status, $rating, $title, $comment, $review_id]);
+
+        $_SESSION['success'] = 'Review updated successfully';
         header('Location: reviews.php');
         exit;
     } catch (PDOException $e) {
@@ -94,24 +103,24 @@ if ($action === 'edit' && isset($_GET['id'])) {
                           JOIN products p ON r.product_id = p.id
                           JOIN users u ON r.user_id = u.id
                           WHERE r.id = ?");
-    $stmt->execute([(int)$_GET['id']]);
+    $stmt->execute([(int) $_GET['id']]);
     $edit_review = $stmt->fetch();
-    
+
     if (!$edit_review) {
         $_SESSION['error'] = 'Review not found.';
         header('Location: reviews.php');
         exit;
     }
-    
+
     // Fetch review images
     $stmt_img = $pdo->prepare("SELECT image_path FROM review_images WHERE review_id = ?");
-    $stmt_img->execute([(int)$_GET['id']]);
+    $stmt_img->execute([(int) $_GET['id']]);
     $edit_review['images'] = $stmt_img->fetchAll(PDO::FETCH_COLUMN);
 }
 
 
 // --- FETCH DATA FOR LIST VIEW (Filtering) ---
-$status_filter = $_GET['status'] ?? 'pending'; // Default to pending reviews
+$status_filter = $_GET['status'] ?? 'all'; // Default to all reviews as requested
 $product_filter = $_GET['product'] ?? '';
 $search = $_GET['search'] ?? '';
 
@@ -157,14 +166,16 @@ include 'includes/sidebar.php';
 
 <div class="main-content">
     <div class="container-fluid">
-        
+
         <!-- Header Section -->
         <div class="row mb-4">
             <div class="col-md-6">
                 <h1 class="h3 mb-0">
-                    <?php 
-                    if ($action === 'edit') echo 'View/Reply Review';
-                    else echo 'Product Reviews';
+                    <?php
+                    if ($action === 'edit')
+                        echo 'View/Reply Review';
+                    else
+                        echo 'Product Reviews';
                     ?>
                 </h1>
             </div>
@@ -180,14 +191,16 @@ include 'includes/sidebar.php';
         <!-- Alerts -->
         <?php if (isset($_SESSION['success'])): ?>
             <div class="alert alert-success alert-dismissible fade show">
-                <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+                <?php echo $_SESSION['success'];
+                unset($_SESSION['success']); ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
 
         <?php if (isset($_SESSION['error']) || !empty($error)): ?>
             <div class="alert alert-danger alert-dismissible fade show">
-                <?php echo isset($_SESSION['error']) ? $_SESSION['error'] : $error; unset($_SESSION['error']); ?>
+                <?php echo isset($_SESSION['error']) ? $_SESSION['error'] : $error;
+                unset($_SESSION['error']); ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
@@ -197,23 +210,29 @@ include 'includes/sidebar.php';
             <!-- === EDIT/REPLY VIEW === -->
             <div class="card mb-4">
                 <div class="card-header bg-light">
-                    Review for: <a href="../product-detail.php?slug=<?php echo htmlspecialchars($edit_review['product_slug']); ?>" target="_blank" class="fw-bold text-primary"><?php echo htmlspecialchars($edit_review['product_name']); ?></a>
+                    Review for: <a
+                        href="../product-detail.php?slug=<?php echo htmlspecialchars($edit_review['product_slug']); ?>"
+                        target="_blank"
+                        class="fw-bold text-primary"><?php echo htmlspecialchars($edit_review['product_name']); ?></a>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <h5 class="fw-bold text-dark"><?php echo htmlspecialchars($edit_review['title']); ?></h5>
                             <?php echo display_rating($edit_review['rating'], false); ?>
-                            <p class="mt-2 text-muted fst-italic">by <?php echo htmlspecialchars($edit_review['user_name']); ?> on <?php echo date('M d, Y', strtotime($edit_review['created_at'])); ?></p>
+                            <p class="mt-2 text-muted fst-italic">by
+                                <?php echo htmlspecialchars($edit_review['user_name']); ?> on
+                                <?php echo date('M d, Y', strtotime($edit_review['created_at'])); ?></p>
                             <p><?php echo nl2br(htmlspecialchars($edit_review['comment'])); ?></p>
-                            
+
                             <?php if (!empty($edit_review['images'])): ?>
                                 <div class="mt-3">
                                     <label class="form-label d-block fw-bold">Review Photos</label>
                                     <div class="d-flex gap-2 flex-wrap">
                                         <?php foreach ($edit_review['images'] as $img): ?>
                                             <a href="../uploads/reviews/<?php echo $img; ?>" target="_blank">
-                                                <img src="../uploads/reviews/<?php echo $img; ?>" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+                                                <img src="../uploads/reviews/<?php echo $img; ?>"
+                                                    style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
                                             </a>
                                         <?php endforeach; ?>
                                     </div>
@@ -225,22 +244,44 @@ include 'includes/sidebar.php';
                                 <input type="hidden" name="review_id" value="<?php echo $edit_review['id']; ?>">
 
                                 <div class="mb-3">
-                                    <label class="form-label">Review Status</label>
+                                    <label class="form-label">Review Title</label>
+                                    <input type="text" class="form-control" name="title"
+                                        value="<?php echo htmlspecialchars($edit_review['title']); ?>">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Rating</label>
+                                    <select class="form-select" name="rating">
+                                        <?php for ($i = 5; $i >= 1; $i--): ?>
+                                            <option value="<?php echo $i; ?>" <?php echo $edit_review['rating'] == $i ? 'selected' : ''; ?>><?php echo $i; ?> Stars</option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
                                     <select class="form-select" name="status" required>
                                         <option value="pending" <?php echo $edit_review['status'] === 'pending' ? 'selected' : ''; ?>>Pending</option>
                                         <option value="approved" <?php echo $edit_review['status'] === 'approved' ? 'selected' : ''; ?>>Approved</option>
                                         <option value="rejected" <?php echo $edit_review['status'] === 'rejected' ? 'selected' : ''; ?>>Rejected</option>
                                     </select>
                                 </div>
-                                
+
                                 <div class="mb-3">
-                                    <label class="form-label">Admin Reply (Optional)</label>
-                                    <textarea class="form-control" name="admin_reply" rows="4"><?php echo htmlspecialchars($edit_review['admin_reply']); ?></textarea>
-                                    <small class="text-muted">This reply will be shown publicly under the review.</small>
+                                    <label class="form-label">Review Comment</label>
+                                    <textarea class="form-control" name="comment"
+                                        rows="4"><?php echo htmlspecialchars($edit_review['comment']); ?></textarea>
                                 </div>
-                                
+
+                                <div class="mb-3">
+                                    <label class="form-label">Admin Reply</label>
+                                    <textarea class="form-control" name="admin_reply" rows="3"
+                                        placeholder="Write a response..."><?php echo htmlspecialchars($edit_review['admin_reply']); ?></textarea>
+                                    <small class="text-muted">Publicly visible under the review.</small>
+                                </div>
+
                                 <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-save me-2"></i>Update Review & Status
+                                    <i class="fas fa-save me-2"></i>Save All Changes
                                 </button>
                             </form>
                         </div>
@@ -250,20 +291,26 @@ include 'includes/sidebar.php';
 
         <?php else: ?>
             <!-- === LIST VIEW === -->
-            
+
             <!-- Filters -->
             <div class="card mb-4">
                 <div class="card-body">
                     <form method="GET" class="row g-3">
                         <div class="col-md-4">
-                            <input type="text" class="form-control" name="search" placeholder="Search by title, comment, or user..." value="<?php echo htmlspecialchars($search); ?>">
+                            <input type="text" class="form-control" name="search"
+                                placeholder="Search by title, comment, or user..."
+                                value="<?php echo htmlspecialchars($search); ?>">
                         </div>
                         <div class="col-md-3">
                             <select name="status" class="form-select">
                                 <option value="all">All Status</option>
-                                <option value="pending" <?php echo $status_filter === 'pending' ? 'selected' : ''; ?>>Pending (<?php echo count(array_filter($reviews, fn($r) => $r['status'] == 'pending')); ?>)</option>
-                                <option value="approved" <?php echo $status_filter === 'approved' ? 'selected' : ''; ?>>Approved</option>
-                                <option value="rejected" <?php echo $status_filter === 'rejected' ? 'selected' : ''; ?>>Rejected</option>
+                                <option value="pending" <?php echo $status_filter === 'pending' ? 'selected' : ''; ?>>Pending
+                                    (<?php echo count(array_filter($reviews, fn($r) => $r['status'] == 'pending')); ?>)
+                                </option>
+                                <option value="approved" <?php echo $status_filter === 'approved' ? 'selected' : ''; ?>>
+                                    Approved</option>
+                                <option value="rejected" <?php echo $status_filter === 'rejected' ? 'selected' : ''; ?>>
+                                    Rejected</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -300,68 +347,73 @@ include 'includes/sidebar.php';
                             </thead>
                             <tbody>
                                 <?php foreach ($reviews as $review): ?>
-                                <tr>
-                                    <td>
-                                        <a href="../product-detail.php?slug=<?php echo htmlspecialchars($review['product_slug']); ?>" target="_blank">
-                                            <?php echo htmlspecialchars(substr($review['product_name'], 0, 40)) . (strlen($review['product_name']) > 40 ? '...' : ''); ?>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <?php echo display_rating($review['rating'], false); ?><br>
-                                        <small class="fw-bold"><?php echo htmlspecialchars(substr($review['title'], 0, 50)) . (strlen($review['title']) > 50 ? '...' : ''); ?></small>
-                                        <p class="text-muted mb-0"><small><?php echo htmlspecialchars(substr($review['comment'], 0, 70)) . '...'; ?></small></p>
-                                    </td>
-                                    <td><?php echo htmlspecialchars($review['user_name']); ?></td>
-                                    <td><?php echo date('M d, Y', strtotime($review['created_at'])); ?></td>
-                                    <td>
-                                        <?php 
+                                    <tr>
+                                        <td>
+                                            <a href="../product-detail.php?slug=<?php echo htmlspecialchars($review['product_slug']); ?>"
+                                                target="_blank">
+                                                <?php echo htmlspecialchars(substr($review['product_name'], 0, 40)) . (strlen($review['product_name']) > 40 ? '...' : ''); ?>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <?php echo display_rating($review['rating'], false); ?><br>
+                                            <small
+                                                class="fw-bold"><?php echo htmlspecialchars(substr($review['title'], 0, 50)) . (strlen($review['title']) > 50 ? '...' : ''); ?></small>
+                                            <p class="text-muted mb-0">
+                                                <small><?php echo htmlspecialchars(substr($review['comment'], 0, 70)) . '...'; ?></small>
+                                            </p>
+                                        </td>
+                                        <td><?php echo htmlspecialchars($review['user_name']); ?></td>
+                                        <td><?php echo date('M d, Y', strtotime($review['created_at'])); ?></td>
+                                        <td>
+                                            <?php
                                             $status_class = [
                                                 'pending' => 'bg-warning text-dark',
                                                 'approved' => 'bg-success',
                                                 'rejected' => 'bg-danger'
                                             ];
-                                        ?>
-                                        <span class="badge <?php echo $status_class[$review['status']]; ?>">
-                                            <?php echo ucfirst($review['status']); ?>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <a href="reviews.php?action=edit&id=<?php echo $review['id']; ?>" class="btn btn-sm btn-info text-white" title="View/Reply">
-                                            <i class="fas fa-reply"></i>
-                                        </a>
-                                        
-                                        <?php if ($review['status'] !== 'approved'): ?>
-                                        <a href="reviews.php?status_id=<?php echo $review['id']; ?>&new_status=approved" 
-                                            class="btn btn-sm btn-success" title="Approve">
-                                            <i class="fas fa-checkmark"></i>
-                                        </a>
-                                        <?php endif; ?>
-                                        
-                                        <?php if ($review['status'] !== 'rejected'): ?>
-                                        <a href="reviews.php?status_id=<?php echo $review['id']; ?>&new_status=rejected" 
-                                            class="btn btn-sm btn-secondary" title="Reject">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                        <?php endif; ?>
-                                        
-                                        <a href="reviews.php?delete=<?php echo $review['id']; ?>" 
-                                           class="btn btn-sm btn-danger" 
-                                           onclick="return confirm('Are you sure you want to delete this review?')" 
-                                           title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </td>
-                                </tr>
+                                            ?>
+                                            <span class="badge <?php echo $status_class[$review['status']]; ?>">
+                                                <?php echo ucfirst($review['status']); ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="reviews.php?action=edit&id=<?php echo $review['id']; ?>"
+                                                class="btn btn-sm btn-info text-white" title="View/Reply">
+                                                <i class="fas fa-reply"></i>
+                                            </a>
+
+                                            <?php if ($review['status'] !== 'approved'): ?>
+                                                <a href="reviews.php?status_id=<?php echo $review['id']; ?>&new_status=approved"
+                                                    class="btn btn-sm btn-success" title="Approve">
+                                                    <i class="fas fa-checkmark"></i>
+                                                </a>
+                                            <?php endif; ?>
+
+                                            <?php if ($review['status'] !== 'rejected'): ?>
+                                                <a href="reviews.php?status_id=<?php echo $review['id']; ?>&new_status=rejected"
+                                                    class="btn btn-sm btn-secondary" title="Reject">
+                                                    <i class="fas fa-times"></i>
+                                                </a>
+                                            <?php endif; ?>
+
+                                            <a href="reviews.php?delete=<?php echo $review['id']; ?>"
+                                                class="btn btn-sm btn-danger"
+                                                onclick="return confirm('Are you sure you want to delete this review?')"
+                                                title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <?php if (empty($reviews)): ?>
-                    <div class="text-center py-5">
-                        <i class="fas fa-star-filled fa-4x text-muted mb-3"></i>
-                        <p class="text-muted">No reviews found matching the criteria.</p>
-                    </div>
+                        <div class="text-center py-5">
+                            <i class="fas fa-star-filled fa-4x text-muted mb-3"></i>
+                            <p class="text-muted">No reviews found matching the criteria.</p>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>
