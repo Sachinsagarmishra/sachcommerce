@@ -89,16 +89,70 @@ include 'includes/navbar.php';
         display: flex;
         align-items: center;
         justify-content: center;
+        position: relative;
     }
 
     .product-main-image img {
         max-width: 100%;
         max-height: 600px;
-        transition: transform 0.5s ease;
+        transition: transform 0.3s ease;
+        cursor: zoom-in;
     }
 
-    .product-main-image:hover img {
-        transform: scale(1.05);
+    .product-main-image.zoomed img {
+        transform: scale(2);
+        cursor: zoom-out;
+    }
+
+    .gallery-nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 45px;
+        height: 45px;
+        background: white;
+        border: none;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #333;
+    }
+
+    .gallery-nav-btn:hover {
+        background: #f8f9fa;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        color: var(--primary-color);
+    }
+
+    .gallery-nav-prev {
+        left: 15px;
+    }
+
+    .gallery-nav-next {
+        right: 15px;
+    }
+
+    .zoom-toggle-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        background: white;
+        border: none;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 11;
+        cursor: pointer;
+        color: #333;
     }
 
     .price-section h2,
@@ -175,7 +229,13 @@ include 'includes/navbar.php';
                         </div>
                     <?php endforeach; ?>
                 </div>
-                <div class="product-main-image">
+                <div class="product-main-image" id="mainImageWrapper">
+                    <button class="gallery-nav-btn gallery-nav-prev" id="prevImage"><i
+                            class="fas fa-chevron-left"></i></button>
+                    <button class="gallery-nav-btn gallery-nav-next" id="nextImage"><i
+                            class="fas fa-chevron-right"></i></button>
+                    <button class="zoom-toggle-btn" id="zoomToggle"><i class="fas fa-expand-alt"></i></button>
+
                     <img id="mainProductImage"
                         src="<?php echo !empty($product_images) ? PRODUCT_IMAGE_URL . $product_images[0]['image_path'] : 'https://via.placeholder.com/600x600?text=No+Image'; ?>"
                         alt="<?php echo htmlspecialchars($product['name']); ?>">
@@ -209,7 +269,8 @@ include 'includes/navbar.php';
 
             <div class="rating-section mb-3">
                 <?php if ($rating_data && $rating_data['total_reviews'] > 0): ?>
-                    <div class="rating-pill d-inline-flex align-items-center bg-light rounded-pill px-3 py-1 border" style="background-color: #f9f4f1 !important; border-color: #f0e6e0 !important;">
+                    <div class="rating-pill d-inline-flex align-items-center bg-light rounded-pill px-3 py-1 border"
+                        style="background-color: #f9f4f1 !important; border-color: #f0e6e0 !important;">
                         <div class="stars me-2">
                             <?php echo display_rating($rating_data['avg_rating'], false); ?>
                         </div>
@@ -219,7 +280,8 @@ include 'includes/navbar.php';
                     </div>
                     <span class="text-muted small ms-2"><?php echo $rating_data['total_reviews']; ?> reviews</span>
                 <?php else: ?>
-                    <div class="rating-pill d-inline-flex align-items-center bg-light rounded-pill px-3 py-1 border" style="background-color: #f9f4f1 !important; border-color: #f0e6e0 !important;">
+                    <div class="rating-pill d-inline-flex align-items-center bg-light rounded-pill px-3 py-1 border"
+                        style="background-color: #f9f4f1 !important; border-color: #f0e6e0 !important;">
                         <div class="stars me-2">
                             <i class="fas fa-star text-warning"></i>
                             <i class="fas fa-star text-warning"></i>
@@ -597,177 +659,260 @@ include 'includes/navbar.php';
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Image Gallery Logic
+        const mainImage = document.getElementById('mainProductImage');
+        const mainImageWrapper = document.getElementById('mainImageWrapper');
+        const thumbnails = document.querySelectorAll('.product-thumb-item');
+        const prevBtn = document.getElementById('prevImage');
+        const nextBtn = document.getElementById('nextImage');
+        const zoomBtn = document.getElementById('zoomToggle');
 
-    function shareProduct() {
-        if (navigator.share) {
-            navigator.share({
-                title: '<?php echo addslashes($product['name']); ?>',
-                text: '<?php echo addslashes($product['short_description']); ?>',
-                url: window.location.href
+        let currentIndex = 0;
+        const images = Array.from(thumbnails).map(t => t.getAttribute('data-image'));
+
+        function updateMainImage(index) {
+            currentIndex = index;
+            const newSrc = images[currentIndex];
+            mainImage.src = newSrc;
+
+            // Update thumbnails active state
+            thumbnails.forEach((t, i) => {
+                if (i === index) t.classList.add('active');
+                else t.classList.remove('active');
             });
-        } else {
-            // Fallback: copy to clipboard
-            navigator.clipboard.writeText(window.location.href);
-            if (typeof showToast === 'function') {
-                showToast('Success', 'Link copied to clipboard!', 'success');
+
+            // Re-sync with mobile/desktop thumbs
+            document.querySelectorAll(`.product-thumb-item[data-image="${newSrc}"]`).forEach(t => t.classList.add('active'));
+        }
+
+        thumbnails.forEach((thumb, index) => {
+            thumb.addEventListener('click', () => updateMainImage(index));
+        });
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                let nextIndex = currentIndex - 1;
+                if (nextIndex < 0) nextIndex = images.length - 1;
+                updateMainImage(nextIndex);
+            });
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                let nextIndex = currentIndex + 1;
+                if (nextIndex >= images.length) nextIndex = 0;
+                updateMainImage(nextIndex);
+            });
+        }
+
+        // Zoom Logic
+        function toggleZoom(e) {
+            if (e) e.stopPropagation();
+            mainImageWrapper.classList.toggle('zoomed');
+            const icon = zoomBtn.querySelector('i');
+            if (mainImageWrapper.classList.contains('zoomed')) {
+                icon.className = 'fas fa-compress-alt';
             } else {
-                alert('Link copied to clipboard!');
+                icon.className = 'fas fa-expand-alt';
             }
         }
-    }
 
-    // Real-time Countdown Timer
-    function updateCountdown() {
-        const countdownElement = document.getElementById('productCountdown');
-        if (!countdownElement) return;
+        if (zoomBtn) zoomBtn.addEventListener('click', toggleZoom);
+        if (mainImage) mainImage.addEventListener('click', toggleZoom);
 
-        let curContent = countdownElement.innerText.trim();
-        let timeParts = curContent.split(':');
-        if (timeParts.length !== 3) return;
+        // Zoom mouse follow
+        mainImageWrapper.addEventListener('mousemove', function (e) {
+            if (this.classList.contains('zoomed')) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
 
-        let hours = parseInt(timeParts[0]);
-        let minutes = parseInt(timeParts[1]);
-        let seconds = parseInt(timeParts[2]);
+                const xPerc = (x / rect.width) * 100;
+                const yPerc = (y / rect.height) * 100;
 
-        let totalSeconds = hours * 3600 + minutes * 60 + seconds;
+                mainImage.style.transformOrigin = `${xPerc}% ${yPerc}%`;
+            }
+        });
 
-        if (totalSeconds <= 0) {
-            // Reset to 24h or stop
-            countdownElement.innerText = "00:00:00";
-            return;
-        }
+        mainImageWrapper.addEventListener('mouseleave', function () {
+            if (this.classList.contains('zoomed')) {
+                toggleZoom();
+            }
+        });
 
-        totalSeconds--;
-
-        let h = Math.floor(totalSeconds / 3600);
-        let m = Math.floor((totalSeconds % 3600) / 60);
-        let s = totalSeconds % 60;
-
-        countdownElement.innerText =
-            (h < 10 ? '0' + h : h) + ':' +
-            (m < 10 ? '0' + m : m) + ':' +
-            (s < 10 ? '0' + s : s);
-    }
-    setInterval(updateCountdown, 1000);
-
-    // Quantity Picker Logic
-    document.addEventListener('DOMContentLoaded', function () {
-        const qtyInput = document.getElementById('productQuantity');
-        const minusBtn = document.querySelector('.qty-btn-minus');
-        const plusBtn = document.querySelector('.qty-btn-plus');
-
-        if (qtyInput && minusBtn && plusBtn) {
-            minusBtn.addEventListener('click', function () {
-                let val = parseInt(qtyInput.value);
-                if (val > 1) qtyInput.value = val - 1;
-            });
-
-            plusBtn.addEventListener('click', function () {
-                let val = parseInt(qtyInput.value);
-                let max = parseInt(qtyInput.getAttribute('max')) || 99;
-                if (val < max) qtyInput.value = val + 1;
-            });
-        }
-
-        // Review Form Submission
-        const reviewForm = document.getElementById('reviewForm');
-        if (reviewForm) {
-            reviewForm.addEventListener('submit', function (e) {
-                e.preventDefault();
-
-                const submitBtn = document.getElementById('submitReviewBtn');
-                const messageDiv = document.getElementById('reviewMessage');
-                const formData = new FormData(this);
-
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
-                messageDiv.innerHTML = '';
-
-                fetch('<?php echo SITE_URL; ?>/api/submit-review.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            messageDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
-                            reviewForm.reset();
-                        } else {
-                            messageDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        messageDiv.innerHTML = `<div class="alert alert-danger">Something went wrong. Please try again later.</div>`;
-                    })
-                    .finally(() => {
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = 'Submit Review';
-                    });
-            });
-        }
-
-        // Review Filtering and Pagination
-        const reviewsList = document.getElementById('reviewsList');
-        const reviewFilter = document.getElementById('reviewFilter');
-        const reviewPagination = document.getElementById('reviewPagination');
-        const productId = <?php echo $product['id']; ?>;
-        const siteUrl = '<?php echo SITE_URL; ?>';
-
-        function loadReviews(page = 1) {
-            const filter = reviewFilter ? reviewFilter.value : 'recent';
-
-            // Show loading state
-            reviewsList.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
-
-            fetch(`${siteUrl}/api/get-reviews.php?product_id=${productId}&filter=${filter}&page=${page}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        renderReviews(data.reviews);
-                        renderPagination(data.pagination);
-                    } else {
-                        reviewsList.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching reviews:', error);
-                    reviewsList.innerHTML = '<div class="alert alert-danger">Failed to load reviews.</div>';
+        function shareProduct() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '<?php echo addslashes($product['name']); ?>',
+                    text: '<?php echo addslashes($product['short_description']); ?>',
+                    url: window.location.href
                 });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(window.location.href);
+                if (typeof showToast === 'function') {
+                    showToast('Success', 'Link copied to clipboard!', 'success');
+                } else {
+                    alert('Link copied to clipboard!');
+                }
+            }
         }
 
-        function renderReviews(reviews) {
-            if (reviews.length === 0) {
-                reviewsList.innerHTML = '<div class="text-center py-5"><p class="text-muted">No reviews found matching your criteria.</p></div>';
+        // Real-time Countdown Timer
+        function updateCountdown() {
+            const countdownElement = document.getElementById('productCountdown');
+            if (!countdownElement) return;
+
+            let curContent = countdownElement.innerText.trim();
+            let timeParts = curContent.split(':');
+            if (timeParts.length !== 3) return;
+
+            let hours = parseInt(timeParts[0]);
+            let minutes = parseInt(timeParts[1]);
+            let seconds = parseInt(timeParts[2]);
+
+            let totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+            if (totalSeconds <= 0) {
+                // Reset to 24h or stop
+                countdownElement.innerText = "00:00:00";
                 return;
             }
 
-            let html = '';
-            reviews.forEach(review => {
-                let imagesHtml = '';
-                if (review.images && review.images.length > 0) {
-                    imagesHtml = '<div class="d-flex gap-2 flex-wrap mb-3">';
-                    review.images.forEach(img => {
-                        imagesHtml += `
+            totalSeconds--;
+
+            let h = Math.floor(totalSeconds / 3600);
+            let m = Math.floor((totalSeconds % 3600) / 60);
+            let s = totalSeconds % 60;
+
+            countdownElement.innerText =
+                (h < 10 ? '0' + h : h) + ':' +
+                (m < 10 ? '0' + m : m) + ':' +
+                (s < 10 ? '0' + s : s);
+        }
+        setInterval(updateCountdown, 1000);
+
+        // Quantity Picker Logic
+        document.addEventListener('DOMContentLoaded', function () {
+            const qtyInput = document.getElementById('productQuantity');
+            const minusBtn = document.querySelector('.qty-btn-minus');
+            const plusBtn = document.querySelector('.qty-btn-plus');
+
+            if (qtyInput && minusBtn && plusBtn) {
+                minusBtn.addEventListener('click', function () {
+                    let val = parseInt(qtyInput.value);
+                    if (val > 1) qtyInput.value = val - 1;
+                });
+
+                plusBtn.addEventListener('click', function () {
+                    let val = parseInt(qtyInput.value);
+                    let max = parseInt(qtyInput.getAttribute('max')) || 99;
+                    if (val < max) qtyInput.value = val + 1;
+                });
+            }
+
+            // Review Form Submission
+            const reviewForm = document.getElementById('reviewForm');
+            if (reviewForm) {
+                reviewForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    const submitBtn = document.getElementById('submitReviewBtn');
+                    const messageDiv = document.getElementById('reviewMessage');
+                    const formData = new FormData(this);
+
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
+                    messageDiv.innerHTML = '';
+
+                    fetch('<?php echo SITE_URL; ?>/api/submit-review.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                messageDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                                reviewForm.reset();
+                            } else {
+                                messageDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            messageDiv.innerHTML = `<div class="alert alert-danger">Something went wrong. Please try again later.</div>`;
+                        })
+                        .finally(() => {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = 'Submit Review';
+                        });
+                });
+            }
+
+            // Review Filtering and Pagination
+            const reviewsList = document.getElementById('reviewsList');
+            const reviewFilter = document.getElementById('reviewFilter');
+            const reviewPagination = document.getElementById('reviewPagination');
+            const productId = <?php echo $product['id']; ?>;
+            const siteUrl = '<?php echo SITE_URL; ?>';
+
+            function loadReviews(page = 1) {
+                const filter = reviewFilter ? reviewFilter.value : 'recent';
+
+                // Show loading state
+                reviewsList.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
+
+                fetch(`${siteUrl}/api/get-reviews.php?product_id=${productId}&filter=${filter}&page=${page}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            renderReviews(data.reviews);
+                            renderPagination(data.pagination);
+                        } else {
+                            reviewsList.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching reviews:', error);
+                        reviewsList.innerHTML = '<div class="alert alert-danger">Failed to load reviews.</div>';
+                    });
+            }
+
+            function renderReviews(reviews) {
+                if (reviews.length === 0) {
+                    reviewsList.innerHTML = '<div class="text-center py-5"><p class="text-muted">No reviews found matching your criteria.</p></div>';
+                    return;
+                }
+
+                let html = '';
+                reviews.forEach(review => {
+                    let imagesHtml = '';
+                    if (review.images && review.images.length > 0) {
+                        imagesHtml = '<div class="d-flex gap-2 flex-wrap mb-3">';
+                        review.images.forEach(img => {
+                            imagesHtml += `
                             <div style="width: 70px; height: 70px; border-radius: 6px; overflow: hidden; border: 1px solid #ddd;">
                                 <a href="${siteUrl}/uploads/reviews/${img}" target="_blank">
                                     <img src="${siteUrl}/uploads/reviews/${img}" style="width: 100%; height: 100%; object-fit: cover;" alt="Review Image">
                                 </a>
                             </div>`;
-                    });
-                    imagesHtml += '</div>';
-                }
+                        });
+                        imagesHtml += '</div>';
+                    }
 
-                let replyHtml = '';
-                if (review.admin_reply) {
-                    replyHtml = `
+                    let replyHtml = '';
+                    if (review.admin_reply) {
+                        replyHtml = `
                         <div class="p-3 bg-light rounded-3 border-start border-4 border-primary mt-3">
                             <span class="d-block fw-bold small text-primary mb-1">Response from TrendsOne:</span>
                             <p class="mb-0 small">${review.admin_reply}</p>
                         </div>`;
-                }
+                    }
 
-                html += `
+                    html += `
                     <div class="mb-4 pb-4 border-bottom">
                         <div class="d-flex justify-content-between mb-2">
                             <span class="fw-bold text-dark">${review.user_name}</span>
@@ -780,62 +925,62 @@ include 'includes/navbar.php';
                         ${imagesHtml}
                         ${replyHtml}
                     </div>`;
-            });
-            reviewsList.innerHTML = html;
-        }
-
-        function renderPagination(pagination) {
-            const { current_page, total_pages } = pagination;
-            if (total_pages < 1) {
-                reviewPagination.innerHTML = '';
-                return;
+                });
+                reviewsList.innerHTML = html;
             }
 
-            let html = '<nav><ul class="pagination pagination-sm">';
+            function renderPagination(pagination) {
+                const { current_page, total_pages } = pagination;
+                if (total_pages < 1) {
+                    reviewPagination.innerHTML = '';
+                    return;
+                }
 
-            // Previous
-            html += `
+                let html = '<nav><ul class="pagination pagination-sm">';
+
+                // Previous
+                html += `
                 <li class="page-item ${current_page === 1 ? 'disabled' : ''}">
                     <a class="page-link rounded-circle mx-1" href="#" data-page="${current_page - 1}">&laquo;</a>
                 </li>`;
 
-            for (let i = 1; i <= total_pages; i++) {
-                html += `
+                for (let i = 1; i <= total_pages; i++) {
+                    html += `
                     <li class="page-item ${current_page === i ? 'active' : ''}">
                         <a class="page-link rounded-circle mx-1" href="#" data-page="${i}">${i}</a>
                     </li>`;
-            }
+                }
 
-            // Next
-            html += `
+                // Next
+                html += `
                 <li class="page-item ${current_page === total_pages ? 'disabled' : ''}">
                     <a class="page-link rounded-circle mx-1" href="#" data-page="${current_page + 1}">&raquo;</a>
                 </li>`;
 
-            html += '</ul></nav>';
-            reviewPagination.innerHTML = html;
+                html += '</ul></nav>';
+                reviewPagination.innerHTML = html;
 
-            // Add click listeners
-            reviewPagination.querySelectorAll('.page-link').forEach(link => {
-                link.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const page = parseInt(this.getAttribute('data-page'));
-                    if (page && page !== current_page) {
-                        loadReviews(page);
-                        // Scroll to reviews list
-                        document.getElementById('reviewsTabContent')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
+                // Add click listeners
+                reviewPagination.querySelectorAll('.page-link').forEach(link => {
+                    link.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const page = parseInt(this.getAttribute('data-page'));
+                        if (page && page !== current_page) {
+                            loadReviews(page);
+                            // Scroll to reviews list
+                            document.getElementById('reviewsTabContent')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    });
                 });
-            });
-        }
+            }
 
-        if (reviewFilter) {
-            reviewFilter.addEventListener('change', () => loadReviews(1));
-        }
+            if (reviewFilter) {
+                reviewFilter.addEventListener('change', () => loadReviews(1));
+            }
 
-        // Load reviews automatically on page load to ensure pagination/filters are active
-        loadReviews(1);
-    });
+            // Load reviews automatically on page load to ensure pagination/filters are active
+            loadReviews(1);
+        });
 </script>
 
 <?php include 'includes/footer.php'; ?>
