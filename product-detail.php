@@ -461,51 +461,75 @@ include 'includes/navbar.php';
                         </div>
                     <?php endif; ?>
 
-                    <!-- 4. Top Reviews List -->
+                    <!-- 4. Filter and List -->
                     <div class="reviews-list-container">
-                        <?php if (!empty($reviews)): ?>
-                            <?php foreach ($reviews as $review): ?>
-                                <div class="mb-4 pb-4 border-bottom">
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <span
-                                            class="fw-bold text-dark"><?php echo htmlspecialchars($review['user_name']); ?></span>
-                                        <small
-                                            class="text-muted"><?php echo date('d M Y', strtotime($review['created_at'])); ?></small>
-                                    </div>
-                                    <div class="mb-2">
-                                        <?php echo display_rating($review['rating'], false); ?>
-                                    </div>
-                                    <p class="mb-3 text-secondary">
-                                        <?php echo nl2br(htmlspecialchars($review['review_text'])); ?></p>
-
-                                    <?php if (!empty($review['images'])): ?>
-                                        <div class="d-flex gap-2 flex-wrap mb-3">
-                                            <?php foreach ($review['images'] as $img): ?>
-                                                <div
-                                                    style="width: 70px; height: 70px; border-radius: 6px; overflow: hidden; border: 1px solid #ddd;">
-                                                    <a href="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
-                                                        target="_blank">
-                                                        <img src="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
-                                                            style="width: 100%; height: 100%; object-fit: cover;" alt="Review Image">
-                                                    </a>
-                                                </div>
-                                            <?php endforeach; ?>
-                                        </div>
-                                    <?php endif; ?>
-
-                                    <?php if (!empty($review['admin_reply'])): ?>
-                                        <div class="p-3 bg-light rounded-3 border-start border-4 border-primary">
-                                            <span class="d-block fw-bold small text-primary mb-1">Response from TrendsOne:</span>
-                                            <p class="mb-0 small"><?php echo nl2br(htmlspecialchars($review['admin_reply'])); ?></p>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <div class="text-center py-5">
-                                <p class="text-muted">No reviews yet for this product.</p>
+                        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                            <h5 class="fw-bold mb-0">Top reviews</h5>
+                            <div class="d-flex align-items-center gap-2">
+                                <label class="small fw-bold text-muted mb-0">SORT BY:</label>
+                                <select class="form-select form-select-sm rounded-pill px-3" id="reviewFilter"
+                                    style="width: auto; min-width: 160px;">
+                                    <option value="recent">Most Recent</option>
+                                    <option value="highest">Highest Rating</option>
+                                    <option value="lowest">Lowest Rating</option>
+                                    <option value="helpful">Most Helpful</option>
+                                    <option value="pics">Only Pictures</option>
+                                    <option value="pics_first">Pictures First</option>
+                                </select>
                             </div>
-                        <?php endif; ?>
+                        </div>
+
+                        <div id="reviewsList">
+                            <?php if (!empty($reviews)): ?>
+                                <?php foreach ($reviews as $review): ?>
+                                    <div class="mb-4 pb-4 border-bottom">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span
+                                                class="fw-bold text-dark"><?php echo htmlspecialchars($review['user_name']); ?></span>
+                                            <small
+                                                class="text-muted"><?php echo date('d M Y', strtotime($review['created_at'])); ?></small>
+                                        </div>
+                                        <div class="mb-2">
+                                            <?php echo display_rating($review['rating'], false); ?>
+                                        </div>
+                                        <p class="mb-3 text-secondary">
+                                            <?php echo nl2br(htmlspecialchars($review['review_text'])); ?></p>
+
+                                        <?php if (!empty($review['images'])): ?>
+                                            <div class="d-flex gap-2 flex-wrap mb-3">
+                                                <?php foreach ($review['images'] as $img): ?>
+                                                    <div
+                                                        style="width: 70px; height: 70px; border-radius: 6px; overflow: hidden; border: 1px solid #ddd;">
+                                                        <a href="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
+                                                            target="_blank">
+                                                            <img src="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
+                                                                style="width: 100%; height: 100%; object-fit: cover;"
+                                                                alt="Review Image">
+                                                        </a>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($review['admin_reply'])): ?>
+                                            <div class="p-3 bg-light rounded-3 border-start border-4 border-primary">
+                                                <span class="d-block fw-bold small text-primary mb-1">Response from
+                                                    TrendsOne:</span>
+                                                <p class="mb-0 small"><?php echo nl2br(htmlspecialchars($review['admin_reply'])); ?>
+                                                </p>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="text-center py-5">
+                                    <p class="text-muted">No reviews yet for this product.</p>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Pagination Container -->
+                        <div id="reviewPagination" class="d-flex justify-content-center mt-4"></div>
                     </div>
                 </div>
             </div>
@@ -668,6 +692,136 @@ include 'includes/navbar.php';
                     });
             });
         }
+
+        // Review Filtering and Pagination
+        const reviewsList = document.getElementById('reviewsList');
+        const reviewFilter = document.getElementById('reviewFilter');
+        const reviewPagination = document.getElementById('reviewPagination');
+        const productId = <?php echo $product['id']; ?>;
+        const siteUrl = '<?php echo SITE_URL; ?>';
+
+        function loadReviews(page = 1) {
+            const filter = reviewFilter ? reviewFilter.value : 'recent';
+
+            // Show loading state
+            reviewsList.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
+
+            fetch(`${siteUrl}/api/get-reviews.php?product_id=${productId}&filter=${filter}&page=${page}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        renderReviews(data.reviews);
+                        renderPagination(data.pagination);
+                    } else {
+                        reviewsList.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching reviews:', error);
+                    reviewsList.innerHTML = '<div class="alert alert-danger">Failed to load reviews.</div>';
+                });
+        }
+
+        function renderReviews(reviews) {
+            if (reviews.length === 0) {
+                reviewsList.innerHTML = '<div class="text-center py-5"><p class="text-muted">No reviews found matching your criteria.</p></div>';
+                return;
+            }
+
+            let html = '';
+            reviews.forEach(review => {
+                let imagesHtml = '';
+                if (review.images && review.images.length > 0) {
+                    imagesHtml = '<div class="d-flex gap-2 flex-wrap mb-3">';
+                    review.images.forEach(img => {
+                        imagesHtml += `
+                            <div style="width: 70px; height: 70px; border-radius: 6px; overflow: hidden; border: 1px solid #ddd;">
+                                <a href="${siteUrl}/uploads/reviews/${img}" target="_blank">
+                                    <img src="${siteUrl}/uploads/reviews/${img}" style="width: 100%; height: 100%; object-fit: cover;" alt="Review Image">
+                                </a>
+                            </div>`;
+                    });
+                    imagesHtml += '</div>';
+                }
+
+                let replyHtml = '';
+                if (review.admin_reply) {
+                    replyHtml = `
+                        <div class="p-3 bg-light rounded-3 border-start border-4 border-primary mt-3">
+                            <span class="d-block fw-bold small text-primary mb-1">Response from TrendsOne:</span>
+                            <p class="mb-0 small">${review.admin_reply}</p>
+                        </div>`;
+                }
+
+                html += `
+                    <div class="mb-4 pb-4 border-bottom">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold text-dark">${review.user_name}</span>
+                            <small class="text-muted">${review.formatted_date}</small>
+                        </div>
+                        <div class="mb-2">
+                            ${review.rating_html}
+                        </div>
+                        <p class="mb-3 text-secondary">${review.review_text.replace(/\n/g, '<br>')}</p>
+                        ${imagesHtml}
+                        ${replyHtml}
+                    </div>`;
+            });
+            reviewsList.innerHTML = html;
+        }
+
+        function renderPagination(pagination) {
+            const { current_page, total_pages } = pagination;
+            if (total_pages <= 1) {
+                reviewPagination.innerHTML = '';
+                return;
+            }
+
+            let html = '<nav><ul class="pagination pagination-sm">';
+
+            // Previous
+            html += `
+                <li class="page-item ${current_page === 1 ? 'disabled' : ''}">
+                    <a class="page-link rounded-circle mx-1" href="#" data-page="${current_page - 1}">&laquo;</a>
+                </li>`;
+
+            for (let i = 1; i <= total_pages; i++) {
+                html += `
+                    <li class="page-item ${current_page === i ? 'active' : ''}">
+                        <a class="page-link rounded-circle mx-1" href="#" data-page="${i}">${i}</a>
+                    </li>`;
+            }
+
+            // Next
+            html += `
+                <li class="page-item ${current_page === total_pages ? 'disabled' : ''}">
+                    <a class="page-link rounded-circle mx-1" href="#" data-page="${current_page + 1}">&raquo;</a>
+                </li>`;
+
+            html += '</ul></nav>';
+            reviewPagination.innerHTML = html;
+
+            // Add click listeners
+            reviewPagination.querySelectorAll('.page-link').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const page = parseInt(this.getAttribute('data-page'));
+                    if (page && page !== current_page) {
+                        loadReviews(page);
+                        // Scroll to reviews list
+                        document.getElementById('reviewsTabContent')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+        }
+
+        if (reviewFilter) {
+            reviewFilter.addEventListener('change', () => loadReviews(1));
+        }
+
+        // Initial load only if results are empty or needed for complex filters
+        // For now, let's load it on demand to ensure filters work immediately
+        // loadReviews(1); 
     });
 </script>
 

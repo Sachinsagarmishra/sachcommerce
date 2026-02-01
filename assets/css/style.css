@@ -898,3 +898,31 @@ h6,
     background: #ccc;
     border-radius: 10px;
 }
+
+#reviewFilter {
+    border-color: #eee;
+    font-size: 0.8rem;
+    color: #444;
+}
+
+#reviewPagination .page-link {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: #333;
+    border: 1px solid #eee;
+}
+
+#reviewPagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+#reviewPagination .page-link:hover:not(.active) {
+    background-color: #f8f9fa;
+    border-color: #ddd;
+}
