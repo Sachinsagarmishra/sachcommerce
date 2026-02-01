@@ -87,6 +87,7 @@ body.sidebar-open {
     width: auto;
     display: block;
     margin: 0 auto;
+    filter: brightness(0) invert(1);
 }
 
 .sidebar-nav {
