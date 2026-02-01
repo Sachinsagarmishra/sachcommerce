@@ -124,7 +124,7 @@ include 'includes/sidebar.php';
             </div>
             <div class="col-md-6 text-end">
                 <a href="products.php" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Back to Products
+                    <i class="lni lni-arrow-left me-2"></i>Back to Products
                 </a>
             </div>
         </div>
@@ -260,7 +260,7 @@ include 'includes/sidebar.php';
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-save me-2"></i>Add Product
+                        <i class="lni lni-save me-2"></i>Add Product
                     </button>
                 </div>
             </div>

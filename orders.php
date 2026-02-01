@@ -88,11 +88,11 @@ include 'includes/navbar.php';
         </div>
     <?php else: ?>
         <div class="text-center py-5">
-            <i class="fas fa-shopping-bag fa-4x text-muted mb-4"></i>
+            <i class="lni lni-shopping-basket fa-4x text-muted mb-4"></i>
             <h4>No orders yet</h4>
             <p class="text-muted mb-4">Start shopping to see your orders here!</p>
             <a href="<?php echo SITE_URL; ?>/shop" class="btn btn-primary btn-lg">
-                <i class="fas fa-shopping-bag me-2"></i>Start Shopping
+                <i class="lni lni-shopping-basket me-2"></i>Start Shopping
             </a>
         </div>
     <?php endif; ?>

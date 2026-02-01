@@ -43,7 +43,7 @@ include 'includes/navbar.php';
             <!-- Success Message -->
             <div class="text-center mb-5">
                 <div class="mb-4">
-                    <i class="fas fa-check-circle text-success" style="font-size: 80px;"></i>
+                    <i class="lni lni-checkmark-circle text-success" style="font-size: 80px;"></i>
                 </div>
                 <h1 class="mb-3">Order Confirmed!</h1>
                 <p class="lead text-muted">Thank you for your order. We'll send you a confirmation email shortly.</p>
@@ -128,7 +128,7 @@ include 'includes/navbar.php';
                 <div class="card-body">
                     <div class="row g-4">
                         <div class="col-md-4 text-center">
-                            <i class="fas fa-box fa-3x text-primary mb-3"></i>
+                            <i class="lni lni-package fa-3x text-primary mb-3"></i>
                             <h6>Order Processing</h6>
                             <p class="text-muted small">We're preparing your order for shipment</p>
                         </div>
@@ -149,10 +149,10 @@ include 'includes/navbar.php';
             <!-- Action Buttons -->
             <div class="text-center">
                 <a href="<?php echo SITE_URL; ?>/orders.php" class="btn btn-primary btn-lg me-2">
-                    <i class="fas fa-list me-2"></i>View All Orders
+                    <i class="lni lni-list me-2"></i>View All Orders
                 </a>
                 <a href="<?php echo SITE_URL; ?>/shop.php" class="btn btn-outline-primary btn-lg">
-                    <i class="fas fa-shopping-bag me-2"></i>Continue Shopping
+                    <i class="lni lni-shopping-basket me-2"></i>Continue Shopping
                 </a>
             </div>
             

@@ -23,15 +23,17 @@ $menu_categories = get_menu_categories(8);
         <div class="row align-items-center">
             <div class="col-md-6">
                 <small>
-                    <i class="fas fa-phone me-2"></i><?php echo SITE_PHONE; ?>
-                    <span class="ms-3"><i class="fas fa-envelope me-2"></i><?php echo SITE_EMAIL; ?></span>
+                    <i class="lni lni-phone me-2"></i><?php echo SITE_PHONE; ?>
+                    <span class="ms-3"><i class="lni lni-envelope me-2"></i><?php echo SITE_EMAIL; ?></span>
                 </small>
             </div>
             <div class="col-md-6 text-md-end">
                 <small>
-                    <a href="<?php echo FACEBOOK_URL; ?>" class="text-white me-2"><i class="fab fa-facebook"></i></a>
-                    <a href="<?php echo INSTAGRAM_URL; ?>" class="text-white me-2"><i class="fab fa-instagram"></i></a>
-                    <a href="<?php echo TWITTER_URL; ?>" class="text-white"><i class="fab fa-twitter"></i></a>
+                    <a href="<?php echo FACEBOOK_URL; ?>" class="text-white me-2"><i
+                            class="lni lni-facebook-filled"></i></a>
+                    <a href="<?php echo INSTAGRAM_URL; ?>" class="text-white me-2"><i
+                            class="lni lni-instagram-filled"></i></a>
+                    <a href="<?php echo TWITTER_URL; ?>" class="text-white"><i class="lni lni-twitter-original"></i></a>
                 </small>
             </div>
         </div>
@@ -43,7 +45,7 @@ $menu_categories = get_menu_categories(8);
     <div class="container">
         <!-- Logo -->
         <a class="navbar-brand fw-bold" href="<?php echo SITE_URL; ?>">
-            <i class="fas fa-store text-primary"></i> <?php echo SITE_NAME; ?>
+            <i class="lni lni-store text-primary"></i> <?php echo SITE_NAME; ?>
         </a>
 
         <!-- Mobile Toggle -->
@@ -59,7 +61,7 @@ $menu_categories = get_menu_categories(8);
                 <div class="input-group">
                     <input type="text" class="form-control" name="q" placeholder="Search products..." required>
                     <button class="btn btn-primary" type="submit">
-                        <i class="fas fa-search"></i>
+                        <i class="lni lni-search-alt"></i>
                     </button>
                 </div>
             </form>
@@ -69,7 +71,7 @@ $menu_categories = get_menu_categories(8);
                 <!-- Search (Mobile) -->
                 <li class="nav-item d-lg-none">
                     <a class="nav-link" href="<?php echo SITE_URL; ?>/search">
-                        <i class="fas fa-search"></i> Search
+                        <i class="lni lni-search-alt"></i> Search
                     </a>
                 </li>
 
@@ -107,7 +109,7 @@ $menu_categories = get_menu_categories(8);
                 <?php if (is_logged_in()): ?>
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo SITE_URL; ?>/wishlist">
-                            <i class="fas fa-heart"></i>
+                            <i class="lni lni-heart"></i>
                             <span class="d-lg-none">Wishlist</span>
                         </a>
                     </li>
@@ -116,7 +118,7 @@ $menu_categories = get_menu_categories(8);
                 <!-- Cart -->
                 <li class="nav-item">
                     <a class="nav-link position-relative" href="<?php echo SITE_URL; ?>/cart">
-                        <i class="fas fa-shopping-cart"></i>
+                        <i class="lni lni-cart"></i>
                         <?php if ($cart_count > 0): ?>
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                 <?php echo $cart_count; ?>
@@ -130,7 +132,7 @@ $menu_categories = get_menu_categories(8);
                 <?php if (is_logged_in()): ?>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i> Account
+                            <i class="lni lni-user"></i> Account
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/my-account">My Account</a></li>
@@ -145,7 +147,7 @@ $menu_categories = get_menu_categories(8);
                 <?php else: ?>
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo SITE_URL; ?>/login">
-                            <i class="fas fa-sign-in-alt"></i> Login
+                            <i class="lni lni-enter"></i> Login
                         </a>
                     </li>
                 <?php endif; ?>

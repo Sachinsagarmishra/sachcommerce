@@ -85,7 +85,7 @@ include 'includes/sidebar.php';
                         <p class="text-muted mb-0">Control your store's aesthetics from one place.</p>
                     </div>
                     <button type="submit" form="themeForm" name="update_theme" class="btn btn-primary btn-lg shadow-sm">
-                        <i class="fas fa-save me-2"></i> Save All Changes
+                        <i class="lni lni-save me-2"></i> Save All Changes
                     </button>
                 </div>
             </div>
@@ -97,7 +97,7 @@ include 'includes/sidebar.php';
                 <div class="alert alert-<?php echo $flash['type']; ?> alert-dismissible fade show shadow-sm border-0"
                     role="alert">
                     <i
-                        class="fas <?php echo $flash['type'] === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'; ?> me-2"></i>
+                        class="lni <?php echo $flash['type'] === 'success' ? 'lni-checkmark-circle' : 'lni-warning'; ?> me-2"></i>
                     <?php echo $flash['message']; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -113,7 +113,7 @@ include 'includes/sidebar.php';
                         <!-- Block 1: Global Branding & Fonts -->
                         <div class="card shadow-sm border-0 mb-4 rounded-4 overflow-hidden">
                             <div class="card-header bg-white border-0 py-3 mt-2">
-                                <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-globe text-primary me-2"></i>
+                                <h5 class="mb-0 fw-bold text-dark"><i class="lni lni-world text-primary me-2"></i>
                                     Website Branding & Typography</h5>
                             </div>
                             <div class="card-body p-4">
@@ -190,7 +190,7 @@ include 'includes/sidebar.php';
                         <!-- Block 2: Navbar & Navigation -->
                         <div class="card shadow-sm border-0 mb-4 rounded-4 overflow-hidden">
                             <div class="card-header bg-white border-0 py-3 mt-2">
-                                <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-compass text-info me-2"></i> Navbar
+                                <h5 class="mb-0 fw-bold text-dark"><i class="lni lni-compass text-info me-2"></i> Navbar
                                     & Navigation</h5>
                             </div>
                             <div class="card-body p-4">
@@ -235,7 +235,7 @@ include 'includes/sidebar.php';
                         <div class="card shadow-sm border-0 mb-4 rounded-4 overflow-hidden">
                             <div class="card-header bg-white border-0 py-3 mt-2">
                                 <h5 class="mb-0 fw-bold text-dark"><i
-                                        class="fas fa-shopping-basket text-success me-2"></i> Shop & Product Pages</h5>
+                                        class="lni lni-shopping-basket text-success me-2"></i> Shop & Product Pages</h5>
                             </div>
                             <div class="card-body p-4">
                                 <div class="row g-4">
@@ -312,7 +312,7 @@ include 'includes/sidebar.php';
                         <!-- Block 4: Footer Customization -->
                         <div class="card shadow-sm border-0 mb-4 rounded-4 overflow-hidden">
                             <div class="card-header bg-white border-0 py-3 mt-2">
-                                <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-layer-group text-warning me-2"></i>
+                                <h5 class="mb-0 fw-bold text-dark"><i class="lni lni-layers text-warning me-2"></i>
                                     Footer Customization</h5>
                             </div>
                             <div class="card-body p-4">
@@ -360,7 +360,8 @@ include 'includes/sidebar.php';
                         <div class="sticky-top" style="top: 100px; z-index: 10;">
                             <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
                                 <div class="card-header bg-dark text-white py-3">
-                                    <h5 class="mb-0 fw-bold small text-uppercase"><i class="fas fa-magic me-2"></i> Live
+                                    <h5 class="mb-0 fw-bold small text-uppercase"><i
+                                            class="lni lni-magic-wand me-2"></i> Live
                                         Interface Preview</h5>
                                 </div>
                                 <div class="card-body p-0 bg-light">
@@ -388,7 +389,7 @@ include 'includes/sidebar.php';
                                                 <span class="badge position-absolute top-0 end-0 m-1"
                                                     id="mock_sale_badge"
                                                     style="font-size: 8px; background-color: <?php echo $sale_badge_bg; ?>;">SALE</span>
-                                                <i class="fas fa-image fa-2x text-secondary opacity-25"></i>
+                                                <i class="lni lni-image fa-2x text-secondary opacity-25"></i>
                                             </div>
                                             <div class="p-1 rounded-pill mb-1"
                                                 style="width: 40px; height: 4px; background-color: <?php echo $secondary_color; ?>;">

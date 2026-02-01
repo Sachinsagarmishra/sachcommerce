@@ -150,7 +150,7 @@ include 'includes/navbar.php';
                                     </div>
                                     <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
                                         data-product-id="<?php echo $product['id']; ?>">
-                                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                                        <i class="lni lni-cart"></i> Add to Cart
                                     </button>
                                 </div>
                             </div>
@@ -159,7 +159,7 @@ include 'includes/navbar.php';
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="col-12 text-center py-5">
-                    <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
+                    <i class="lni lni-package-open fa-4x text-muted mb-3"></i>
                     <h4>No Featured Products Yet</h4>
                     <p class="text-muted">Import sample products or add products via admin panel</p>
                     <a href="<?php echo SITE_URL; ?>/admin/" class="btn btn-primary">Go to Admin Panel</a>
@@ -206,7 +206,7 @@ include 'includes/navbar.php';
                                     </div>
                                     <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
                                         data-product-id="<?php echo $product['id']; ?>">
-                                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                                        <i class="lni lni-cart"></i> Add to Cart
                                     </button>
                                 </div>
                             </div>

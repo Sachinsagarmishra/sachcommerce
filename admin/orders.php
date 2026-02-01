@@ -120,7 +120,7 @@ include 'includes/sidebar.php';
                                 </td>
                                 <td>
                                     <a href="order-detail.php?id=<?php echo $order['id']; ?>" class="btn btn-sm btn-primary" title="View Details">
-                                        <i class="fas fa-eye"></i>
+                                        <i class="lni lni-eye"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -131,7 +131,7 @@ include 'includes/sidebar.php';
                 
                 <?php if (empty($orders)): ?>
                 <div class="text-center py-5">
-                    <i class="fas fa-shopping-bag fa-4x text-muted mb-3"></i>
+                    <i class="lni lni-shopping-basket fa-4x text-muted mb-3"></i>
                     <p class="text-muted">No orders found</p>
                 </div>
                 <?php endif; ?>

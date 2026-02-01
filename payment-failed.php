@@ -35,7 +35,7 @@ include 'includes/navbar.php';
                     <i class="fas fa-redo me-2"></i>Try Again
                 </a>
                 <a href="<?php echo SITE_URL; ?>/cart.php" class="btn btn-outline-secondary btn-lg">
-                    <i class="fas fa-shopping-cart me-2"></i>Back to Cart
+                    <i class="lni lni-cart me-2"></i>Back to Cart
                 </a>
             </div>
             

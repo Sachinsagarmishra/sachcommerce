@@ -120,7 +120,7 @@ include 'includes/sidebar.php';
                             </div>
                             
                             <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-save me-2"></i><?php echo $edit_category ? 'Update' : 'Add'; ?> Category
+                                <i class="lni lni-save me-2"></i><?php echo $edit_category ? 'Update' : 'Add'; ?> Category
                             </button>
                             
                             <?php if ($edit_category): ?>

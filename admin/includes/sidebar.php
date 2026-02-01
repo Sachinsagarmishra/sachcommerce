@@ -5,7 +5,7 @@ $user = get_logged_user();
 <!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-        <h4><i class="fas fa-store"></i> <?php echo SITE_NAME; ?></h4>
+        <h4><i class="lni lni-store"></i> <?php echo SITE_NAME; ?></h4>
     </div>
 
     <nav class="sidebar-nav">
@@ -14,7 +14,7 @@ $user = get_logged_user();
             <li class="nav-item">
                 <a class="nav-link <?php echo ($current_page == 'dashboard.php') ? 'active' : ''; ?>"
                     href="dashboard.php">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                    <i class="lni lni-dashboard"></i> Dashboard
                 </a>
             </li>
 
@@ -22,18 +22,18 @@ $user = get_logged_user();
             <li class="nav-item">
                 <a class="nav-link <?php echo (in_array($current_page, ['products.php', 'add-product.php', 'edit-product.php', 'bulk-upload-products.php'])) ? 'active' : ''; ?>"
                     data-bs-toggle="collapse" href="#productsMenu" role="button" aria-expanded="false">
-                    <i class="fas fa-box"></i> Products <i class="fas fa-chevron-down float-end"></i>
+                    <i class="lni lni-package"></i> Products <i class="lni lni-chevron-down float-end"></i>
                 </a>
                 <div class="collapse" id="productsMenu">
                     <ul class="nav flex-column ms-3">
                         <li class="nav-item">
-                            <a class="nav-link" href="products.php"><i class="fas fa-list"></i> All Products</a>
+                            <a class="nav-link" href="products.php"><i class="lni lni-list"></i> All Products</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="product-add.php"><i class="fas fa-plus"></i> Add Product</a>
+                            <a class="nav-link" href="product-add.php"><i class="lni lni-plus"></i> Add Product</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="bulk-upload-products.php"><i class="fas fa-upload"></i> Bulk
+                            <a class="nav-link" href="bulk-upload-products.php"><i class="lni lni-upload"></i> Bulk
                                 Upload</a>
                         </li>
                     </ul>
@@ -44,7 +44,7 @@ $user = get_logged_user();
             <li class="nav-item">
                 <a class="nav-link <?php echo (in_array($current_page, ['categories.php', 'add-category.php', 'edit-category.php'])) ? 'active' : ''; ?>"
                     href="categories.php">
-                    <i class="fas fa-tags"></i> Categories
+                    <i class="lni lni-tag"></i> Categories
                 </a>
             </li>
 
@@ -52,7 +52,7 @@ $user = get_logged_user();
             <li class="nav-item">
                 <a class="nav-link <?php echo (in_array($current_page, ['orders.php', 'view-order.php'])) ? 'active' : ''; ?>"
                     href="orders.php">
-                    <i class="fas fa-shopping-cart"></i> Orders
+                    <i class="lni lni-cart"></i> Orders
                 </a>
             </li>
 
@@ -60,7 +60,7 @@ $user = get_logged_user();
             <li class="nav-item">
                 <a class="nav-link <?php echo (in_array($current_page, ['customers.php', 'view-customer.php', 'edit-customer.php'])) ? 'active' : ''; ?>"
                     href="customers.php">
-                    <i class="fas fa-users"></i> Customers
+                    <i class="lni lni-users"></i> Customers
                 </a>
             </li>
 
@@ -68,7 +68,7 @@ $user = get_logged_user();
             <li class="nav-item">
                 <a class="nav-link <?php echo (in_array($current_page, ['coupons.php', 'add-coupon.php', 'edit-coupon.php'])) ? 'active' : ''; ?>"
                     href="coupons.php">
-                    <i class="fas fa-ticket-alt"></i> Coupons
+                    <i class="lni lni-ticket"></i> Coupons
                 </a>
             </li>
 
@@ -76,14 +76,14 @@ $user = get_logged_user();
             <li class="nav-item">
                 <a class="nav-link <?php echo (in_array($current_page, ['manage-banners.php', 'add-banner.php', 'edit-banner.php'])) ? 'active' : ''; ?>"
                     href="manage-banners.php">
-                    <i class="fas fa-images"></i> Homepage Banners
+                    <i class="lni lni-gallery"></i> Homepage Banners
                 </a>
             </li>
 
             <!-- Reviews -->
             <li class="nav-item">
                 <a class="nav-link <?php echo ($current_page == 'reviews.php') ? 'active' : ''; ?>" href="reviews.php">
-                    <i class="fas fa-star"></i> Reviews
+                    <i class="lni lni-star-filled"></i> Reviews
                 </a>
             </li>
 
@@ -92,19 +92,19 @@ $user = get_logged_user();
             <li class="nav-item">
                 <a class="nav-link <?php echo (in_array($current_page, ['sales-report.php', 'product-report.php', 'customer-report.php'])) ? 'active' : ''; ?>"
                     data-bs-toggle="collapse" href="#reportsMenu" role="button" aria-expanded="false">
-                    <i class="fas fa-chart-bar"></i> Reports <i class="fas fa-chevron-down float-end"></i>
+                    <i class="lni lni-bar-chart"></i> Reports <i class="lni lni-chevron-down float-end"></i>
                 </a>
                 <div class="collapse" id="reportsMenu">
                     <ul class="nav flex-column ms-3">
                         <li class="nav-item">
-                            <a class="nav-link" href="sales-report.php"><i class="fas fa-dollar-sign"></i> Sales
+                            <a class="nav-link" href="sales-report.php"><i class="lni lni-revenue"></i> Sales
                                 Report</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="product-report.php"><i class="fas fa-box"></i> Product Report</a>
+                            <a class="nav-link" href="product-report.php"><i class="lni lni-package"></i> Product Report</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="customer-report.php"><i class="fas fa-users"></i> Customer
+                            <a class="nav-link" href="customer-report.php"><i class="lni lni-users"></i> Customer
                                 Report</a>
                         </li>
                     </ul>
@@ -115,28 +115,28 @@ $user = get_logged_user();
             <li class="nav-item">
                 <a class="nav-link <?php echo (strpos($current_page, 'settings') !== false) ? 'active' : ''; ?>"
                     data-bs-toggle="collapse" href="#settingsMenu" role="button" aria-expanded="false">
-                    <i class="fas fa-cog"></i> Settings <i class="fas fa-chevron-down float-end"></i>
+                    <i class="lni lni-cog"></i> Settings <i class="lni lni-chevron-down float-end"></i>
                 </a>
                 <div class="collapse" id="settingsMenu">
                     <ul class="nav flex-column ms-3">
                         <li class="nav-item">
-                            <a class="nav-link" href="general-settings.php"><i class="fas fa-sliders-h"></i> General</a>
+                            <a class="nav-link" href="general-settings.php"><i class="lni lni-control-panel"></i> General</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="payment-settings.php"><i class="fas fa-credit-card"></i>
+                            <a class="nav-link" href="payment-settings.php"><i class="lni lni-credit-cards"></i>
                                 Payment</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="email-settings.php"><i class="fas fa-envelope"></i> Email</a>
+                            <a class="nav-link" href="email-settings.php"><i class="lni lni-envelope"></i> Email</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="shipping-settings.php"><i class="fas fa-truck"></i> Shipping</a>
+                            <a class="nav-link" href="shipping-settings.php"><i class="lni lni-delivery"></i> Shipping</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="tax-settings.php"><i class="fas fa-percentage"></i> Tax</a>
+                            <a class="nav-link" href="tax-settings.php"><i class="lni lni-offer"></i> Tax</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="seo-settings.php"><i class="fas fa-search"></i> SEO</a>
+                            <a class="nav-link" href="seo-settings.php"><i class="lni lni-search-alt"></i> SEO</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="theme-settings.php"><i class="fas fa-palette"></i> Theme

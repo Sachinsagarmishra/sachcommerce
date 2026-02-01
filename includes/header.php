@@ -17,20 +17,21 @@ $current_dir = dirname($script_name);
 
     <?php
     // Helper function for hex to rgb
-    function hexToRgb($hex) {
+    function hexToRgb($hex)
+    {
         $hex = str_replace("#", "", $hex);
-        if(strlen($hex) == 3) {
-            $r = hexdec(substr($hex,0,1).substr($hex,0,1));
-            $g = hexdec(substr($hex,1,1).substr($hex,1,1));
-            $b = hexdec(substr($hex,2,1).substr($hex,2,1));
+        if (strlen($hex) == 3) {
+            $r = hexdec(substr($hex, 0, 1) . substr($hex, 0, 1));
+            $g = hexdec(substr($hex, 1, 1) . substr($hex, 1, 1));
+            $b = hexdec(substr($hex, 2, 1) . substr($hex, 2, 1));
         } else {
-            $r = hexdec(substr($hex,0,2));
-            $g = hexdec(substr($hex,2,2));
-            $b = hexdec(substr($hex,4,2));
+            $r = hexdec(substr($hex, 0, 2));
+            $g = hexdec(substr($hex, 2, 2));
+            $b = hexdec(substr($hex, 4, 2));
         }
         return "$r, $g, $b";
     }
-    
+
     // Fetch Theme Settings
     $primary_color = get_site_setting('primary_color', '#83b735');
     $secondary_color = get_site_setting('secondary_color', '#858796');
@@ -67,107 +68,187 @@ $current_dir = dirname($script_name);
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Lineicons 5.0 -->
+    <link rel="stylesheet" href="https://cdn.lineicons.com/5.0/lineicons.css" />
 
     <!-- Custom Frontend CSS -->
     <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/style.css">
 
     <style>
         :root {
-            --primary-color: <?php echo $primary_color; ?>;
-            --primary-rgb: <?php echo $primary_rgb; ?>;
-            --secondary-color: <?php echo $secondary_color; ?>;
-            --dark-color: <?php echo $heading_text_color; ?>;
+            --primary-color:
+                <?php echo $primary_color; ?>
+            ;
+            --primary-rgb:
+                <?php echo $primary_rgb; ?>
+            ;
+            --secondary-color:
+                <?php echo $secondary_color; ?>
+            ;
+            --dark-color:
+                <?php echo $heading_text_color; ?>
+            ;
             /* Update dark color to match heading color */
         }
 
         body {
-            font-family: <?php echo $body_font; ?> !important;
-            color: <?php echo $body_text_color; ?>;
+            font-family:
+                <?php echo $body_font; ?>
+                !important;
+            color:
+                <?php echo $body_text_color; ?>
+            ;
         }
 
-        h1, h2, h3, h4, h5, h6, .section-title, .navbar-brand {
-            font-family: <?php echo $heading_font; ?> !important;
-            color: <?php echo $heading_text_color; ?>;
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .section-title,
+        .navbar-brand {
+            font-family:
+                <?php echo $heading_font; ?>
+                !important;
+            color:
+                <?php echo $heading_text_color; ?>
+            ;
         }
 
         /* Navbar Customization */
         .navbar {
-            background-color: <?php echo $navbar_bg; ?> !important;
+            background-color:
+                <?php echo $navbar_bg; ?>
+                !important;
         }
 
         .navbar-nav .nav-link {
-            color: <?php echo $nav_link_color; ?> !important;
+            color:
+                <?php echo $nav_link_color; ?>
+                !important;
         }
 
         .navbar-nav .nav-link:hover {
-            color: <?php echo $nav_link_hover_color; ?> !important;
+            color:
+                <?php echo $nav_link_hover_color; ?>
+                !important;
         }
 
         .navbar-brand {
-            color: <?php echo $nav_link_color; ?> !important;
+            color:
+                <?php echo $nav_link_color; ?>
+                !important;
         }
 
         /* Product Card Customization */
-        .product-title, .product-title a {
-            color: <?php echo $product_title_color; ?> !important;
+        .product-title,
+        .product-title a {
+            color:
+                <?php echo $product_title_color; ?>
+                !important;
         }
 
         .product-price {
-            color: <?php echo $product_price_color; ?> !important;
+            color:
+                <?php echo $product_price_color; ?>
+                !important;
         }
 
-        .badge-sale, .badge-discount {
-            background-color: <?php echo $sale_badge_bg; ?> !important;
+        .badge-sale,
+        .badge-discount {
+            background-color:
+                <?php echo $sale_badge_bg; ?>
+                !important;
         }
 
         .badge-new {
-            background-color: <?php echo $new_badge_bg; ?> !important;
+            background-color:
+                <?php echo $new_badge_bg; ?>
+                !important;
         }
 
         /* Button Customization */
-        .btn-primary, .add-to-cart-btn {
-            background-color: <?php echo $btn_primary_bg; ?> !important;
-            border-color: <?php echo $btn_primary_bg; ?> !important;
-            color: <?php echo $btn_primary_text; ?> !important;
+        .btn-primary,
+        .add-to-cart-btn {
+            background-color:
+                <?php echo $btn_primary_bg; ?>
+                !important;
+            border-color:
+                <?php echo $btn_primary_bg; ?>
+                !important;
+            color:
+                <?php echo $btn_primary_text; ?>
+                !important;
         }
 
-        .btn-primary:hover, .add-to-cart-btn:hover {
+        .btn-primary:hover,
+        .add-to-cart-btn:hover {
             opacity: 0.9;
-            background-color: <?php echo $btn_primary_bg; ?> !important;
-            border-color: <?php echo $btn_primary_bg; ?> !important;
+            background-color:
+                <?php echo $btn_primary_bg; ?>
+                !important;
+            border-color:
+                <?php echo $btn_primary_bg; ?>
+                !important;
         }
+
         .btn-outline-primary {
-            color: <?php echo $btn_primary_bg; ?> !important;
-            border-color: <?php echo $btn_primary_bg; ?> !important;
+            color:
+                <?php echo $btn_primary_bg; ?>
+                !important;
+            border-color:
+                <?php echo $btn_primary_bg; ?>
+                !important;
         }
+
         .btn-outline-primary:hover {
-            background-color: <?php echo $btn_primary_bg; ?> !important;
-            color: <?php echo $btn_primary_text; ?> !important;
+            background-color:
+                <?php echo $btn_primary_bg; ?>
+                !important;
+            color:
+                <?php echo $btn_primary_text; ?>
+                !important;
         }
 
         /* Footer Customization */
         .footer {
-            background-color: <?php echo $footer_bg; ?> !important;
+            background-color:
+                <?php echo $footer_bg; ?>
+                !important;
         }
 
-        .footer h4, .footer h5, .footer .footer-title, .footer .widget-title {
-            color: <?php echo $footer_heading_color; ?> !important;
+        .footer h4,
+        .footer h5,
+        .footer .footer-title,
+        .footer .widget-title {
+            color:
+                <?php echo $footer_heading_color; ?>
+                !important;
         }
 
-        .footer p, .footer span, .footer div, .footer li, .footer small {
-            color: <?php echo $footer_text_color; ?> !important;
+        .footer p,
+        .footer span,
+        .footer div,
+        .footer li,
+        .footer small {
+            color:
+                <?php echo $footer_text_color; ?>
+                !important;
         }
 
         .footer a {
-            color: <?php echo $footer_text_color; ?> !important;
+            color:
+                <?php echo $footer_text_color; ?>
+                !important;
             opacity: 0.8;
             text-decoration: none;
         }
 
         .footer a:hover {
-            color: <?php echo $primary_color; ?> !important;
+            color:
+                <?php echo $primary_color; ?>
+                !important;
             opacity: 1;
         }
 

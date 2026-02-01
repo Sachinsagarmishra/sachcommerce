@@ -88,7 +88,7 @@ include 'includes/navbar.php';
                                                         onchange="updateQuantity(<?php echo $item['id']; ?>, this.value)">
                                                     <button class="btn btn-outline-secondary btn-sm" type="button"
                                                         onclick="updateQuantity(<?php echo $item['id']; ?>, <?php echo $item['quantity'] + 1; ?>)">
-                                                        <i class="fas fa-plus"></i>
+                                                        <i class="lni lni-plus"></i>
                                                     </button>
                                                 </div>
                                             </td>
@@ -112,7 +112,7 @@ include 'includes/navbar.php';
                 <!-- Continue Shopping -->
                 <div class="mt-3">
                     <a href="<?php echo SITE_URL; ?>/shop" class="btn btn-outline-primary">
-                        <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                        <i class="lni lni-arrow-left me-2"></i>Continue Shopping
                     </a>
                 </div>
             </div>
@@ -190,11 +190,11 @@ include 'includes/navbar.php';
     <?php else: ?>
         <!-- Empty Cart -->
         <div class="text-center py-5">
-            <i class="fas fa-shopping-cart fa-4x text-muted mb-4"></i>
+            <i class="lni lni-cart fa-4x text-muted mb-4"></i>
             <h3>Your cart is empty</h3>
             <p class="text-muted mb-4">Add some products to get started!</p>
             <a href="<?php echo SITE_URL; ?>/shop" class="btn btn-primary btn-lg">
-                <i class="fas fa-shopping-bag me-2"></i>Start Shopping
+                <i class="lni lni-shopping-basket me-2"></i>Start Shopping
             </a>
         </div>
     <?php endif; ?>

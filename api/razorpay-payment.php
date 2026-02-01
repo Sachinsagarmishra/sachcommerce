@@ -106,7 +106,7 @@ if (file_exists('../includes/navbar.php')) {
                 </div>
                 <div class="card-body text-center p-5">
                     <div class="mb-4">
-                        <i class="fas fa-credit-card fa-4x text-primary"></i>
+                        <i class="lni lni-credit-cards fa-4x text-primary"></i>
                     </div>
                     
                     <h5 class="text-muted">Order #<?php echo htmlspecialchars($order['order_number']); ?></h5>
@@ -145,7 +145,7 @@ if (file_exists('../includes/navbar.php')) {
                             <form action="<?php echo SITE_URL; ?>/api/mark-payment-success.php" method="POST">
                                 <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
                                 <button type="submit" class="btn btn-outline-success w-100">
-                                    <i class="fas fa-check me-2"></i>Bypass Payment (Test Success)
+                                    <i class="lni lni-checkmark me-2"></i>Bypass Payment (Test Success)
                                 </button>
                             </form>
                         </div>

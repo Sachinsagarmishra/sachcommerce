@@ -81,7 +81,7 @@ include 'includes/sidebar.php';
             </div>
             <div class="col-md-6 text-end">
                 <a href="manage-banners.php" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Back to Banners
+                    <i class="lni lni-arrow-left me-2"></i>Back to Banners
                 </a>
             </div>
         </div>
@@ -139,7 +139,7 @@ include 'includes/sidebar.php';
 
                     <div class="text-end mt-4">
                         <button type="submit" class="btn btn-primary px-5">
-                            <i class="fas fa-save me-2"></i>Update Banner
+                            <i class="lni lni-save me-2"></i>Update Banner
                         </button>
                     </div>
                 </form>

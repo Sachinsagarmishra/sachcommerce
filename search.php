@@ -57,7 +57,7 @@ include 'includes/navbar.php';
                 </div>
                 <div class="product-footer">
                     <button class="btn btn-primary btn-sm w-100 add-to-cart-btn" data-product-id="<?php echo $product['id']; ?>">
-                        <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                        <i class="lni lni-cart me-2"></i>Add to Cart
                     </button>
                 </div>
             </div>
@@ -66,7 +66,7 @@ include 'includes/navbar.php';
     </div>
     <?php else: ?>
     <div class="text-center py-5">
-        <i class="fas fa-search fa-4x text-muted mb-4"></i>
+        <i class="lni lni-search-alt fa-4x text-muted mb-4"></i>
         <h4>No products found</h4>
         <p class="text-muted mb-4">Try different keywords or browse our categories</p>
         <a href="<?php echo SITE_URL; ?>/shop.php" class="btn btn-primary">Browse All Products</a>

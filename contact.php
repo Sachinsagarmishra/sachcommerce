@@ -47,7 +47,7 @@ include 'includes/navbar.php';
         <div class="col-lg-4 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center">
-                    <i class="fas fa-map-marker-alt fa-3x text-primary mb-3"></i>
+                    <i class="lni lni-map-marker fa-3x text-primary mb-3"></i>
                     <h5>Address</h5>
                     <p class="text-muted"><?php echo SITE_ADDRESS; ?></p>
                 </div>
@@ -56,7 +56,7 @@ include 'includes/navbar.php';
         <div class="col-lg-4 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center">
-                    <i class="fas fa-phone fa-3x text-success mb-3"></i>
+                    <i class="lni lni-phone fa-3x text-success mb-3"></i>
                     <h5>Phone</h5>
                     <p class="text-muted"><?php echo SITE_PHONE; ?></p>
                 </div>
@@ -65,7 +65,7 @@ include 'includes/navbar.php';
         <div class="col-lg-4 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center">
-                    <i class="fas fa-envelope fa-3x text-info mb-3"></i>
+                    <i class="lni lni-envelope fa-3x text-info mb-3"></i>
                     <h5>Email</h5>
                     <p class="text-muted"><?php echo SITE_EMAIL; ?></p>
                 </div>
@@ -107,7 +107,7 @@ include 'includes/navbar.php';
                             <textarea class="form-control" name="message" rows="5" required></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="fas fa-paper-plane me-2"></i>Send Message
+                            <i class="lni lni-telegram-original me-2"></i>Send Message
                         </button>
                     </form>
                 </div>

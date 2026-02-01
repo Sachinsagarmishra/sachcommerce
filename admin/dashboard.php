@@ -56,7 +56,7 @@ include 'includes/header.php';
                                 <div class="stats-number"><?php echo format_price($stats['today_sales']); ?></div>
                             </div>
                             <div class="text-success">
-                                <i class="fas fa-rupee-sign fa-3x"></i>
+                                <i class="lni lni-revenue fa-3x"></i>
                             </div>
                         </div>
                     </div>
@@ -72,7 +72,7 @@ include 'includes/header.php';
                                 <div class="stats-number"><?php echo format_price($stats['month_sales']); ?></div>
                             </div>
                             <div class="text-info">
-                                <i class="fas fa-calendar fa-3x"></i>
+                                <i class="lni lni-calendar fa-3x"></i>
                             </div>
                         </div>
                     </div>
@@ -88,7 +88,7 @@ include 'includes/header.php';
                                 <div class="stats-number"><?php echo $stats['pending_orders']; ?></div>
                             </div>
                             <div class="text-warning">
-                                <i class="fas fa-shopping-cart fa-3x"></i>
+                                <i class="lni lni-cart fa-3x"></i>
                             </div>
                         </div>
                     </div>
@@ -172,19 +172,19 @@ include 'includes/header.php';
                     <div class="card-body">
                         <div class="d-grid gap-2">
                             <a href="add-product.php" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Add New Product
+                                <i class="lni lni-plus"></i> Add New Product
                             </a>
                             <a href="orders.php" class="btn btn-info">
-                                <i class="fas fa-shopping-cart"></i> View Orders
+                                <i class="lni lni-cart"></i> View Orders
                             </a>
                             <a href="add-coupon.php" class="btn btn-success">
-                                <i class="fas fa-ticket-alt"></i> Create Coupon
+                                <i class="lni lni-ticket"></i> Create Coupon
                             </a>
                             <a href="add-blog-post.php" class="btn btn-warning">
                                 <i class="fas fa-blog"></i> Write Blog Post
                             </a>
                             <a href="general-settings.php" class="btn btn-secondary">
-                                <i class="fas fa-cog"></i> Settings
+                                <i class="lni lni-cog"></i> Settings
                             </a>
                         </div>
                     </div>
@@ -197,7 +197,7 @@ include 'includes/header.php';
             <div class="col-lg-8 mb-4">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <span><i class="fas fa-shopping-cart"></i> Recent Orders</span>
+                        <span><i class="lni lni-cart"></i> Recent Orders</span>
                         <a href="orders.php" class="btn btn-sm btn-primary">View All</a>
                     </div>
                     <div class="card-body">
@@ -232,7 +232,7 @@ include 'includes/header.php';
                                                 <td><?php echo date('M d, Y', strtotime($order['created_at'])); ?></td>
                                                 <td>
                                                     <a href="view-order.php?id=<?php echo $order['id']; ?>" class="btn btn-sm btn-info">
-                                                        <i class="fas fa-eye"></i>
+                                                        <i class="lni lni-eye"></i>
                                                     </a>
                                                 </td>
                                             </tr>

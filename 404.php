@@ -21,7 +21,7 @@ include 'includes/navbar.php';
                     <i class="fas fa-home me-2"></i>Go Home
                 </a>
                 <a href="<?php echo SITE_URL; ?>/shop.php" class="btn btn-outline-primary btn-lg">
-                    <i class="fas fa-shopping-bag me-2"></i>Browse Products
+                    <i class="lni lni-shopping-basket me-2"></i>Browse Products
                 </a>
             </div>
             
@@ -30,7 +30,7 @@ include 'includes/navbar.php';
                     <div class="input-group" style="max-width: 400px;">
                         <input type="text" class="form-control" name="q" placeholder="Search products..." required>
                         <button class="btn btn-primary" type="submit">
-                            <i class="fas fa-search"></i>
+                            <i class="lni lni-search-alt"></i>
                         </button>
                     </div>
                 </form>

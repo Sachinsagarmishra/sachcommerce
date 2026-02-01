@@ -147,7 +147,7 @@ include 'includes/sidebar.php';
             <div class="col-md-6 text-end">
                 <?php if ($action === 'edit'): ?>
                     <a href="reviews.php" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Back to Reviews List
+                        <i class="lni lni-arrow-left me-2"></i>Back to Reviews List
                     </a>
                 <?php endif; ?>
             </div>
@@ -203,7 +203,7 @@ include 'includes/sidebar.php';
                                 </div>
                                 
                                 <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-save me-2"></i>Update Review & Status
+                                    <i class="lni lni-save me-2"></i>Update Review & Status
                                 </button>
                             </form>
                         </div>
@@ -296,7 +296,7 @@ include 'includes/sidebar.php';
                                         <?php if ($review['status'] !== 'approved'): ?>
                                         <a href="reviews.php?status_id=<?php echo $review['id']; ?>&new_status=approved" 
                                             class="btn btn-sm btn-success" title="Approve">
-                                            <i class="fas fa-check"></i>
+                                            <i class="lni lni-checkmark"></i>
                                         </a>
                                         <?php endif; ?>
                                         
@@ -322,7 +322,7 @@ include 'includes/sidebar.php';
                     
                     <?php if (empty($reviews)): ?>
                     <div class="text-center py-5">
-                        <i class="fas fa-star fa-4x text-muted mb-3"></i>
+                        <i class="lni lni-star-filled fa-4x text-muted mb-3"></i>
                         <p class="text-muted">No reviews found matching the criteria.</p>
                     </div>
                     <?php endif; ?>

@@ -214,9 +214,9 @@ include 'includes/navbar.php';
                         $rating = get_product_rating($product['id']);
                         for ($i = 1; $i <= 5; $i++) {
                             if ($i <= $rating) {
-                                echo '<i class="fas fa-star"></i>';
+                                echo '<i class="lni lni-star-filled"></i>';
                             } else {
-                                echo '<i class="far fa-star"></i>';
+                                echo '<i class="lni lni-star"></i>';
                             }
                         }
                         ?>
@@ -268,7 +268,7 @@ include 'includes/navbar.php';
             ?>
 
             <div class="delivery-message mb-3">
-                <p class="mb-1"><i class="far fa-clock me-2"></i>Order today within <span
+                <p class="mb-1"><i class="lni lni-timer me-2"></i>Order today within <span
                         class="countdown-timer text-orange fw-bold"
                         id="productCountdown"><?php echo $countdown_formatted; ?></span>, you'll receive your package
                     between
@@ -280,17 +280,17 @@ include 'includes/navbar.php';
             <div class="timeline-box p-3 mb-4">
                 <div class="timeline-line">
                     <div class="timeline-point active">
-                        <div class="icon-circle"><i class="fas fa-shopping-bag"></i></div>
+                        <div class="icon-circle"><i class="lni lni-shopping-basket"></i></div>
                         <span class="label">Purchased</span>
                         <span class="date"><?php echo $purchased_date; ?></span>
                     </div>
                     <div class="timeline-point">
-                        <div class="icon-circle"><i class="fas fa-truck"></i></div>
+                        <div class="icon-circle"><i class="lni lni-delivery"></i></div>
                         <span class="label">Processing</span>
                         <span class="date"><?php echo $proc_date; ?></span>
                     </div>
                     <div class="timeline-point">
-                        <div class="icon-circle"><i class="fas fa-map-marker-alt"></i></div>
+                        <div class="icon-circle"><i class="lni lni-map-marker"></i></div>
                         <span class="label">Delivered</span>
                         <span class="date"><?php echo $del_date; ?></span>
                     </div>
@@ -331,11 +331,11 @@ include 'includes/navbar.php';
             <div class="product-footer-meta small py-3">
                 <div class="share-links-custom d-flex align-items-center gap-3">
                     <span class="text-muted"><strong>Share:</strong></span>
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-pinterest"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fab fa-telegram-plane"></i></a>
+                    <a href="#"><i class="lni lni-facebook-filled"></i></a>
+                    <a href="#"><i class="lni lni-twitter-original"></i></a>
+                    <a href="#"><i class="lni lni-pinterest"></i></a>
+                    <a href="#"><i class="lni lni-linkedin-original"></i></a>
+                    <a href="#"><i class="lni lni-telegram-original"></i></a>
                 </div>
             </div>
         </div>
@@ -389,15 +389,15 @@ include 'includes/navbar.php';
                                     <label class="form-label">Rating</label>
                                     <div class="rating-input">
                                         <input type="radio" name="rating" value="5" id="star5" required>
-                                        <label for="star5"><i class="fas fa-star"></i></label>
+                                        <label for="star5"><i class="lni lni-star-filled"></i></label>
                                         <input type="radio" name="rating" value="4" id="star4">
-                                        <label for="star4"><i class="fas fa-star"></i></label>
+                                        <label for="star4"><i class="lni lni-star-filled"></i></label>
                                         <input type="radio" name="rating" value="3" id="star3">
-                                        <label for="star3"><i class="fas fa-star"></i></label>
+                                        <label for="star3"><i class="lni lni-star-filled"></i></label>
                                         <input type="radio" name="rating" value="2" id="star2">
-                                        <label for="star2"><i class="fas fa-star"></i></label>
+                                        <label for="star2"><i class="lni lni-star-filled"></i></label>
                                         <input type="radio" name="rating" value="1" id="star1">
-                                        <label for="star1"><i class="fas fa-star"></i></label>
+                                        <label for="star1"><i class="lni lni-star-filled"></i></label>
                                     </div>
                                 </div>
                                 <div class="mb-3">
@@ -450,7 +450,7 @@ include 'includes/navbar.php';
                                 <div class="product-footer">
                                     <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
                                         data-product-id="<?php echo $related['id']; ?>">
-                                        <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                                        <i class="lni lni-cart me-2"></i>Add to Cart
                                     </button>
                                 </div>
                             </div>

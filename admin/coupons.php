@@ -132,11 +132,11 @@ include 'includes/sidebar.php';
             <div class="col-md-6 text-end">
                 <?php if ($action === 'list'): ?>
                     <a href="coupons.php?action=add" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>Add New Coupon
+                        <i class="lni lni-plus me-2"></i>Add New Coupon
                     </a>
                 <?php else: ?>
                     <a href="coupons.php" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Back to List
+                        <i class="lni lni-arrow-left me-2"></i>Back to List
                     </a>
                 <?php endif; ?>
             </div>
@@ -257,7 +257,7 @@ include 'includes/sidebar.php';
 
                         <div class="mt-3">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i><?php echo $action === 'edit' ? 'Update Coupon' : 'Create Coupon'; ?>
+                                <i class="lni lni-save me-2"></i><?php echo $action === 'edit' ? 'Update Coupon' : 'Create Coupon'; ?>
                             </button>
                             <a href="coupons.php" class="btn btn-outline-secondary">Cancel</a>
                         </div>
@@ -343,7 +343,7 @@ include 'includes/sidebar.php';
 
                     <?php if (empty($coupons)): ?>
                     <div class="text-center py-5">
-                        <i class="fas fa-ticket-alt fa-4x text-muted mb-3"></i>
+                        <i class="lni lni-ticket fa-4x text-muted mb-3"></i>
                         <p class="text-muted">No coupons found.</p>
                         <a href="coupons.php?action=add" class="btn btn-outline-primary mt-2">Create your first coupon</a>
                     </div>
