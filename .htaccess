@@ -8,7 +8,8 @@ RewriteEngine On
 RewriteRule ^products/([a-zA-Z0-9-]+)/?$ product-detail.php?slug=$1 [L,QSA]
 
 # Remove .php extension
-# 1. Redirect /file.php to /file
+# 1. Redirect /file.php to /file (EXCEPT for /api/ endpoints to preserve POST data)
+RewriteCond %{REQUEST_URI} !^/api/ [NC]
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^.]+)\.php [NC]
 RewriteRule ^ %1 [R=301,L]
 
