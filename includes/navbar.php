@@ -12,6 +12,16 @@ $nav_categories = get_menu_categories(8);
 
 // Get user info if logged in
 $current_user = is_logged_in() ? get_logged_user() : null;
+
+// Ensure site_settings is available (loaded in header.php)
+if (!isset($site_settings)) {
+    $site_settings = [
+        'site_name' => get_site_setting('site_name', SITE_NAME ?? 'TrendsOne'),
+        'site_logo' => get_site_setting('site_logo', ''),
+        'support_email' => get_site_setting('support_email', SITE_EMAIL ?? ''),
+        'support_phone' => get_site_setting('support_phone', SITE_PHONE ?? ''),
+    ];
+}
 ?>
 
 <!-- Top Bar -->
@@ -20,11 +30,21 @@ $current_user = is_logged_in() ? get_logged_user() : null;
         <div class="row align-items-center">
             <div class="col-md-6">
                 <small>
-                    <i class="fas fa-phone-alt me-2"></i>
-                    <?php echo SITE_PHONE; ?>
-                    <span class="mx-3">|</span>
-                    <i class="fas fa-envelope me-2"></i>
-                    <?php echo SITE_EMAIL; ?>
+                    <?php if ($site_settings['support_phone']): ?>
+                        <i class="fas fa-phone-alt me-2"></i>
+                        <a href="tel:<?php echo preg_replace('/[^0-9+]/', '', $site_settings['support_phone']); ?>"
+                            class="text-white text-decoration-none">
+                            <?php echo htmlspecialchars($site_settings['support_phone']); ?>
+                        </a>
+                        <span class="mx-3">|</span>
+                    <?php endif; ?>
+                    <?php if ($site_settings['support_email']): ?>
+                        <i class="fas fa-envelope me-2"></i>
+                        <a href="mailto:<?php echo htmlspecialchars($site_settings['support_email']); ?>"
+                            class="text-white text-decoration-none">
+                            <?php echo htmlspecialchars($site_settings['support_email']); ?>
+                        </a>
+                    <?php endif; ?>
                 </small>
             </div>
             <div class="col-md-6 text-end">
@@ -46,14 +66,12 @@ $current_user = is_logged_in() ? get_logged_user() : null;
     <div class="container">
         <!-- Brand Logo -->
         <a class="navbar-brand fw-bold" href="<?php echo SITE_URL; ?>">
-            <?php
-            $logo = get_site_setting('site_logo');
-            if ($logo):
-                ?>
-                <img src="<?php echo SITE_URL; ?>/uploads/<?php echo $logo; ?>" alt="<?php echo SITE_NAME; ?>" height="40">
+            <?php if ($site_settings['site_logo']): ?>
+                <img src="<?php echo SITE_URL; ?>/uploads/logos/<?php echo $site_settings['site_logo']; ?>"
+                    alt="<?php echo htmlspecialchars($site_settings['site_name']); ?>" height="40">
             <?php else: ?>
                 <i class="fas fa-store me-2" style="color: var(--primary-color);"></i>
-                <?php echo SITE_NAME; ?>
+                <?php echo htmlspecialchars($site_settings['site_name']); ?>
             <?php endif; ?>
         </a>
 
