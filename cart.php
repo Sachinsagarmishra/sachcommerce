@@ -176,8 +176,8 @@ include 'includes/navbar.php';
                     <div class="card-body text-center">
                         <small class="text-muted">We Accept</small>
                         <div class="mt-2">
-                            <img src="<?php echo SITE_URL; ?>/uploads/img/payments.webp" alt="Payment Methods" height="50"
-                                class="opacity-75">
+                            <img src="<?php echo SITE_URL; ?>/uploads/img/payments.webp" alt="Payment Methods" height="15"
+                                class="opacity-105">
                         </div>
                     </div>
                 </div>
