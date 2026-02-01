@@ -492,7 +492,6 @@ include 'includes/navbar.php';
                                     <?php foreach ($reviews as $review): ?>
                                         <div class="review-item mb-4 border-bottom pb-4">
                                             <div class="review-user-info d-flex align-items-center mb-2">
-                                                <i class="fas fa-user-circle fa-lg me-2 text-muted"></i>
                                                 <span
                                                     class="fw-bold"><?php echo htmlspecialchars($review['user_name']); ?></span>
                                             </div>
