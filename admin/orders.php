@@ -52,16 +52,23 @@ include 'includes/sidebar.php';
             <div class="card-body">
                 <form method="GET" class="row g-3">
                     <div class="col-md-5">
-                        <input type="text" class="form-control" name="search" placeholder="Search by order number, customer..." value="<?php echo htmlspecialchars($search); ?>">
+                        <input type="text" class="form-control" name="search"
+                            placeholder="Search by order number, customer..."
+                            value="<?php echo htmlspecialchars($search); ?>">
                     </div>
                     <div class="col-md-4">
                         <select name="status" class="form-select">
                             <option value="">All Status</option>
-                            <option value="pending" <?php echo $status === 'pending' ? 'selected' : ''; ?>>Pending</option>
-                            <option value="processing" <?php echo $status === 'processing' ? 'selected' : ''; ?>>Processing</option>
-                            <option value="shipped" <?php echo $status === 'shipped' ? 'selected' : ''; ?>>Shipped</option>
-                            <option value="delivered" <?php echo $status === 'delivered' ? 'selected' : ''; ?>>Delivered</option>
-                            <option value="cancelled" <?php echo $status === 'cancelled' ? 'selected' : ''; ?>>Cancelled</option>
+                            <option value="pending" <?php echo $status === 'pending' ? 'selected' : ''; ?>>Pending
+                            </option>
+                            <option value="processing" <?php echo $status === 'processing' ? 'selected' : ''; ?>>
+                                Processing</option>
+                            <option value="shipped" <?php echo $status === 'shipped' ? 'selected' : ''; ?>>Shipped
+                            </option>
+                            <option value="delivered" <?php echo $status === 'delivered' ? 'selected' : ''; ?>>Delivered
+                            </option>
+                            <option value="cancelled" <?php echo $status === 'cancelled' ? 'selected' : ''; ?>>Cancelled
+                            </option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -89,51 +96,69 @@ include 'includes/sidebar.php';
                         </thead>
                         <tbody>
                             <?php foreach ($orders as $order): ?>
-                            <tr>
-                                <td><strong><?php echo htmlspecialchars($order['order_number']); ?></strong></td>
-                                <td>
-                                    <?php echo htmlspecialchars($order['customer_name']); ?><br>
-                                    <small class="text-muted"><?php echo htmlspecialchars($order['customer_email']); ?></small>
-                                </td>
-                                <td><?php echo date('M d, Y', strtotime($order['created_at'])); ?></td>
-                                <td><strong><?php echo format_price($order['total_amount']); ?></strong></td>
-                                <td>
-                                    <span class="badge <?php echo $order['payment_status'] === 'paid' ? 'bg-success' : 'bg-warning'; ?>">
-                                        <?php echo ucfirst($order['payment_status']); ?>
-                                    </span><br>
-                                    <small class="text-muted"><?php echo strtoupper($order['payment_method']); ?></small>
-                                </td>
-                                <td>
-                                    <?php
-                                    $badge_class = 'bg-secondary';
-                                    switch ($order['order_status']) {
-                                        case 'pending': $badge_class = 'bg-warning'; break;
-                                        case 'processing': $badge_class = 'bg-info'; break;
-                                        case 'shipped': $badge_class = 'bg-primary'; break;
-                                        case 'delivered': $badge_class = 'bg-success'; break;
-                                        case 'cancelled': $badge_class = 'bg-danger'; break;
-                                    }
-                                    ?>
-                                    <span class="badge <?php echo $badge_class; ?>">
-                                        <?php echo ucfirst($order['order_status']); ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <a href="order-detail.php?id=<?php echo $order['id']; ?>" class="btn btn-sm btn-primary" title="View Details">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td><strong><?php echo htmlspecialchars($order['order_number']); ?></strong></td>
+                                    <td>
+                                        <?php echo htmlspecialchars($order['customer_name']); ?><br>
+                                        <small
+                                            class="text-muted"><?php echo htmlspecialchars($order['customer_email']); ?></small>
+                                    </td>
+                                    <td>
+                                        <?php echo date('M d, Y', strtotime($order['created_at'])); ?><br>
+                                        <small
+                                            class="text-muted"><?php echo date('h:i A', strtotime($order['created_at'])); ?></small>
+                                    </td>
+                                    <td><strong><?php echo format_price($order['total_amount']); ?></strong></td>
+                                    <td>
+                                        <span
+                                            class="badge <?php echo $order['payment_status'] === 'paid' ? 'bg-success' : 'bg-warning'; ?>">
+                                            <?php echo ucfirst($order['payment_status']); ?>
+                                        </span><br>
+                                        <small
+                                            class="text-muted"><?php echo strtoupper($order['payment_method']); ?></small>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        $badge_class = 'bg-secondary';
+                                        switch ($order['order_status']) {
+                                            case 'pending':
+                                                $badge_class = 'bg-warning';
+                                                break;
+                                            case 'processing':
+                                                $badge_class = 'bg-info';
+                                                break;
+                                            case 'shipped':
+                                                $badge_class = 'bg-primary';
+                                                break;
+                                            case 'delivered':
+                                                $badge_class = 'bg-success';
+                                                break;
+                                            case 'cancelled':
+                                                $badge_class = 'bg-danger';
+                                                break;
+                                        }
+                                        ?>
+                                        <span class="badge <?php echo $badge_class; ?>">
+                                            <?php echo ucfirst($order['order_status']); ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="order-detail.php?id=<?php echo $order['id']; ?>"
+                                            class="btn btn-sm btn-primary" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
-                
+
                 <?php if (empty($orders)): ?>
-                <div class="text-center py-5">
-                    <i class="fas fa-shopping-basket fa-4x text-muted mb-3"></i>
-                    <p class="text-muted">No orders found</p>
-                </div>
+                    <div class="text-center py-5">
+                        <i class="fas fa-shopping-basket fa-4x text-muted mb-3"></i>
+                        <p class="text-muted">No orders found</p>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
