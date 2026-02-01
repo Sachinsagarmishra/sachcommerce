@@ -6,6 +6,36 @@ require_once 'includes/auth-check.php';
 
 $page_title = 'Orders';
 
+// Handle bulk delete
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_delete'])) {
+    $order_ids = $_POST['order_ids'] ?? [];
+
+    if (!empty($order_ids)) {
+        try {
+            $pdo->beginTransaction();
+
+            // Delete order items first
+            $placeholders = str_repeat('?,', count($order_ids) - 1) . '?';
+            $stmt = $pdo->prepare("DELETE FROM order_items WHERE order_id IN ($placeholders)");
+            $stmt->execute($order_ids);
+
+            // Delete orders
+            $stmt = $pdo->prepare("DELETE FROM orders WHERE id IN ($placeholders)");
+            $stmt->execute($order_ids);
+
+            $pdo->commit();
+
+            $_SESSION['success'] = count($order_ids) . ' order(s) deleted successfully';
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            $_SESSION['error'] = 'Failed to delete orders: ' . $e->getMessage();
+        }
+
+        header('Location: orders.php');
+        exit;
+    }
+}
+
 // Get filters
 $status = $_GET['status'] ?? '';
 $search = $_GET['search'] ?? '';
@@ -35,9 +65,42 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $orders = $stmt->fetchAll();
 
+// Get messages
+$success = $_SESSION['success'] ?? '';
+$error = $_SESSION['error'] ?? '';
+unset($_SESSION['success'], $_SESSION['error']);
+
 include 'includes/header.php';
 include 'includes/sidebar.php';
 ?>
+
+<style>
+    .bulk-actions {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        display: none;
+    }
+
+    .bulk-actions.show {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .order-checkbox {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+
+    .select-all-checkbox {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+</style>
 
 <div class="main-content">
     <div class="container-fluid">
@@ -46,6 +109,20 @@ include 'includes/sidebar.php';
                 <h1 class="h3 mb-0">Orders</h1>
             </div>
         </div>
+
+        <?php if ($success): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?php echo htmlspecialchars($success); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($error): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?php echo htmlspecialchars($error); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
 
         <!-- Filters -->
         <div class="card mb-4">
@@ -81,78 +158,104 @@ include 'includes/sidebar.php';
         <!-- Orders Table -->
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Order #</th>
-                                <th>Customer</th>
-                                <th>Date</th>
-                                <th>Total</th>
-                                <th>Payment</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($orders as $order): ?>
+                <!-- Bulk Actions Bar -->
+                <form method="POST" id="bulkDeleteForm">
+                    <div class="bulk-actions" id="bulkActionsBar">
+                        <div>
+                            <span id="selectedCount">0</span> order(s) selected
+                        </div>
+                        <div>
+                            <button type="submit" name="bulk_delete" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to delete the selected orders? This action cannot be undone.')">
+                                <i class="fas fa-trash me-1"></i> Delete Selected
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-sm ms-2" onclick="clearSelection()">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
                                 <tr>
-                                    <td><strong><?php echo htmlspecialchars($order['order_number']); ?></strong></td>
-                                    <td>
-                                        <?php echo htmlspecialchars($order['customer_name']); ?><br>
-                                        <small
-                                            class="text-muted"><?php echo htmlspecialchars($order['customer_email']); ?></small>
-                                    </td>
-                                    <td>
-                                        <?php echo date('M d, Y', strtotime($order['created_at'])); ?><br>
-                                        <small
-                                            class="text-muted"><?php echo date('h:i A', strtotime($order['created_at'])); ?></small>
-                                    </td>
-                                    <td><strong><?php echo format_price($order['total_amount']); ?></strong></td>
-                                    <td>
-                                        <span
-                                            class="badge <?php echo $order['payment_status'] === 'paid' ? 'bg-success' : 'bg-warning'; ?>">
-                                            <?php echo ucfirst($order['payment_status']); ?>
-                                        </span><br>
-                                        <small
-                                            class="text-muted"><?php echo strtoupper($order['payment_method']); ?></small>
-                                    </td>
-                                    <td>
-                                        <?php
-                                        $badge_class = 'bg-secondary';
-                                        switch ($order['order_status']) {
-                                            case 'pending':
-                                                $badge_class = 'bg-warning';
-                                                break;
-                                            case 'processing':
-                                                $badge_class = 'bg-info';
-                                                break;
-                                            case 'shipped':
-                                                $badge_class = 'bg-primary';
-                                                break;
-                                            case 'delivered':
-                                                $badge_class = 'bg-success';
-                                                break;
-                                            case 'cancelled':
-                                                $badge_class = 'bg-danger';
-                                                break;
-                                        }
-                                        ?>
-                                        <span class="badge <?php echo $badge_class; ?>">
-                                            <?php echo ucfirst($order['order_status']); ?>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <a href="order-detail.php?id=<?php echo $order['id']; ?>"
-                                            class="btn btn-sm btn-primary" title="View Details">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                    </td>
+                                    <th style="width: 40px;">
+                                        <input type="checkbox" class="select-all-checkbox" id="selectAll"
+                                            onchange="toggleSelectAll(this)">
+                                    </th>
+                                    <th>Order #</th>
+                                    <th>Customer</th>
+                                    <th>Date & Time</th>
+                                    <th>Total</th>
+                                    <th>Payment</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($orders as $order): ?>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" class="order-checkbox" name="order_ids[]"
+                                                value="<?php echo $order['id']; ?>" onchange="updateBulkActions()">
+                                        </td>
+                                        <td><strong><?php echo htmlspecialchars($order['order_number']); ?></strong></td>
+                                        <td>
+                                            <?php echo htmlspecialchars($order['customer_name']); ?><br>
+                                            <small
+                                                class="text-muted"><?php echo htmlspecialchars($order['customer_email']); ?></small>
+                                        </td>
+                                        <td>
+                                                <?php echo date('M d, Y', strtotime($order['created_at'])); ?><br>
+                                            <small
+                                                class="text-muted"><?php echo date('h:i A', strtotime($order['created_at'])); ?></small>
+                                        </td>
+                                        <td><strong><?php echo format_price($order['total_amount']); ?></strong></td>
+                                        <td>
+                                            <span
+                                                class="badge <?php echo $order['payment_status'] === 'paid' ? 'bg-success' : 'bg-warning'; ?>">
+                                                <?php echo ucfirst($order['payment_status']); ?>
+                                            </span><br>
+                                            <small
+                                                class="text-muted"><?php echo strtoupper($order['payment_method']); ?></small>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $badge_class = 'bg-secondary';
+                                            switch ($order['order_status']) {
+                                                case 'pending':
+                                                    $badge_class = 'bg-warning';
+                                                    break;
+                                                case 'processing':
+                                                    $badge_class = 'bg-info';
+                                                    break;
+                                                case 'shipped':
+                                                    $badge_class = 'bg-primary';
+                                                    break;
+                                                case 'delivered':
+                                                    $badge_class = 'bg-success';
+                                                    break;
+                                                case 'cancelled':
+                                                    $badge_class = 'bg-danger';
+                                                    break;
+                                            }
+                                            ?>
+                                             <span class="badge <?php echo $badge_class; ?>">
+                                                    <?php echo ucfirst($order['order_status']); ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="order-detail.php?id=<?php echo $order['id']; ?>"
+                                                class="btn btn-sm btn-primary" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
 
                 <?php if (empty($orders)): ?>
                     <div class="text-center py-5">
@@ -164,5 +267,39 @@ include 'includes/sidebar.php';
         </div>
     </div>
 </div>
+
+<script>
+    function toggleSelectAll(checkbox) {
+        const checkboxes = document.querySelectorAll('.order-checkbox');
+        checkboxes.forEach(cb => cb.checked = checkbox.checked);
+        updateBulkActions();
+    }
+
+    function updateBulkActions() {
+        const checkboxes = document.querySelectorAll('.order-checkbox:checked');
+        const bulkActionsBar = document.getElementById('bulkActionsBar');
+        const selectedCount = document.getElementById('selectedCount');
+
+        selectedCount.textContent = checkboxes.length;
+
+        if (checkboxes.length > 0) {
+            bulkActionsBar.classList.add('show');
+        } else {
+            bulkActionsBar.classList.remove('show');
+        }
+
+        // Update select all checkbox state
+        const allCheckboxes = document.querySelectorAll('.order-checkbox');
+        const selectAllCheckbox = document.getElementById('selectAll');
+        selectAllCheckbox.checked = allCheckboxes.length > 0 && checkboxes.length === allCheckboxes.length;
+    }
+
+    function clearSelection() {
+        const checkboxes = document.querySelectorAll('.order-checkbox');
+        checkboxes.forEach(cb => cb.checked = false);
+        document.getElementById('selectAll').checked = false;
+        updateBulkActions();
+    }
+</script>
 
 <?php include 'includes/footer.php'; ?>
