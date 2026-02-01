@@ -464,8 +464,8 @@ h6,
     border: 1px solid #ddd;
     border-radius: 4px;
     overflow: hidden;
-    height: 36px;
-    width: 160px;
+    height: 36px !important;
+    width: 160px !important;
 }
 
 .quantity-picker-custom .qty-btn {
