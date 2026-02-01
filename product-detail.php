@@ -367,13 +367,33 @@ include 'includes/navbar.php';
                             <div class="review-item mb-4 pb-4 border-bottom">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <div>
-                                        <h6 class="mb-1"><?php echo htmlspecialchars($review['user_name']); ?></h6>
+                                        <h6 class="mb-1 fw-bold"><?php echo htmlspecialchars($review['user_name']); ?></h6>
                                         <?php echo display_rating($review['rating'], false); ?>
                                     </div>
                                     <small
                                         class="text-muted"><?php echo date('M d, Y', strtotime($review['created_at'])); ?></small>
                                 </div>
-                                <p class="mb-0"><?php echo nl2br(htmlspecialchars($review['review_text'])); ?></p>
+
+                                <p class="mb-2"><?php echo nl2br(htmlspecialchars($review['review_text'])); ?></p>
+
+                                <?php if (!empty($review['images'])): ?>
+                                    <div class="review-images-flex">
+                                        <?php foreach ($review['images'] as $img): ?>
+                                            <a href="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>" target="_blank">
+                                                <img src="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
+                                                    class="review-img-thumb" alt="Review Image">
+                                            </a>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if (!empty($review['admin_reply'])): ?>
+                                    <div class="admin-reply-box">
+                                        <span class="admin-reply-label">Support Team Response:</span>
+                                        <p class="mb-0 small text-dark">
+                                            <?php echo nl2br(htmlspecialchars($review['admin_reply'])); ?></p>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
@@ -381,35 +401,52 @@ include 'includes/navbar.php';
                     <?php endif; ?>
 
                     <?php if (is_logged_in()): ?>
-                        <div class="mt-4">
-                            <h5>Write a Review</h5>
-                            <form action="<?php echo SITE_URL; ?>/api/submit-review.php" method="POST">
+                        <div class="mt-4 p-4 bg-light rounded-4">
+                            <h5 class="mb-4">Write a Review</h5>
+                            <form id="reviewForm" enctype="multipart/form-data">
                                 <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+
                                 <div class="mb-3">
-                                    <label class="form-label">Rating</label>
+                                    <label class="form-label d-block">Overall Rating</label>
                                     <div class="rating-input">
                                         <input type="radio" name="rating" value="5" id="star5" required>
-                                        <label for="star5"><i class="fas fa-star"></i></label>
+                                        <label for="star5" title="5 stars"><i class="fas fa-star"></i></label>
                                         <input type="radio" name="rating" value="4" id="star4">
-                                        <label for="star4"><i class="fas fa-star"></i></label>
+                                        <label for="star4" title="4 stars"><i class="fas fa-star"></i></label>
                                         <input type="radio" name="rating" value="3" id="star3">
-                                        <label for="star3"><i class="fas fa-star"></i></label>
+                                        <label for="star3" title="3 stars"><i class="fas fa-star"></i></label>
                                         <input type="radio" name="rating" value="2" id="star2">
-                                        <label for="star2"><i class="fas fa-star"></i></label>
+                                        <label for="star2" title="2 stars"><i class="fas fa-star"></i></label>
                                         <input type="radio" name="rating" value="1" id="star1">
-                                        <label for="star1"><i class="fas fa-star"></i></label>
+                                        <label for="star1" title="1 star"><i class="fas fa-star"></i></label>
                                     </div>
                                 </div>
+
                                 <div class="mb-3">
-                                    <label class="form-label">Your Review</label>
-                                    <textarea class="form-control" name="review_text" rows="4" required></textarea>
+                                    <label class="form-label">Review Comment</label>
+                                    <textarea class="form-control" name="review_text" rows="4"
+                                        placeholder="Share your experience with this product..." required></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Submit Review</button>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Upload Photos (Optional)</label>
+                                    <input type="file" class="form-control" name="review_images[]" multiple
+                                        accept="image/png, image/jpeg, image/webp">
+                                    <div class="form-text">You can select up to 5 images. Max 5MB per image. (PNG, JPG,
+                                        WEBP)</div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary px-5 btn-lg rounded-pill" id="submitReviewBtn">
+                                    Submit Review
+                                </button>
+
+                                <div id="reviewMessage" class="mt-3"></div>
                             </form>
                         </div>
                     <?php else: ?>
-                        <p class="text-muted">Please <a href="<?php echo SITE_URL; ?>/login">login</a> to write a
-                            review.</p>
+                        <div class="alert alert-info border-0 rounded-4">
+                            Please <a href="<?php echo SITE_URL; ?>/login" class="fw-bold">login</a> to write a review.
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -532,6 +569,44 @@ include 'includes/navbar.php';
                 let val = parseInt(qtyInput.value);
                 let max = parseInt(qtyInput.getAttribute('max')) || 99;
                 if (val < max) qtyInput.value = val + 1;
+            });
+        }
+
+        // Review Form Submission
+        const reviewForm = document.getElementById('reviewForm');
+        if (reviewForm) {
+            reviewForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const submitBtn = document.getElementById('submitReviewBtn');
+                const messageDiv = document.getElementById('reviewMessage');
+                const formData = new FormData(this);
+                
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
+                messageDiv.innerHTML = '';
+
+                fetch('<?php echo SITE_URL; ?>/api/submit-review.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        messageDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                        reviewForm.reset();
+                    } else {
+                        messageDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    messageDiv.innerHTML = `<div class="alert alert-danger">Something went wrong. Please try again later.</div>`;
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Submit Review';
+                });
             });
         }
     });

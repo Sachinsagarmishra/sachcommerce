@@ -752,3 +752,73 @@ h6,
     background: transparent;
     font-weight: 600;
 }
+
+/* Review System Styles */
+.review-images-flex {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.review-img-thumb {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid #eee;
+    transition: transform 0.2s;
+}
+
+.review-img-thumb:hover {
+    transform: scale(1.05);
+}
+
+.admin-reply-box {
+    background-color: #f8f9fa;
+    border-left: 4px solid var(--primary-color);
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 0 8px 8px 0;
+}
+
+.admin-reply-label {
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
+
+.rating-input input {
+    display: none;
+}
+
+.rating-input label {
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rating-input label i {
+    color: #ddd;
+    font-size: 1.5rem;
+    transition: color 0.2s;
+}
+
+.rating-input input:checked~label i,
+.rating-input label:hover~label i,
+.rating-input label:hover i {
+    color: #ffc107;
+}

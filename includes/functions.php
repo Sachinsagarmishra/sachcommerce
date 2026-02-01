@@ -228,7 +228,21 @@ function get_product_reviews($product_id, $limit = null)
         $stmt->execute([$product_id]);
     }
 
-    return $stmt->fetchAll();
+    $reviews = $stmt->fetchAll();
+
+    // Fetch images for each review
+    foreach ($reviews as &$review) {
+        $stmt_img = $pdo->prepare("SELECT image_path FROM review_images WHERE review_id = ?");
+        $stmt_img->execute([$review['id']]);
+        $review['images'] = $stmt_img->fetchAll(PDO::FETCH_COLUMN);
+
+        // Ensure comment/review_text consistency
+        if (!isset($review['review_text']) && isset($review['comment'])) {
+            $review['review_text'] = $review['comment'];
+        }
+    }
+
+    return $reviews;
 }
 
 /**

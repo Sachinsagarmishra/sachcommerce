@@ -12,6 +12,25 @@ $success = '';
 $action = isset($_GET['action']) ? $_GET['action'] : 'list';
 $edit_review = null;
 
+// --- PROACTIVE DB CHECK ---
+try {
+    $pdo->query("SELECT 1 FROM review_images LIMIT 1");
+} catch (Exception $e) {
+    // Table missing, create it
+    $pdo->exec("CREATE TABLE IF NOT EXISTS review_images (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        review_id INT NOT NULL,
+        image_path VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (review_id) REFERENCES reviews(id) ON DELETE CASCADE
+    )");
+    
+    // Also ensure admin_reply and status columns exist in reviews
+    try { $pdo->exec("ALTER TABLE reviews ADD COLUMN status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending'"); } catch (Exception $ex) {}
+    try { $pdo->exec("ALTER TABLE reviews ADD COLUMN admin_reply TEXT DEFAULT NULL"); } catch (Exception $ex) {}
+}
+
+
 // --- HANDLE ACTIONS ---
 
 // 1. DELETE
@@ -83,6 +102,11 @@ if ($action === 'edit' && isset($_GET['id'])) {
         header('Location: reviews.php');
         exit;
     }
+    
+    // Fetch review images
+    $stmt_img = $pdo->prepare("SELECT image_path FROM review_images WHERE review_id = ?");
+    $stmt_img->execute([(int)$_GET['id']]);
+    $edit_review['images'] = $stmt_img->fetchAll(PDO::FETCH_COLUMN);
 }
 
 
@@ -182,6 +206,19 @@ include 'includes/sidebar.php';
                             <?php echo display_rating($edit_review['rating'], false); ?>
                             <p class="mt-2 text-muted fst-italic">by <?php echo htmlspecialchars($edit_review['user_name']); ?> on <?php echo date('M d, Y', strtotime($edit_review['created_at'])); ?></p>
                             <p><?php echo nl2br(htmlspecialchars($edit_review['comment'])); ?></p>
+                            
+                            <?php if (!empty($edit_review['images'])): ?>
+                                <div class="mt-3">
+                                    <label class="form-label d-block fw-bold">Review Photos</label>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <?php foreach ($edit_review['images'] as $img): ?>
+                                            <a href="../uploads/reviews/<?php echo $img; ?>" target="_blank">
+                                                <img src="../uploads/reviews/<?php echo $img; ?>" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+                                            </a>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <div class="col-md-6 border-start">
                             <form method="POST">
