@@ -81,6 +81,14 @@ body.sidebar-open {
     font-weight: 600;
 }
 
+.admin-sidebar-logo {
+    max-height: 40px;
+    object-fit: contain;
+    width: auto;
+    display: block;
+    margin: 0 auto;
+}
+
 .sidebar-nav {
     padding: 20px 0;
 }

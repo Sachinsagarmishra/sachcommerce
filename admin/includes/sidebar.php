@@ -11,10 +11,21 @@ $products_open = in_array($current_page, $products_pages);
 $reports_open = in_array($current_page, $reports_pages);
 $settings_open = in_array($current_page, $settings_pages) || strpos($current_page, 'settings') !== false;
 ?>
+<?php
+$site_logo = get_site_setting('site_logo');
+$site_name = get_site_setting('site_name', SITE_NAME);
+?>
 <!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-        <h4><i class="fas fa-store"></i> <?php echo SITE_NAME; ?></h4>
+        <a href="dashboard.php" class="text-decoration-none">
+            <?php if ($site_logo): ?>
+                <img src="<?php echo SITE_URL; ?>/uploads/logos/<?php echo $site_logo; ?>"
+                    alt="<?php echo htmlspecialchars($site_name); ?>" class="img-fluid admin-sidebar-logo">
+            <?php else: ?>
+                <h4><i class="fas fa-store"></i> <?php echo htmlspecialchars($site_name); ?></h4>
+            <?php endif; ?>
+        </a>
     </div>
 
     <nav class="sidebar-nav">
