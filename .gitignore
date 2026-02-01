@@ -12,6 +12,7 @@
 
 # PHP related
 vendor/
+!vendor/phpmailer/
 composer.lock
 
 # Uploads
