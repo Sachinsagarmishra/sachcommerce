@@ -219,7 +219,7 @@ include 'includes/navbar.php';
                                 <div class="product-footer">
                                     <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
                                         data-product-id="<?php echo $product['id']; ?>">
-                                        <i class="fas fa-cart me-2"></i>Add to Cart
+                                        <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                                     </button>
                                 </div>
                             </div>

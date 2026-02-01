@@ -47,12 +47,12 @@ include 'includes/navbar.php';
                                     </tr>
                                 </thead>
                                 <tbody>
-                                        <?php foreach ($cart_items as $item): ?>
-                                                <?php
-                                                $item_price = $item['sale_price'] ?? $item['price'];
-                                                $item_total = $item_price * $item['quantity'];
-                                                ?>
-          <tr>
+                                    <?php foreach ($cart_items as $item): ?>
+                                        <?php
+                                        $item_price = $item['sale_price'] ?? $item['price'];
+                                        $item_total = $item_price * $item['quantity'];
+                                        ?>
+                                        <tr>
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <img src="<?php echo $item['image'] ? PRODUCT_IMAGE_URL . $item['image'] : 'https://via.placeholder.com/80x80'; ?>"
@@ -63,18 +63,18 @@ include 'includes/navbar.php';
                                                         <h6 class="mb-1">
                                                             <a href="<?php echo SITE_URL; ?>/products/<?php echo $item['slug']; ?>"
                                                                 class="text-decoration-none text-dark">
-                                                                        <?php echo htmlspecialchars($item['name']); ?>
+                                                                <?php echo htmlspecialchars($item['name']); ?>
                                                             </a>
                                                         </h6>
-                                                                <?php if ($item['stock_quantity'] < $item['quantity']): ?>
+                                                        <?php if ($item['stock_quantity'] < $item['quantity']): ?>
                                                             <small class="text-danger">Only <?php echo $item['stock_quantity']; ?>
                                                                 left in stock</small>
-                                                      <?php endif; ?>
+                                                        <?php endif; ?>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="align-middle">
-                                             <?php echo format_price($item_price); ?>
+                                                <?php echo format_price($item_price); ?>
                                             </td>
                                             <td class="align-middle">
                                                 <div class="input-group" style="width: 130px;">
@@ -102,7 +102,7 @@ include 'includes/navbar.php';
                                                 </button>
                                             </td>
                                         </tr>
-                                        <?php endforeach; ?>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -129,19 +129,19 @@ include 'includes/navbar.php';
                             <strong><?php echo format_price($cart_total); ?></strong>
                         </div>
 
-                            <?php
-                            $shipping_cost = $cart_total >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_CHARGE;
-                            $total = $cart_total + $shipping_cost;
-                            ?>
+                        <?php
+                        $shipping_cost = $cart_total >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_CHARGE;
+                        $total = $cart_total + $shipping_cost;
+                        ?>
 
-                            <div class="d-flex justify-content-between mb-3">
+                        <div class="d-flex justify-content-between mb-3">
                             <span>Shipping:</span>
                             <strong>
-                                    <?php if ($shipping_cost == 0): ?>
+                                <?php if ($shipping_cost == 0): ?>
                                     <span class="text-success">FREE</span>
-                                    <?php else: ?>
-                                            <?php echo format_price($shipping_cost); ?>
-                              <?php endif; ?>
+                                <?php else: ?>
+                                    <?php echo format_price($shipping_cost); ?>
+                                <?php endif; ?>
                             </strong>
                         </div>
 
@@ -149,7 +149,7 @@ include 'includes/navbar.php';
                             <div class="alert alert-info small">
                                 Add <?php echo format_price(FREE_SHIPPING_THRESHOLD - $cart_total); ?> more for FREE shipping!
                             </div>
-                      <?php endif; ?>
+                        <?php endif; ?>
 
                         <hr>
 
@@ -190,7 +190,7 @@ include 'includes/navbar.php';
     <?php else: ?>
         <!-- Empty Cart -->
         <div class="text-center py-5">
-            <i class="fas fa-cart fa-4x text-muted mb-4"></i>
+            <i class="fas fa-shopping-cart fa-4x text-muted mb-4"></i>
             <h3>Your cart is empty</h3>
             <p class="text-muted mb-4">Add some products to get started!</p>
             <a href="<?php echo SITE_URL; ?>/shop" class="btn btn-primary btn-lg">

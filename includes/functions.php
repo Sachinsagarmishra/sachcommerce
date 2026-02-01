@@ -421,17 +421,17 @@ function display_rating($rating, $show_number = true)
 
     // Full stars
     for ($i = 0; $i < $full_stars; $i++) {
-        $html .= '<i class="fas fa-star-filled text-warning"></i>';
+        $html .= '<i class="fas fa-star text-warning"></i>';
     }
 
     // Half star
     if ($half_star) {
-        $html .= '<i class="fas fa-star-filled-half-alt text-warning"></i>';
+        $html .= '<i class="fas fa-star-half-alt text-warning"></i>';
     }
 
     // Empty stars
     for ($i = 0; $i < $empty_stars; $i++) {
-        $html .= '<i class="fas fa-star text-warning"></i>';
+        $html .= '<i class="far fa-star text-warning"></i>';
     }
 
     if ($show_number) {

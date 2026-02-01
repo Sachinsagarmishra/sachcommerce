@@ -206,7 +206,7 @@ include 'includes/navbar.php';
                                     </div>
                                     <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
                                         data-product-id="<?php echo $product['id']; ?>">
-                                        <i class="fas fa-cart"></i> Add to Cart
+                                        <i class="fas fa-shopping-cart"></i> Add to Cart
                                     </button>
                                 </div>
                             </div>
