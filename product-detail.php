@@ -482,10 +482,15 @@ include 'includes/navbar.php';
                         <div id="reviewsList">
                             <?php if (!empty($reviews)): ?>
                                 <?php foreach ($reviews as $review): ?>
-                                    <div class="mb-4 pb-4 border-bottom">
+                                    <?php
+                                    $display_name = $review['user_name'];
+                                    if ($display_name === 'Admin User')
+                                        $display_name = 'Customer';
+                                    ?>
+                                            <div class="mb-4 pb-4 border-bottom">
                                         <div class="d-flex justify-content-between mb-2">
                                             <span
-                                                class="fw-bold text-dark"><?php echo htmlspecialchars($review['user_name']); ?></span>
+                                                class="fw-bold text-dark"><?php echo htmlspecialchars($display_name); ?></span>
                                             <small
                                                 class="text-muted"><?php echo date('d M Y', strtotime($review['created_at'])); ?></small>
                                         </div>
@@ -773,7 +778,7 @@ include 'includes/navbar.php';
 
         function renderPagination(pagination) {
             const { current_page, total_pages } = pagination;
-            if (total_pages <= 1) {
+            if (total_pages < 1) {
                 reviewPagination.innerHTML = '';
                 return;
             }
@@ -820,9 +825,8 @@ include 'includes/navbar.php';
             reviewFilter.addEventListener('change', () => loadReviews(1));
         }
 
-        // Initial load only if results are empty or needed for complex filters
-        // For now, let's load it on demand to ensure filters work immediately
-        // loadReviews(1); 
+        // Load reviews automatically on page load to ensure pagination/filters are active
+        loadReviews(1);
     });
 </script>
 

@@ -72,7 +72,7 @@ try {
     }
 
     $pdo->commit();
-    echo json_encode(['success' => true, 'message' => 'Review submitted successfully! It will be live after admin approval.']);
+    echo json_encode(['success' => true, 'message' => 'Review submitted successfully! It will be live after approval.']);
 } catch (Exception $e) {
     $pdo->rollBack();
     echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);

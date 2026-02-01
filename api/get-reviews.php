@@ -69,6 +69,11 @@ try {
 
     // Fetch images and admin replies for each review
     foreach ($reviews as &$review) {
+        // Remove 'Admin' from name if it exists
+        if ($review['user_name'] === 'Admin User') {
+            $review['user_name'] = 'Customer';
+        }
+
         $stmt_img = $pdo->prepare("SELECT image_path FROM review_images WHERE review_id = ?");
         $stmt_img->execute([$review['id']]);
         $review['images'] = $stmt_img->fetchAll(PDO::FETCH_COLUMN);
