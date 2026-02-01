@@ -26,18 +26,25 @@ $(document).ready(function () {
         const btn = $(this);
         const productId = btn.data('product-id');
 
-        // Check for quantity input (detail page or cart)
+        // Check for quantity input - first look for #productQuantity (product detail page)
         let quantity = 1;
-        const qtyInput = btn.closest('.row, .product-footer, .product-info').find('.qty-input, #productQuantity');
-        if (qtyInput.length) {
-            quantity = qtyInput.val();
+        const detailPageQty = $('#productQuantity');
+        if (detailPageQty.length) {
+            quantity = parseInt(detailPageQty.val()) || 1;
         } else {
-            quantity = btn.data('quantity') || 1;
+            // Check in nearby containers
+            const qtyInput = btn.closest('.cart-controls-wrapper, .product-footer, .product-info, .row').find('.qty-input');
+            if (qtyInput.length) {
+                quantity = parseInt(qtyInput.val()) || 1;
+            } else {
+                quantity = parseInt(btn.data('quantity')) || 1;
+            }
         }
 
         $.ajax({
             url: baseSiteUrl + '/api/add-to-cart.php',
             method: 'POST',
+            dataType: 'json',
             data: {
                 product_id: productId,
                 quantity: quantity
@@ -243,11 +250,12 @@ $(document).ready(function () {
     $(document).on('click', '.buy-now-btn', function (e) {
         e.preventDefault();
         const productId = $(this).data('product-id');
-        let quantity = $('#productQuantity').val() || 1;
+        let quantity = parseInt($('#productQuantity').val()) || 1;
 
         $.ajax({
             url: baseSiteUrl + '/api/add-to-cart.php',
             method: 'POST',
+            dataType: 'json',
             data: {
                 product_id: productId,
                 quantity: quantity
