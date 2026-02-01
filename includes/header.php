@@ -262,6 +262,11 @@ $current_dir = dirname($script_name);
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="<?php echo SITE_URL; ?>/assets/images/favicon.ico">
+
+    <!-- Global JavaScript Variables -->
+    <script>
+        var baseSiteUrl = '<?php echo SITE_URL; ?>';
+    </script>
 </head>
 
 <body>
