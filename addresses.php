@@ -34,7 +34,7 @@ include 'includes/navbar.php';
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>My Addresses</h2>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal">
-            <i class="lni lni-plus me-2"></i>Add New Address
+            <i class="fas fa-plus me-2"></i>Add New Address
         </button>
     </div>
 
@@ -87,11 +87,11 @@ include 'includes/navbar.php';
         </div>
     <?php else: ?>
         <div class="text-center py-5">
-            <i class="lni lni-map-marker fa-4x text-muted mb-4"></i>
+            <i class="fas fa-map-marker fa-4x text-muted mb-4"></i>
             <h4>No addresses saved</h4>
             <p class="text-muted mb-4">Add your shipping address for faster checkout</p>
             <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#addAddressModal">
-                <i class="lni lni-plus me-2"></i>Add Address
+                <i class="fas fa-plus me-2"></i>Add Address
             </button>
         </div>
     <?php endif; ?>

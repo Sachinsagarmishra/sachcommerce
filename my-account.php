@@ -64,25 +64,25 @@ include 'includes/navbar.php';
 
             <div class="list-group mt-3">
                 <a href="<?php echo SITE_URL; ?>/my-account" class="list-group-item list-group-item-action active">
-                    <i class="lni lni-dashboard me-2"></i>Dashboard
+                    <i class="fas fa-dashboard me-2"></i>Dashboard
                 </a>
                 <a href="<?php echo SITE_URL; ?>/orders" class="list-group-item list-group-item-action">
-                    <i class="lni lni-shopping-basket me-2"></i>My Orders
+                    <i class="fas fa-shopping-basket me-2"></i>My Orders
                 </a>
                 <a href="<?php echo SITE_URL; ?>/wishlist" class="list-group-item list-group-item-action">
-                    <i class="lni lni-heart me-2"></i>Wishlist
+                    <i class="fas fa-heart me-2"></i>Wishlist
                 </a>
                 <a href="<?php echo SITE_URL; ?>/addresses" class="list-group-item list-group-item-action">
-                    <i class="lni lni-map-marker me-2"></i>Addresses
+                    <i class="fas fa-map-marker me-2"></i>Addresses
                 </a>
                 <a href="<?php echo SITE_URL; ?>/profile-edit" class="list-group-item list-group-item-action">
-                    <i class="lni lni-user-edit me-2"></i>Edit Profile
+                    <i class="fas fa-user-edit me-2"></i>Edit Profile
                 </a>
                 <a href="<?php echo SITE_URL; ?>/change-password" class="list-group-item list-group-item-action">
                     <i class="fas fa-key me-2"></i>Change Password
                 </a>
                 <a href="<?php echo SITE_URL; ?>/logout" class="list-group-item list-group-item-action text-danger">
-                    <i class="lni lni-exit me-2"></i>Logout
+                    <i class="fas fa-exit me-2"></i>Logout
                 </a>
             </div>
         </div>
@@ -96,7 +96,7 @@ include 'includes/navbar.php';
                 <div class="col-md-4">
                     <div class="card text-center">
                         <div class="card-body">
-                            <i class="lni lni-shopping-basket fa-3x text-primary mb-3"></i>
+                            <i class="fas fa-shopping-basket fa-3x text-primary mb-3"></i>
                             <h3 class="mb-0"><?php echo $order_stats['total_orders']; ?></h3>
                             <p class="text-muted mb-0">Total Orders</p>
                         </div>
@@ -105,7 +105,7 @@ include 'includes/navbar.php';
                 <div class="col-md-4">
                     <div class="card text-center">
                         <div class="card-body">
-                            <i class="lni lni-heart fa-3x text-danger mb-3"></i>
+                            <i class="fas fa-heart fa-3x text-danger mb-3"></i>
                             <h3 class="mb-0"><?php echo $wishlist_stats['wishlist_count']; ?></h3>
                             <p class="text-muted mb-0">Wishlist Items</p>
                         </div>
@@ -114,7 +114,7 @@ include 'includes/navbar.php';
                 <div class="col-md-4">
                     <div class="card text-center">
                         <div class="card-body">
-                            <i class="lni lni-user-check fa-3x text-success mb-3"></i>
+                            <i class="fas fa-user-check fa-3x text-success mb-3"></i>
                             <h3 class="mb-0">Active</h3>
                             <p class="text-muted mb-0">Account Status</p>
                         </div>
@@ -164,7 +164,7 @@ include 'includes/navbar.php';
                         </div>
                     <?php else: ?>
                         <div class="text-center py-4">
-                            <i class="lni lni-shopping-basket fa-3x text-muted mb-3"></i>
+                            <i class="fas fa-shopping-basket fa-3x text-muted mb-3"></i>
                             <p class="text-muted">No orders yet</p>
                             <a href="<?php echo SITE_URL; ?>/shop" class="btn btn-primary">Start Shopping</a>
                         </div>

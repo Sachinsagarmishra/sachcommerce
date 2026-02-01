@@ -65,7 +65,7 @@ include 'includes/navbar.php';
                         <div class="product-footer">
                             <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
                                 data-product-id="<?php echo $item['product_id']; ?>">
-                                <i class="lni lni-cart me-2"></i>Add to Cart
+                                <i class="fas fa-cart me-2"></i>Add to Cart
                             </button>
                         </div>
                     </div>
@@ -74,11 +74,11 @@ include 'includes/navbar.php';
         </div>
     <?php else: ?>
         <div class="text-center py-5">
-            <i class="lni lni-heart fa-4x text-muted mb-4"></i>
+            <i class="fas fa-heart fa-4x text-muted mb-4"></i>
             <h4>Your wishlist is empty</h4>
             <p class="text-muted mb-4">Save your favorite items here!</p>
             <a href="<?php echo SITE_URL; ?>/shop" class="btn btn-primary btn-lg">
-                <i class="lni lni-shopping-basket me-2"></i>Start Shopping
+                <i class="fas fa-shopping-basket me-2"></i>Start Shopping
             </a>
         </div>
     <?php endif; ?>

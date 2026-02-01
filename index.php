@@ -90,23 +90,23 @@ include 'includes/navbar.php';
 </section>
 
 <!-- Categories Section -->
-<section class="py-5 bg-light">
+<section class="py-4 bg-light">
     <div class="container">
-        <h2 class="section-title">Shop by Category</h2>
-        <div class="row g-4">
+        <div class="categories-horizontal-wrapper">
             <?php if (!empty($categories)): ?>
                 <?php foreach ($categories as $category): ?>
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <a href="<?php echo SITE_URL; ?>/shop?category=<?php echo $category['slug']; ?>"
-                            class="text-decoration-none">
-                            <div class="card category-card text-center h-100">
-                                <div class="card-body p-4">
-                                    <i class="fas fa-tag fa-3x text-primary mb-3"></i>
-                                    <h6 class="card-title mb-0"><?php echo htmlspecialchars($category['name']); ?></h6>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
+                    <a href="<?php echo SITE_URL; ?>/shop?category=<?php echo $category['slug']; ?>"
+                        class="category-item-circular">
+                        <div class="category-image-circle">
+                            <?php if (!empty($category['image'])): ?>
+                                <img src="<?php echo CATEGORY_IMAGE_URL . $category['image']; ?>"
+                                    alt="<?php echo htmlspecialchars($category['name']); ?>">
+                            <?php else: ?>
+                                <i class="fas fa-tag"></i>
+                            <?php endif; ?>
+                        </div>
+                        <span class="category-name-circular"><?php echo htmlspecialchars($category['name']); ?></span>
+                    </a>
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
@@ -150,7 +150,7 @@ include 'includes/navbar.php';
                                     </div>
                                     <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
                                         data-product-id="<?php echo $product['id']; ?>">
-                                        <i class="lni lni-cart"></i> Add to Cart
+                                        <i class="fas fa-shopping-cart"></i> Add to Cart
                                     </button>
                                 </div>
                             </div>
@@ -159,7 +159,7 @@ include 'includes/navbar.php';
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="col-12 text-center py-5">
-                    <i class="lni lni-package-open fa-4x text-muted mb-3"></i>
+                    <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
                     <h4>No Featured Products Yet</h4>
                     <p class="text-muted">Import sample products or add products via admin panel</p>
                     <a href="<?php echo SITE_URL; ?>/admin/" class="btn btn-primary">Go to Admin Panel</a>
@@ -206,7 +206,7 @@ include 'includes/navbar.php';
                                     </div>
                                     <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
                                         data-product-id="<?php echo $product['id']; ?>">
-                                        <i class="lni lni-cart"></i> Add to Cart
+                                        <i class="fas fa-cart"></i> Add to Cart
                                     </button>
                                 </div>
                             </div>

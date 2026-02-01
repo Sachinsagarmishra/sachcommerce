@@ -65,7 +65,7 @@ include 'includes/navbar.php';
                         
                         <div class="text-center">
                             <a href="<?php echo SITE_URL; ?>/login.php" class="text-decoration-none">
-                                <i class="lni lni-arrow-left me-2"></i>Back to Login
+                                <i class="fas fa-arrow-left me-2"></i>Back to Login
                             </a>
                         </div>
                     </form>

@@ -394,7 +394,7 @@ function get_menu_categories($limit = null)
 {
     global $pdo;
 
-    $sql = "SELECT * FROM categories WHERE status = 'active' AND parent_id IS NULL ORDER BY display_order ASC, name ASC";
+    $sql = "SELECT * FROM categories WHERE status = 'active' ORDER BY display_order ASC, name ASC";
 
     if ($limit) {
         $sql .= " LIMIT ?";
@@ -421,17 +421,17 @@ function display_rating($rating, $show_number = true)
 
     // Full stars
     for ($i = 0; $i < $full_stars; $i++) {
-        $html .= '<i class="lni lni-star-filled text-warning"></i>';
+        $html .= '<i class="fas fa-star-filled text-warning"></i>';
     }
 
     // Half star
     if ($half_star) {
-        $html .= '<i class="lni lni-star-filled-half-alt text-warning"></i>';
+        $html .= '<i class="fas fa-star-filled-half-alt text-warning"></i>';
     }
 
     // Empty stars
     for ($i = 0; $i < $empty_stars; $i++) {
-        $html .= '<i class="lni lni-star text-warning"></i>';
+        $html .= '<i class="fas fa-star text-warning"></i>';
     }
 
     if ($show_number) {

@@ -29,7 +29,7 @@ include 'includes/navbar.php';
     <div class="row justify-content-center">
         <div class="col-md-6 text-center">
             <?php if (isset($success)): ?>
-            <i class="lni lni-checkmark-circle text-success fa-4x mb-4"></i>
+            <i class="fas fa-checkmark-circle text-success fa-4x mb-4"></i>
             <h2>Email Verified!</h2>
             <p class="lead mb-4">Your email has been successfully verified.</p>
             <a href="<?php echo SITE_URL; ?>/login.php" class="btn btn-primary">Login to Your Account</a>
@@ -39,7 +39,7 @@ include 'includes/navbar.php';
             <p class="lead mb-4">Invalid or expired verification link.</p>
             <a href="<?php echo SITE_URL; ?>/register.php" class="btn btn-primary">Register Again</a>
             <?php else: ?>
-            <i class="lni lni-envelope fa-4x text-muted mb-4"></i>
+            <i class="fas fa-envelope fa-4x text-muted mb-4"></i>
             <h2>Invalid Link</h2>
             <p class="lead mb-4">Please use the link sent to your email.</p>
             <a href="<?php echo SITE_URL; ?>" class="btn btn-primary">Go to Homepage</a>

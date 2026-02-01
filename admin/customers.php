@@ -108,7 +108,7 @@ include 'includes/sidebar.php';
                 
                 <?php if (empty($customers)): ?>
                 <div class="text-center py-5">
-                    <i class="lni lni-users fa-4x text-muted mb-3"></i>
+                    <i class="fas fa-users fa-4x text-muted mb-3"></i>
                     <p class="text-muted">No customers found</p>
                 </div>
                 <?php endif; ?>

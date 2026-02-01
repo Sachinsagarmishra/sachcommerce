@@ -60,7 +60,7 @@ include 'includes/navbar.php';
 
     <?php if (!empty($success)): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="lni lni-checkmark-circle me-2"></i><?php echo $success; ?>
+            <i class="fas fa-checkmark-circle me-2"></i><?php echo $success; ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
@@ -75,7 +75,7 @@ include 'includes/navbar.php';
                         <h5 class="mb-0">Shipping Address</h5>
                         <a href="#" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
                             data-bs-target="#addAddressModal">
-                            <i class="lni lni-plus me-1"></i>Add New
+                            <i class="fas fa-plus me-1"></i>Add New
                         </a>
                     </div>
                     <div class="card-body">

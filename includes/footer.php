@@ -4,16 +4,16 @@
         <div class="row">
             <!-- About -->
             <div class="col-md-3 mb-4">
-                <h5 class="mb-3"><i class="lni lni-store"></i> <?php echo SITE_NAME; ?></h5>
+                <h5 class="mb-3"><i class="fas fa-store"></i> <?php echo SITE_NAME; ?></h5>
                 <p class="text-white-50"><?php echo SITE_TAGLINE; ?></p>
                 <div class="social-links mt-3">
                     <a href="<?php echo FACEBOOK_URL; ?>" class="text-white me-3"><i
-                            class="lni lni-facebook-filled fa-lg"></i></a>
+                            class="fab fa-facebook-f fa-lg"></i></a>
                     <a href="<?php echo INSTAGRAM_URL; ?>" class="text-white me-3"><i
-                            class="lni lni-instagram-filled fa-lg"></i></a>
+                            class="fab fa-instagram fa-lg"></i></a>
                     <a href="<?php echo TWITTER_URL; ?>" class="text-white me-3"><i
-                            class="lni lni-twitter-original fa-lg"></i></a>
-                    <a href="<?php echo YOUTUBE_URL; ?>" class="text-white"><i class="lni lni-youtube fa-lg"></i></a>
+                            class="fab fa-twitter fa-lg"></i></a>
+                    <a href="<?php echo YOUTUBE_URL; ?>" class="text-white"><i class="fab fa-youtube fa-lg"></i></a>
                 </div>
             </div>
 
@@ -54,16 +54,16 @@
                 <h5 class="mb-3">Contact Us</h5>
                 <ul class="list-unstyled text-white-50">
                     <li class="mb-2">
-                        <i class="lni lni-map-marker me-2"></i>
+                        <i class="fas fa-map-marker-alt me-2"></i>
                         <?php echo SITE_ADDRESS; ?>
                     </li>
                     <li class="mb-2">
-                        <i class="lni lni-phone me-2"></i>
+                        <i class="fas fa-phone-alt me-2"></i>
                         <a href="tel:<?php echo SITE_PHONE; ?>"
                             class="text-white-50 text-decoration-none"><?php echo SITE_PHONE; ?></a>
                     </li>
                     <li class="mb-2">
-                        <i class="lni lni-envelope me-2"></i>
+                        <i class="fas fa-envelope me-2"></i>
                         <a href="mailto:<?php echo SITE_EMAIL; ?>"
                             class="text-white-50 text-decoration-none"><?php echo SITE_EMAIL; ?></a>
                     </li>
@@ -77,7 +77,7 @@
                         <div class="input-group input-group-sm">
                             <input type="email" class="form-control" name="email" placeholder="Your email" required>
                             <button class="btn btn-primary" type="submit">
-                                <i class="lni lni-telegram-original"></i>
+                                <i class="fas fa-paper-plane"></i>
                             </button>
                         </div>
                     </form>
@@ -104,7 +104,7 @@
 
 <!-- Back to Top Button -->
 <button id="backToTop" class="btn btn-primary btn-floating" style="display: none;">
-    <i class="lni lni-chevron-up"></i>
+    <i class="fas fa-chevron-up"></i>
 </button>
 
 <!-- Bootstrap 5 JS -->

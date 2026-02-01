@@ -68,7 +68,7 @@ include 'includes/sidebar.php';
             </div>
             <div class="col-md-6 text-end">
                 <a href="product-add.php" class="btn btn-primary">
-                    <i class="lni lni-plus me-2"></i>Add New Product
+                    <i class="fas fa-plus me-2"></i>Add New Product
                 </a>
             </div>
         </div>
@@ -193,7 +193,7 @@ include 'includes/sidebar.php';
 
                 <?php if (empty($products)): ?>
                     <div class="text-center py-5">
-                        <i class="lni lni-package-open fa-4x text-muted mb-3"></i>
+                        <i class="fas fa-package-open fa-4x text-muted mb-3"></i>
                         <p class="text-muted">No products found</p>
                     </div>
                 <?php endif; ?>

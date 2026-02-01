@@ -219,7 +219,7 @@ include 'includes/navbar.php';
                                 <div class="product-footer">
                                     <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
                                         data-product-id="<?php echo $product['id']; ?>">
-                                        <i class="lni lni-cart me-2"></i>Add to Cart
+                                        <i class="fas fa-cart me-2"></i>Add to Cart
                                     </button>
                                 </div>
                             </div>
@@ -266,7 +266,7 @@ include 'includes/navbar.php';
 
             <?php else: ?>
                 <div class="text-center py-5">
-                    <i class="lni lni-package-open fa-4x text-muted mb-3"></i>
+                    <i class="fas fa-package-open fa-4x text-muted mb-3"></i>
                     <h4>No products found</h4>
                     <p class="text-muted">Try adjusting your filters or search terms</p>
                     <a href="<?php echo SITE_URL; ?>/shop" class="btn btn-primary">View All Products</a>

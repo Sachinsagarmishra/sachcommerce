@@ -56,7 +56,7 @@ include 'includes/sidebar.php';
             </div>
             <div class="col-md-6 text-end">
                 <a href="orders.php" class="btn btn-secondary">
-                    <i class="lni lni-arrow-left me-2"></i>Back to Orders
+                    <i class="fas fa-arrow-left me-2"></i>Back to Orders
                 </a>
             </div>
         </div>
@@ -124,8 +124,8 @@ include 'includes/sidebar.php';
                         <p class="mb-1"><strong><?php echo htmlspecialchars($order['customer_name']); ?></strong></p>
                         <p class="mb-1"><?php echo htmlspecialchars($order['shipping_address']); ?></p>
                         <p class="mb-1"><?php echo htmlspecialchars($order['shipping_city']); ?>, <?php echo htmlspecialchars($order['shipping_state']); ?> - <?php echo htmlspecialchars($order['shipping_pincode']); ?></p>
-                        <p class="mb-0"><i class="lni lni-phone me-2"></i><?php echo htmlspecialchars($order['customer_phone']); ?></p>
-                        <p class="mb-0"><i class="lni lni-envelope me-2"></i><?php echo htmlspecialchars($order['customer_email']); ?></p>
+                        <p class="mb-0"><i class="fas fa-phone me-2"></i><?php echo htmlspecialchars($order['customer_phone']); ?></p>
+                        <p class="mb-0"><i class="fas fa-envelope me-2"></i><?php echo htmlspecialchars($order['customer_email']); ?></p>
                     </div>
                 </div>
             </div>
@@ -149,7 +149,7 @@ include 'includes/sidebar.php';
                                 </select>
                             </div>
                             <button type="submit" name="update_status" class="btn btn-primary w-100">
-                                <i class="lni lni-save me-2"></i>Update Status
+                                <i class="fas fa-save me-2"></i>Update Status
                             </button>
                         </form>
                     </div>

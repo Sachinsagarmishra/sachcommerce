@@ -101,7 +101,7 @@ if (isset($_GET['error'])) {
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email Address</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="lni lni-envelope"></i></span>
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                                         <input type="email" class="form-control" id="email" name="email" 
                                                placeholder="admin@example.com" required autofocus
                                                value="<?php echo htmlspecialchars($email ?? ''); ?>">
@@ -123,13 +123,13 @@ if (isset($_GET['error'])) {
                                 </div>
                                 
                                 <button type="submit" class="btn btn-primary w-100 py-2">
-                                    <i class="lni lni-enter"></i> Login
+                                    <i class="fas fa-enter"></i> Login
                                 </button>
                             </form>
                             
                             <div class="text-center mt-4">
                                 <a href="<?php echo SITE_URL; ?>" class="text-muted">
-                                    <i class="lni lni-arrow-left"></i> Back to Website
+                                    <i class="fas fa-arrow-left"></i> Back to Website
                                 </a>
                             </div>
                             

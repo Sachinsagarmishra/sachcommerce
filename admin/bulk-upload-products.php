@@ -142,7 +142,7 @@ include 'includes/sidebar.php';
             </div>
             <div class="col-md-6 text-end">
                 <a href="products.php" class="btn btn-secondary">
-                    <i class="lni lni-arrow-left me-2"></i>Back to Products
+                    <i class="fas fa-arrow-left me-2"></i>Back to Products
                 </a>
             </div>
         </div>
@@ -175,7 +175,7 @@ include 'includes/sidebar.php';
                                 <div class="form-text mt-2">Upload your product list in CSV format.</div>
                             </div>
                             <button type="submit" class="btn btn-primary px-4">
-                                <i class="lni lni-upload me-2"></i>Start Upload
+                                <i class="fas fa-upload me-2"></i>Start Upload
                             </button>
                         </form>
                     </div>

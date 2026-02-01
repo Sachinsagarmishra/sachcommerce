@@ -112,7 +112,7 @@ $(document).ready(function () {
         const btn = $(this);
         const originalText = btn.html();
 
-        btn.prop('disabled', true).html('<i class="lni lni-spinner fa-spin me-2"></i>Adding...');
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Adding...');
 
         $.ajax({
             url: baseSiteUrl + '/api/add-to-wishlist.php',
@@ -124,12 +124,12 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     btn.removeClass('btn-danger').addClass('btn-success');
-                    btn.html('<i class="lni lni-checkmark me-2"></i>Added to Wishlist');
+                    btn.html('<i class="fas fa-check me-2"></i>Added to Wishlist');
                     showToast('Success', 'Product added to your wishlist!', 'success');
 
                     // Change to "View Wishlist" after 2 seconds
                     setTimeout(function () {
-                        btn.html('<i class="lni lni-heart me-2"></i>View Wishlist');
+                        btn.html('<i class="fas fa-heart me-2"></i>View Wishlist');
                         btn.off('click').on('click', function () {
                             window.location.href = baseSiteUrl + '/wishlist.php';
                         });
