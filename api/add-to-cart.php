@@ -4,14 +4,46 @@ require_once '../includes/functions.php';
 
 header('Content-Type: application/json');
 
-// Get product ID and quantity
-$product_id = isset($_POST['product_id']) ? (int)$_POST['product_id'] : 0;
-$quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
+// Handle both regular POST and JSON input
+$product_id = 0;
+$quantity = 1;
 
-if (!$product_id || $quantity < 1) {
+// Check for regular POST data first
+if (isset($_POST['product_id'])) {
+    $product_id = (int) $_POST['product_id'];
+    $quantity = isset($_POST['quantity']) ? (int) $_POST['quantity'] : 1;
+} else {
+    // Try to get JSON input
+    $json_input = file_get_contents('php://input');
+    if (!empty($json_input)) {
+        $data = json_decode($json_input, true);
+        if ($data) {
+            $product_id = isset($data['product_id']) ? (int) $data['product_id'] : 0;
+            $quantity = isset($data['quantity']) ? (int) $data['quantity'] : 1;
+        }
+    }
+
+    // Also check GET as fallback
+    if (!$product_id && isset($_GET['product_id'])) {
+        $product_id = (int) $_GET['product_id'];
+        $quantity = isset($_GET['quantity']) ? (int) $_GET['quantity'] : 1;
+    }
+}
+
+// Ensure quantity is at least 1
+if ($quantity < 1) {
+    $quantity = 1;
+}
+
+if (!$product_id) {
     echo json_encode([
         'success' => false,
-        'message' => 'Invalid product or quantity'
+        'message' => 'Invalid product or quantity',
+        'debug' => [
+            'post' => $_POST,
+            'received_product_id' => $product_id,
+            'received_quantity' => $quantity
+        ]
     ]);
     exit;
 }
@@ -61,7 +93,7 @@ try {
     if ($cart_item) {
         // Update quantity
         $new_quantity = $cart_item['quantity'] + $quantity;
-        
+
         if ($new_quantity > $product['stock_quantity']) {
             echo json_encode([
                 'success' => false,
@@ -69,7 +101,7 @@ try {
             ]);
             exit;
         }
-        
+
         $stmt = $pdo->prepare("UPDATE cart SET quantity = ?, updated_at = NOW() WHERE id = ?");
         $stmt->execute([$new_quantity, $cart_item['id']]);
     } else {
@@ -77,7 +109,7 @@ try {
         $stmt = $pdo->prepare("INSERT INTO cart (user_id, session_id, product_id, quantity, created_at) VALUES (?, ?, ?, ?, NOW())");
         $stmt->execute([$user_id, $session_id, $product_id, $quantity]);
     }
-    
+
     echo json_encode([
         'success' => true,
         'message' => 'Product added to cart'
