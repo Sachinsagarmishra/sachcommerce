@@ -218,16 +218,22 @@ try {
     $_SESSION['last_order_number'] = $order_number;
     $_SESSION['last_order_id'] = $order_id;
 
-    // Send email for guest user with temporary password
+    // Store temp password for guest users (shown on confirmation page only)
     if ($new_user_created && $temp_password) {
         $_SESSION['guest_password'] = $temp_password;
         $_SESSION['guest_email'] = $customer_email;
+    }
 
-        // Try to send email (non-blocking)
-        try {
-            sendGuestAccountEmail($customer_email, $customer_name, $temp_password, $order_number);
-        } catch (Exception $e) {
-            error_log("Failed to send guest account email: " . $e->getMessage());
+    // Send Order Confirmation Email (only for COD - Razorpay sends after payment verification)
+    if ($payment_method === 'cod') {
+        // Check if email notifications are enabled
+        $email_enabled = get_site_setting('email_order_confirmation', '1');
+        if ($email_enabled === '1' && !empty($customer_email)) {
+            try {
+                sendOrderConfirmationEmail($order_id, $order_number, $customer_email, $customer_name, $cart_total, $cart_items);
+            } catch (Exception $e) {
+                error_log("Failed to send order confirmation email: " . $e->getMessage());
+            }
         }
     }
 
@@ -265,58 +271,151 @@ function generateTempPassword($length = 10)
 }
 
 /**
- * Send email to guest user with account credentials
+ * Send Order Confirmation Email to Customer
+ * Uses PHPMailer with dynamic SMTP settings from admin panel
  */
-function sendGuestAccountEmail($email, $name, $password, $order_number)
+function sendOrderConfirmationEmail($order_id, $order_number, $email, $name, $total, $items)
 {
-    $subject = "Your TrendsOne Account Created - Order #" . $order_number;
+    // Get site settings
+    $site_name = get_site_setting('site_name', SITE_NAME ?? 'TrendsOne');
+    $support_phone = get_site_setting('support_phone', '');
+    $support_email = get_site_setting('support_email', '');
+
+    // Format currency
+    $formatted_total = '₹' . number_format($total, 2);
+
+    // Build items HTML
+    $items_html = '';
+    foreach ($items as $item) {
+        $item_total = '₹' . number_format($item['price'] * $item['quantity'], 2);
+        $items_html .= "
+            <tr>
+                <td style='padding: 10px; border-bottom: 1px solid #eee;'>{$item['name']}</td>
+                <td style='padding: 10px; border-bottom: 1px solid #eee; text-align: center;'>{$item['quantity']}</td>
+                <td style='padding: 10px; border-bottom: 1px solid #eee; text-align: right;'>{$item_total}</td>
+            </tr>
+        ";
+    }
+
+    $subject = "Order Confirmed - #{$order_number} - {$site_name}";
 
     $message = "
     <html>
     <head>
         <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #83b735; color: white; padding: 20px; text-align: center; }
-            .content { padding: 30px; background: #f9f9f9; }
-            .credentials { background: #fff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #83b735; }
-            .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-            .btn { display: inline-block; padding: 12px 30px; background: #83b735; color: white; text-decoration: none; border-radius: 5px; }
+            body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+            .container { max-width: 600px; margin: 0 auto; }
+            .header { background: linear-gradient(135deg, #83b735 0%, #5a8f1d 100%); color: white; padding: 30px; text-align: center; }
+            .header h1 { margin: 0; font-size: 24px; }
+            .content { padding: 30px; background: #ffffff; }
+            .order-box { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+            .order-number { font-size: 28px; color: #83b735; font-weight: bold; }
+            .items-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+            .items-table th { background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; }
+            .total-row { font-size: 18px; font-weight: bold; background: #f8f9fa; }
+            .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; background: #f8f9fa; }
+            .success-icon { font-size: 48px; margin-bottom: 10px; }
         </style>
     </head>
     <body>
         <div class='container'>
             <div class='header'>
-                <h1>Welcome to TrendsOne!</h1>
+                <div class='success-icon'>✓</div>
+                <h1>Order Confirmed!</h1>
             </div>
             <div class='content'>
                 <p>Dear <strong>{$name}</strong>,</p>
-                <p>Thank you for your order! Your order <strong>#{$order_number}</strong> has been placed successfully.</p>
-                <p>We've created an account for you so you can track your order and shop faster in the future.</p>
+                <p>Thank you for your order! We're getting it ready for you.</p>
                 
-                <div class='credentials'>
-                    <h3>Your Login Credentials</h3>
-                    <p><strong>Email:</strong> {$email}</p>
-                    <p><strong>Temporary Password:</strong> {$password}</p>
+                <div class='order-box'>
+                    <p style='margin: 0 0 10px 0; color: #666;'>Order Number</p>
+                    <p class='order-number'>#{$order_number}</p>
                 </div>
                 
-                <p><strong>Important:</strong> Please change your password after your first login for security.</p>
+                <h3 style='border-bottom: 2px solid #83b735; padding-bottom: 10px;'>Order Summary</h3>
+                <table class='items-table'>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th style='text-align: center;'>Qty</th>
+                            <th style='text-align: right;'>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {$items_html}
+                        <tr class='total-row'>
+                            <td colspan='2' style='padding: 15px;'>Total</td>
+                            <td style='padding: 15px; text-align: right;'>{$formatted_total}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p>We'll notify you when your order is shipped.</p>
                 
                 <p style='text-align: center; margin-top: 30px;'>
-                    <a href='" . SITE_URL . "/login' class='btn'>Login to Your Account</a>
+                    <a href='" . SITE_URL . "/orders' style='display: inline-block; padding: 12px 30px; background: #83b735; color: white; text-decoration: none; border-radius: 5px;'>Track Your Order</a>
                 </p>
             </div>
             <div class='footer'>
-                <p>&copy; " . date('Y') . " TrendsOne. All rights reserved.</p>
+                <p><strong>{$site_name}</strong></p>
+                " . ($support_phone ? "<p>📞 {$support_phone}</p>" : "") . "
+                " . ($support_email ? "<p>✉️ {$support_email}</p>" : "") . "
+                <p>&copy; " . date('Y') . " {$site_name}. All rights reserved.</p>
             </div>
         </div>
     </body>
     </html>
     ";
 
-    $headers = "MIME-Version: 1.0\r\n";
-    $headers .= "Content-type: text/html; charset=UTF-8\r\n";
-    $headers .= "From: " . SITE_NAME . " <" . SITE_EMAIL . ">\r\n";
+    // Use the send_email function which uses PHPMailer with dynamic settings
+    $result = send_email($email, $subject, '', ['body' => $message]);
 
-    mail($email, $subject, $message, $headers);
+    // If template-based send_email doesn't work, send directly
+    if (!$result['success']) {
+        // Fallback: Try direct PHPMailer
+        $phpmailer_path = ROOT_PATH . '/vendor/phpmailer/PHPMailer.php';
+        if (file_exists($phpmailer_path)) {
+            require_once $phpmailer_path;
+            require_once ROOT_PATH . '/vendor/phpmailer/SMTP.php';
+            require_once ROOT_PATH . '/vendor/phpmailer/Exception.php';
+
+            $smtp_host = get_site_setting('smtp_host', 'smtp.gmail.com');
+            $smtp_port = get_site_setting('smtp_port', '587');
+            $smtp_username = get_site_setting('smtp_username', '');
+            $smtp_password = get_site_setting('smtp_password', '');
+            $smtp_encryption = get_site_setting('smtp_encryption', 'tls');
+            $smtp_from_email = get_site_setting('smtp_from_email', $smtp_username);
+            $smtp_from_name = get_site_setting('smtp_from_name', $site_name);
+
+            if (!empty($smtp_username) && !empty($smtp_password)) {
+                try {
+                    $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+                    $mail->CharSet = 'UTF-8';
+                    $mail->isSMTP();
+                    $mail->Host = $smtp_host;
+                    $mail->SMTPAuth = true;
+                    $mail->Username = $smtp_username;
+                    $mail->Password = $smtp_password;
+                    $mail->SMTPSecure = $smtp_encryption;
+                    $mail->Port = (int) $smtp_port;
+
+                    $mail->setFrom($smtp_from_email ?: $smtp_username, $smtp_from_name);
+                    $mail->addAddress($email, $name);
+
+                    $mail->isHTML(true);
+                    $mail->Subject = $subject;
+                    $mail->Body = $message;
+
+                    $mail->send();
+                    return true;
+                } catch (Exception $e) {
+                    error_log("Order email failed: " . $e->getMessage());
+                    return false;
+                }
+            }
+        }
+    }
+
+    return $result['success'];
 }
+

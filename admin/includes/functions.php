@@ -243,23 +243,13 @@ function update_order_status($order_id, $new_status, $admin_notes = '')
 
 /**
  * Send order status update email
+ * DISABLED: Per business requirement, only order confirmation emails are sent.
+ * Status update notifications are not sent to customers.
  */
 function send_order_status_email($order_id, $status)
 {
-    global $pdo;
-
-    $stmt = $pdo->prepare("SELECT * FROM orders WHERE id = ?");
-    $stmt->execute([$order_id]);
-    $order = $stmt->fetch();
-
-    if ($order) {
-        $data = [
-            'order_number' => $order['order_number'],
-            'customer_name' => $order['customer_name'],
-            'status' => ucfirst($status),
-            'order_url' => SITE_URL . '/order-detail.php?id=' . $order_id
-        ];
-
-        send_email($order['customer_email'], 'Order Status Update', 'order-status-update', $data);
-    }
+    // Order status update emails disabled
+    // Only order confirmation emails are sent at checkout
+    return;
 }
+

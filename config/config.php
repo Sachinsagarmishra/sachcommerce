@@ -472,13 +472,35 @@ function delete_file($file_path)
 }
 
 /**
- * Send email using PHPMailer
+ * Send email using PHPMailer with dynamic settings from database
  */
 function send_email($to, $subject, $template, $data = [])
 {
-    require_once ROOT_PATH . '/vendor/phpmailer/PHPMailer.php';
+    // Check if PHPMailer exists
+    $phpmailer_path = ROOT_PATH . '/vendor/phpmailer/PHPMailer.php';
+    if (!file_exists($phpmailer_path)) {
+        error_log("PHPMailer not found at: $phpmailer_path");
+        return ['success' => false, 'message' => 'PHPMailer not installed'];
+    }
+
+    require_once $phpmailer_path;
     require_once ROOT_PATH . '/vendor/phpmailer/SMTP.php';
     require_once ROOT_PATH . '/vendor/phpmailer/Exception.php';
+
+    // Get SMTP settings from database (dynamic)
+    $smtp_host = get_site_setting('smtp_host', SMTP_HOST ?? 'smtp.gmail.com');
+    $smtp_port = get_site_setting('smtp_port', SMTP_PORT ?? '587');
+    $smtp_username = get_site_setting('smtp_username', SMTP_USERNAME ?? '');
+    $smtp_password = get_site_setting('smtp_password', SMTP_PASSWORD ?? '');
+    $smtp_encryption = get_site_setting('smtp_encryption', 'tls');
+    $smtp_from_email = get_site_setting('smtp_from_email', $smtp_username);
+    $smtp_from_name = get_site_setting('smtp_from_name', get_site_setting('site_name', 'TrendsOne'));
+
+    // Check if configured
+    if (empty($smtp_username) || empty($smtp_password)) {
+        error_log("SMTP not configured - email not sent to: $to");
+        return ['success' => false, 'message' => 'SMTP not configured'];
+    }
 
     $mail = new PHPMailer\PHPMailer\PHPMailer(true);
 
@@ -487,14 +509,14 @@ function send_email($to, $subject, $template, $data = [])
         $mail->Encoding = 'base64';
 
         $mail->isSMTP();
-        $mail->Host = SMTP_HOST;
+        $mail->Host = $smtp_host;
         $mail->SMTPAuth = true;
-        $mail->Username = SMTP_USERNAME;
-        $mail->Password = SMTP_PASSWORD;
-        $mail->SMTPSecure = SMTP_ENCRYPTION;
-        $mail->Port = SMTP_PORT;
+        $mail->Username = $smtp_username;
+        $mail->Password = $smtp_password;
+        $mail->SMTPSecure = $smtp_encryption;
+        $mail->Port = (int) $smtp_port;
 
-        $mail->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
+        $mail->setFrom($smtp_from_email ?: $smtp_username, $smtp_from_name);
         $mail->addAddress($to);
 
         $mail->isHTML(true);
