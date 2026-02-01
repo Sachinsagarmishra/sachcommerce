@@ -414,7 +414,7 @@ include 'includes/navbar.php';
                                     <h5 class="fw-bold mb-3">Reviews with images</h5>
                                     <div class="gallery-grid">
                                         <?php foreach ($all_review_images as $img): ?>
-                                            <div class="gallery-item">
+                                            <div class="gallery-item" style="min-width: 100px; height: 100px;">
                                                 <a href="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
                                                     target="_blank">
                                                     <img src="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
@@ -492,8 +492,7 @@ include 'includes/navbar.php';
                                     <?php foreach ($reviews as $review): ?>
                                         <div class="review-item mb-4 border-bottom pb-4">
                                             <div class="review-user-info d-flex align-items-center mb-2">
-                                                <img src="<?php echo $review['avatar'] ? SITE_URL . '/uploads/avatars/' . $review['avatar'] : 'https://www.gravatar.com/avatar/' . md5($review['user_name']) . '?d=mp'; ?>"
-                                                    alt="User Avatar">
+                                                <i class="fas fa-user-circle fa-lg me-2 text-muted"></i>
                                                 <span
                                                     class="fw-bold"><?php echo htmlspecialchars($review['user_name']); ?></span>
                                             </div>
@@ -530,7 +529,8 @@ include 'includes/navbar.php';
                                                     <span class="admin-reply-label d-block fw-bold small text-primary mb-1">Response
                                                         from TrendsOne:</span>
                                                     <p class="mb-0 small">
-                                                        <?php echo nl2br(htmlspecialchars($review['admin_reply'])); ?></p>
+                                                        <?php echo nl2br(htmlspecialchars($review['admin_reply'])); ?>
+                                                    </p>
                                                 </div>
                                             <?php endif; ?>
                                         </div>
