@@ -138,8 +138,18 @@ foreach ($cart_items as $item) {
     $subtotal += $item_price * $item['quantity'];
 }
 
+// Apply coupon if exists
+$coupon_discount = 0;
+$coupon_code = null;
+if (isset($_SESSION['applied_coupon'])) {
+    $coupon_discount = $_SESSION['applied_coupon']['discount'];
+    $coupon_code = $_SESSION['applied_coupon']['code'];
+}
+
 $shipping_charge = $subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_CHARGE;
-$total_amount = $subtotal + $shipping_charge;
+$total_amount = ($subtotal - $coupon_discount) + $shipping_charge;
+if ($total_amount < 0)
+    $total_amount = 0;
 
 // Create order
 try {
@@ -153,10 +163,11 @@ try {
         INSERT INTO orders (
             user_id, order_number, order_status, payment_method, payment_status,
             subtotal, shipping_charge, total_amount,
+            coupon_code, coupon_discount,
             customer_name, customer_email, customer_phone,
             shipping_address, shipping_city, shipping_state, shipping_pincode,
             order_notes, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     ");
 
     $stmt->execute([
@@ -168,6 +179,8 @@ try {
         $subtotal,
         $shipping_charge,
         $total_amount,
+        $coupon_code,
+        $coupon_discount,
         $customer_name,
         $customer_email,
         $customer_phone,
@@ -179,6 +192,13 @@ try {
     ]);
 
     $order_id = $pdo->lastInsertId();
+
+    // Increment coupon usage count
+    if ($coupon_code) {
+        $stmt = $pdo->prepare("UPDATE coupons SET used_count = used_count + 1 WHERE code = ?");
+        $stmt->execute([$coupon_code]);
+        unset($_SESSION['applied_coupon']);
+    }
 
     // Insert order items
     foreach ($cart_items as $item) {

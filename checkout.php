@@ -317,7 +317,7 @@ include 'includes/navbar.php';
                                                         <?php echo htmlspecialchars($address['state']); ?> -
                                                         <?php echo htmlspecialchars($address['pincode']); ?>
                                                     </p>
-                                                        <?php echo htmlspecialchars($address['phone']); ?>
+                                                    <?php echo htmlspecialchars($address['phone']); ?>
                                                     </p>
                                                 </div>
                                             </div>
@@ -526,12 +526,42 @@ include 'includes/navbar.php';
                                 </strong>
                             </div>
 
+                            <?php
+                            $discount = 0;
+                            if (isset($_SESSION['applied_coupon'])) {
+                                $discount = $_SESSION['applied_coupon']['discount'];
+                                $total -= $discount;
+                            }
+                            ?>
+
+                            <?php if ($discount > 0): ?>
+                                <div class="summary-row text-success">
+                                    <span>Discount (<?php echo $_SESSION['applied_coupon']['code']; ?>):</span>
+                                    <strong>- <?php echo format_price($discount); ?></strong>
+                                </div>
+                                <div class="mb-3">
+                                    <a href="javascript:void(0)" onclick="removeCoupon()" class="small text-danger">Remove
+                                        Coupon</a>
+                                </div>
+                            <?php endif; ?>
+
                             <div class="summary-row total">
                                 <span>Total:</span>
                                 <span class="text-primary"><?php echo format_price($total); ?></span>
                             </div>
 
-                            <button type="submit" class="btn-place-order mt-4" id="placeOrderBtn">
+                            <?php if (!isset($_SESSION['applied_coupon'])): ?>
+                                <div class="mt-3 mb-3">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Coupon Code" id="couponCode">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="applyCoupon()">
+                                            Apply
+                                        </button>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+
+                            <button type="submit" class="btn-place-order mt-2" id="placeOrderBtn">
                                 Place Order
                             </button>
 
@@ -541,7 +571,6 @@ include 'includes/navbar.php';
                         </div>
                     </div>
                 </div>
-            </div>
         </form>
     </div>
 </div>
@@ -634,6 +663,43 @@ include 'includes/navbar.php';
         btn.innerHTML = 'Processing...';
         btn.disabled = true;
     });
+
+    function applyCoupon() {
+        const code = $('#couponCode').val();
+        if (!code) {
+            showToast('Error', 'Please enter a coupon code', 'error');
+            return;
+        }
+
+        $.ajax({
+            url: '<?php echo SITE_URL; ?>/api/apply-coupon.php',
+            method: 'POST',
+            data: {
+                coupon_code: code
+            },
+            success: function (response) {
+                if (response.success) {
+                    showToast('Success', response.message, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast('Error', response.message, 'error');
+                }
+            }
+        });
+    }
+
+    function removeCoupon() {
+        $.ajax({
+            url: '<?php echo SITE_URL; ?>/api/remove-coupon.php',
+            method: 'POST',
+            success: function (response) {
+                if (response.success) {
+                    showToast('Success', response.message, 'success');
+                    location.reload();
+                }
+            }
+        });
+    }
 </script>
 
 <?php include 'includes/footer.php'; ?>

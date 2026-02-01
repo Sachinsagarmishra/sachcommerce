@@ -148,6 +148,25 @@ include 'includes/navbar.php';
                             </div>
                         <?php endif; ?>
 
+                        <?php
+                        $discount = 0;
+                        if (isset($_SESSION['applied_coupon'])) {
+                            $discount = $_SESSION['applied_coupon']['discount'];
+                            $total -= $discount;
+                        }
+                        ?>
+
+                        <?php if ($discount > 0): ?>
+                            <div class="d-flex justify-content-between mb-3 text-success">
+                                <span>Discount (<?php echo $_SESSION['applied_coupon']['code']; ?>):</span>
+                                <strong>- <?php echo format_price($discount); ?></strong>
+                            </div>
+                            <div class="mb-3">
+                                <a href="javascript:void(0)" onclick="removeCoupon()" class="small text-danger">Remove
+                                    Coupon</a>
+                            </div>
+                        <?php endif; ?>
+
                         <hr>
 
                         <div class="d-flex justify-content-between mb-4">
@@ -255,10 +274,23 @@ include 'includes/navbar.php';
             },
             success: function (response) {
                 if (response.success) {
-                    showToast('Success', 'Coupon applied successfully!', 'success');
-                    location.reload();
+                    showToast('Success', response.message, 'success');
+                    setTimeout(() => location.reload(), 1000);
                 } else {
                     showToast('Error', response.message, 'error');
+                }
+            }
+        });
+    }
+
+    function removeCoupon() {
+        $.ajax({
+            url: '<?php echo SITE_URL; ?>/api/remove-coupon.php',
+            method: 'POST',
+            success: function (response) {
+                if (response.success) {
+                    showToast('Success', response.message, 'success');
+                    location.reload();
                 }
             }
         });
