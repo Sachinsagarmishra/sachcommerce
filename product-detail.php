@@ -208,14 +208,18 @@ include 'includes/navbar.php';
             </div>
 
             <div class="rating-section mb-3">
-                <div class="d-flex align-items-center">
-                    <?php if ($rating_data && $rating_data['total_reviews'] > 0): ?>
-                        <span class="me-2 fw-bold"><?php echo number_format($rating_data['avg_rating'], 1); ?></span>
+                <?php if ($rating_data && $rating_data['total_reviews'] > 0): ?>
+                    <div class="rating-pill d-inline-flex align-items-center bg-light rounded-pill px-3 py-1 border" style="background-color: #f9f4f1 !important; border-color: #f0e6e0 !important;">
                         <div class="stars me-2">
                             <?php echo display_rating($rating_data['avg_rating'], false); ?>
                         </div>
-                        <span class="text-muted small">(<?php echo $rating_data['total_reviews']; ?>)</span>
-                    <?php else: ?>
+                        <span class="fw-bold" style="color: #1a2b4c; font-size: 0.95rem;">
+                            (<?php echo number_format($rating_data['avg_rating'], 1); ?>)
+                        </span>
+                    </div>
+                    <span class="text-muted small ms-2"><?php echo $rating_data['total_reviews']; ?> reviews</span>
+                <?php else: ?>
+                    <div class="rating-pill d-inline-flex align-items-center bg-light rounded-pill px-3 py-1 border" style="background-color: #f9f4f1 !important; border-color: #f0e6e0 !important;">
                         <div class="stars me-2">
                             <i class="fas fa-star text-warning"></i>
                             <i class="fas fa-star text-warning"></i>
@@ -223,9 +227,10 @@ include 'includes/navbar.php';
                             <i class="fas fa-star text-warning"></i>
                             <i class="fas fa-star text-warning"></i>
                         </div>
-                        <span class="text-muted small">5 star rating</span>
-                    <?php endif; ?>
-                </div>
+                        <span class="fw-bold" style="color: #1a2b4c; font-size: 0.95rem;">(5.0)</span>
+                    </div>
+                    <span class="text-muted small ms-2">5 star rating</span>
+                <?php endif; ?>
             </div>
 
             <div class="short-description mb-4">
