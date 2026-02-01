@@ -43,6 +43,7 @@ h6,
 
 /* Top Bar */
 .top-bar {
+    background-color: var(--primary-color) !important;
     font-size: 13px;
 }
 
