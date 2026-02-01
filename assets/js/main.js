@@ -41,6 +41,8 @@ $(document).ready(function () {
             }
         }
 
+        console.log('Sending to cart:', { product_id: productId, quantity: quantity });
+
         $.ajax({
             url: baseSiteUrl + '/api/add-to-cart.php',
             method: 'POST',
@@ -50,6 +52,7 @@ $(document).ready(function () {
                 quantity: quantity
             },
             success: function (response) {
+                console.log('Cart API response:', response);
                 if (response.success) {
                     // Update cart count
                     updateCartCount();
@@ -61,10 +64,12 @@ $(document).ready(function () {
                         window.location.href = baseSiteUrl + '/cart.php';
                     }, 500);
                 } else {
+                    console.error('Cart error:', response);
                     showToast('Error', response.message || 'Failed to add product', 'error');
                 }
             },
-            error: function () {
+            error: function (xhr, status, error) {
+                console.error('AJAX error:', status, error, xhr.responseText);
                 showToast('Error', 'Something went wrong', 'error');
             }
         });
