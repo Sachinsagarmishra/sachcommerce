@@ -230,7 +230,15 @@ try {
         $email_enabled = get_site_setting('email_order_confirmation', '1');
         if ($email_enabled === '1' && !empty($customer_email)) {
             try {
-                sendOrderConfirmationEmail($order_id, $order_number, $customer_email, $customer_name, $cart_total, $cart_items);
+                // Pass guest credentials if new user was created
+                $guest_credentials = null;
+                if ($new_user_created && $temp_password) {
+                    $guest_credentials = [
+                        'email' => $customer_email,
+                        'password' => $temp_password
+                    ];
+                }
+                sendOrderConfirmationEmail($order_id, $order_number, $customer_email, $customer_name, $cart_total, $cart_items, $guest_credentials);
             } catch (Exception $e) {
                 error_log("Failed to send order confirmation email: " . $e->getMessage());
             }
@@ -273,8 +281,15 @@ function generateTempPassword($length = 10)
 /**
  * Send Order Confirmation Email to Customer
  * Uses PHPMailer with dynamic SMTP settings from admin panel
+ * @param int $order_id Order ID
+ * @param string $order_number Order number
+ * @param string $email Customer email
+ * @param string $name Customer name
+ * @param float $total Order total
+ * @param array $items Order items
+ * @param array|null $guest_credentials Guest login credentials if new account created
  */
-function sendOrderConfirmationEmail($order_id, $order_number, $email, $name, $total, $items)
+function sendOrderConfirmationEmail($order_id, $order_number, $email, $name, $total, $items, $guest_credentials = null)
 {
     // Get site settings
     $site_name = get_site_setting('site_name', SITE_NAME ?? 'TrendsOne');
@@ -294,6 +309,22 @@ function sendOrderConfirmationEmail($order_id, $order_number, $email, $name, $to
                 <td style='padding: 10px; border-bottom: 1px solid #eee; text-align: center;'>{$item['quantity']}</td>
                 <td style='padding: 10px; border-bottom: 1px solid #eee; text-align: right;'>{$item_total}</td>
             </tr>
+        ";
+    }
+
+    // Build guest credentials HTML if applicable
+    $credentials_html = '';
+    if ($guest_credentials) {
+        $credentials_html = "
+                <div style='background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107; margin: 20px 0;'>
+                    <h4 style='margin: 0 0 10px 0; color: #856404;'>🔐 Your Account Has Been Created</h4>
+                    <p style='margin: 0 0 5px 0; color: #856404;'>We've created an account for you to track orders and shop faster:</p>
+                    <div style='background: #fff; padding: 10px; border-radius: 5px; margin-top: 10px;'>
+                        <p style='margin: 0 0 5px 0;'><strong>Email:</strong> {$guest_credentials['email']}</p>
+                        <p style='margin: 0;'><strong>Password:</strong> {$guest_credentials['password']}</p>
+                    </div>
+                    <p style='margin: 10px 0 0 0; font-size: 12px; color: #856404;'><em>⚠️ Please change your password after first login for security.</em></p>
+                </div>
         ";
     }
 
@@ -331,6 +362,8 @@ function sendOrderConfirmationEmail($order_id, $order_number, $email, $name, $to
                     <p style='margin: 0 0 10px 0; color: #666;'>Order Number</p>
                     <p class='order-number'>#{$order_number}</p>
                 </div>
+                
+                {$credentials_html}
                 
                 <h3 style='border-bottom: 2px solid #83b735; padding-bottom: 10px;'>Order Summary</h3>
                 <table class='items-table'>

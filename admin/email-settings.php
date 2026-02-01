@@ -286,25 +286,55 @@ include 'includes/sidebar.php';
                             <button type="submit" name="send_test" value="1" class="btn btn-success w-100">
                                 <i class="fas fa-paper-plane me-2"></i>Send Test Email
                             </button>
+                            <small class="text-muted d-block mt-2 text-center">Sends a sample order confirmation email</small>
                         </div>
                     </div>
 
-                    <!-- Gmail Setup Guide -->
+                    <!-- Email Preview -->
                     <div class="card settings-card">
                         <div class="card-header py-3">
-                            <h5 class="mb-0"><i class="fab fa-google me-2 text-danger"></i>Gmail Setup</h5>
+                            <h5 class="mb-0"><i class="fas fa-eye me-2 text-info"></i>Email Preview</h5>
                         </div>
-                        <div class="card-body">
-                            <ol class="ps-3 mb-0">
-                                <li class="mb-2">Enable 2-Factor Authentication on your Gmail account</li>
-                                <li class="mb-2">Go to <a href="https://myaccount.google.com/apppasswords" target="_blank">Google App Passwords</a></li>
-                                <li class="mb-2">Generate a new App Password for "Mail"</li>
-                                <li class="mb-2">Use that 16-character password here</li>
-                            </ol>
-                            <hr>
-                            <p class="mb-1"><strong>SMTP Host:</strong> smtp.gmail.com</p>
-                            <p class="mb-1"><strong>SMTP Port:</strong> 587</p>
-                            <p class="mb-0"><strong>Encryption:</strong> TLS</p>
+                        <div class="card-body p-0">
+                            <div style="background: linear-gradient(135deg, #83b735 0%, #5a8f1d 100%); color: white; padding: 20px; text-align: center;">
+                                <div style="font-size: 32px;">✓</div>
+                                <h6 style="margin: 0;">Order Confirmed!</h6>
+                            </div>
+                            <div style="padding: 15px; font-size: 12px;">
+                                <p style="margin: 0 0 10px;">Dear <strong>Customer Name</strong>,</p>
+                                <p style="margin: 0 0 10px; color: #666;">Thank you for your order!</p>
+                                
+                                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                                    <small style="color: #666;">Order Number</small>
+                                    <div style="color: #83b735; font-weight: bold; font-size: 16px;">#ORD-12345</div>
+                                </div>
+                                
+                                <!-- Guest Account Credentials -->
+                                <div style="background: #fff3cd; padding: 10px; border-radius: 5px; border-left: 3px solid #ffc107; margin: 10px 0;">
+                                    <small style="color: #856404;"><strong>🔐 Your Account Created</strong></small>
+                                    <p style="margin: 5px 0 0; font-size: 11px; color: #856404;">
+                                        <strong>Email:</strong> guest@example.com<br>
+                                        <strong>Password:</strong> ********
+                                    </p>
+                                </div>
+                                
+                                <table style="width: 100%; font-size: 11px; border-collapse: collapse; margin: 10px 0;">
+                                    <tr style="background: #f8f9fa;">
+                                        <th style="padding: 5px; text-align: left;">Product</th>
+                                        <th style="padding: 5px; text-align: center;">Qty</th>
+                                        <th style="padding: 5px; text-align: right;">Price</th>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 5px; border-bottom: 1px solid #eee;">Sample Product</td>
+                                        <td style="padding: 5px; border-bottom: 1px solid #eee; text-align: center;">1</td>
+                                        <td style="padding: 5px; border-bottom: 1px solid #eee; text-align: right;">₹999</td>
+                                    </tr>
+                                    <tr style="background: #f8f9fa; font-weight: bold;">
+                                        <td colspan="2" style="padding: 5px;">Total</td>
+                                        <td style="padding: 5px; text-align: right;">₹999</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
