@@ -6,7 +6,53 @@ require_once 'includes/auth-check.php';
 
 $page_title = 'Products';
 
-// Handle delete
+// Handle bulk delete
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_delete'])) {
+    $product_ids = $_POST['product_ids'] ?? [];
+
+    if (!empty($product_ids)) {
+        try {
+            $pdo->beginTransaction();
+
+            // Delete from cart
+            $placeholders = str_repeat('?,', count($product_ids) - 1) . '?';
+            $stmt = $pdo->prepare("DELETE FROM cart WHERE product_id IN ($placeholders)");
+            $stmt->execute($product_ids);
+
+            // Delete from wishlist if exists
+            try {
+                $stmt = $pdo->prepare("DELETE FROM wishlist WHERE product_id IN ($placeholders)");
+                $stmt->execute($product_ids);
+            } catch (Exception $e) {
+                // Table might not exist, ignore
+            }
+
+            // Delete product images from product_images table if exists
+            try {
+                $stmt = $pdo->prepare("DELETE FROM product_images WHERE product_id IN ($placeholders)");
+                $stmt->execute($product_ids);
+            } catch (Exception $e) {
+                // Table might not exist, ignore
+            }
+
+            // Delete products
+            $stmt = $pdo->prepare("DELETE FROM products WHERE id IN ($placeholders)");
+            $stmt->execute($product_ids);
+
+            $pdo->commit();
+
+            $_SESSION['success'] = count($product_ids) . ' product(s) deleted successfully';
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            $_SESSION['error'] = 'Failed to delete products: ' . $e->getMessage();
+        }
+
+        header('Location: products.php');
+        exit;
+    }
+}
+
+// Handle single delete
 if (isset($_GET['delete'])) {
     $product_id = (int) $_GET['delete'];
     $stmt = $pdo->prepare("DELETE FROM products WHERE id = ?");
@@ -59,6 +105,34 @@ $categories = get_menu_categories();
 include 'includes/header.php';
 include 'includes/sidebar.php';
 ?>
+
+<style>
+    .bulk-actions {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        display: none;
+    }
+
+    .bulk-actions.show {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .product-checkbox {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+
+    .select-all-checkbox {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+</style>
 
 <div class="main-content">
     <div class="container-fluid">
@@ -127,73 +201,100 @@ include 'includes/sidebar.php';
         <!-- Products Table -->
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Image</th>
-                                <th>Name</th>
-                                <th>SKU</th>
-                                <th>Category</th>
-                                <th>Price</th>
-                                <th>Stock</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($products as $product): ?>
+                <!-- Bulk Actions Bar -->
+                <form method="POST" id="bulkDeleteForm">
+                    <div class="bulk-actions" id="bulkActionsBar">
+                        <div>
+                            <span id="selectedCount">0</span> product(s) selected
+                        </div>
+                        <div>
+                            <button type="submit" name="bulk_delete" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to delete the selected products? This action cannot be undone.')">
+                                <i class="fas fa-trash me-1"></i> Delete Selected
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-sm ms-2" onclick="clearSelection()">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <img src="<?php echo $product['primary_image'] ? PRODUCT_IMAGE_URL . $product['primary_image'] : 'https://via.placeholder.com/50'; ?>"
-                                            alt="<?php echo htmlspecialchars($product['name']); ?>"
-                                            style="width: 50px; height: 50px; object-fit: cover;">
-                                    </td>
-                                    <td><?php echo htmlspecialchars($product['name']); ?></td>
-                                    <td><?php echo htmlspecialchars($product['sku']); ?></td>
-                                    <td><?php echo htmlspecialchars($product['category_name'] ?? 'N/A'); ?></td>
-                                    <td>
-                                        <?php if ($product['sale_price']): ?>
-                                            <span class="text-danger"><?php echo format_price($product['sale_price']); ?></span>
-                                            <small
-                                                class="text-muted text-decoration-line-through"><?php echo format_price($product['price']); ?></small>
-                                        <?php else: ?>
-                                            <?php echo format_price($product['price']); ?>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <span
-                                            class="badge <?php echo $product['stock_quantity'] > 10 ? 'bg-success' : ($product['stock_quantity'] > 0 ? 'bg-warning' : 'bg-danger'); ?>">
-                                            <?php echo $product['stock_quantity']; ?>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span
-                                            class="badge <?php echo $product['status'] === 'active' ? 'bg-success' : 'bg-secondary'; ?>">
-                                            <?php echo ucfirst($product['status']); ?>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <a href="product-edit.php?id=<?php echo $product['id']; ?>"
-                                            class="btn btn-sm btn-primary" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="products.php?delete=<?php echo $product['id']; ?>"
-                                            class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Are you sure you want to delete this product?')"
-                                            title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </td>
+                                    <th style="width: 40px;">
+                                        <input type="checkbox" class="select-all-checkbox" id="selectAll"
+                                            onchange="toggleSelectAll(this)">
+                                    </th>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>SKU</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($products as $product): ?>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" class="product-checkbox" name="product_ids[]"
+                                                value="<?php echo $product['id']; ?>" onchange="updateBulkActions()">
+                                        </td>
+                                        <td>
+                                            <img src="<?php echo $product['primary_image'] ? PRODUCT_IMAGE_URL . $product['primary_image'] : 'https://via.placeholder.com/50'; ?>"
+                                                alt="<?php echo htmlspecialchars($product['name']); ?>"
+                                                style="width: 50px; height: 50px; object-fit: cover;">
+                                        </td>
+                                        <td><?php echo htmlspecialchars($product['name']); ?></td>
+                                        <td><?php echo htmlspecialchars($product['sku']); ?></td>
+                                        <td><?php echo htmlspecialchars($product['category_name'] ?? 'N/A'); ?></td>
+                                        <td>
+                                            <?php if ($product['sale_price']): ?>
+                                                <span
+                                                    class="text-danger"><?php echo format_price($product['sale_price']); ?></span>
+                                                <small
+                                                    class="text-muted text-decoration-line-through"><?php echo format_price($product['price']); ?></small>
+                                            <?php else: ?>
+                                                <?php echo format_price($product['price']); ?>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <span
+                                                class="badge <?php echo $product['stock_quantity'] > 10 ? 'bg-success' : ($product['stock_quantity'] > 0 ? 'bg-warning' : 'bg-danger'); ?>">
+                                                <?php echo $product['stock_quantity']; ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span
+                                                class="badge <?php echo $product['status'] === 'active' ? 'bg-success' : 'bg-secondary'; ?>">
+                                                <?php echo ucfirst($product['status']); ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="product-edit.php?id=<?php echo $product['id']; ?>"
+                                                class="btn btn-sm btn-primary" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="products.php?delete=<?php echo $product['id']; ?>"
+                                                class="btn btn-sm btn-danger"
+                                                onclick="return confirm('Are you sure you want to delete this product?')"
+                                                title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
 
                 <?php if (empty($products)): ?>
                     <div class="text-center py-5">
-                        <i class="fas fa-package-open fa-4x text-muted mb-3"></i>
+                        <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
                         <p class="text-muted">No products found</p>
                     </div>
                 <?php endif; ?>
@@ -201,5 +302,39 @@ include 'includes/sidebar.php';
         </div>
     </div>
 </div>
+
+<script>
+    function toggleSelectAll(checkbox) {
+        const checkboxes = document.querySelectorAll('.product-checkbox');
+        checkboxes.forEach(cb => cb.checked = checkbox.checked);
+        updateBulkActions();
+    }
+
+    function updateBulkActions() {
+        const checkboxes = document.querySelectorAll('.product-checkbox:checked');
+        const bulkActionsBar = document.getElementById('bulkActionsBar');
+        const selectedCount = document.getElementById('selectedCount');
+
+        selectedCount.textContent = checkboxes.length;
+
+        if (checkboxes.length > 0) {
+            bulkActionsBar.classList.add('show');
+        } else {
+            bulkActionsBar.classList.remove('show');
+        }
+
+        // Update select all checkbox state
+        const allCheckboxes = document.querySelectorAll('.product-checkbox');
+        const selectAllCheckbox = document.getElementById('selectAll');
+        selectAllCheckbox.checked = allCheckboxes.length > 0 && checkboxes.length === allCheckboxes.length;
+    }
+
+    function clearSelection() {
+        const checkboxes = document.querySelectorAll('.product-checkbox');
+        checkboxes.forEach(cb => cb.checked = false);
+        document.getElementById('selectAll').checked = false;
+        updateBulkActions();
+    }
+</script>
 
 <?php include 'includes/footer.php'; ?>
