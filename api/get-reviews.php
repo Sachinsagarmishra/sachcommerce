@@ -7,7 +7,7 @@ header('Content-Type: application/json');
 $product_id = isset($_GET['product_id']) ? (int) $_GET['product_id'] : 0;
 $filter = isset($_GET['filter']) ? $_GET['filter'] : 'recent';
 $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-$limit = 5;
+$limit = 3;
 $offset = ($page - 1) * $limit;
 
 if (!$product_id) {

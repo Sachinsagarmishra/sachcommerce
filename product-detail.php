@@ -30,7 +30,7 @@ if (empty($product_images) && !empty($product['primary_image'])) {
 }
 
 // Get product reviews
-$reviews = get_product_reviews($product['id'], 5);
+$reviews = get_product_reviews($product['id'], 3);
 $rating_data = get_product_rating($product['id']);
 
 // Get related products
@@ -493,7 +493,8 @@ include 'includes/navbar.php';
                                             <?php echo display_rating($review['rating'], false); ?>
                                         </div>
                                         <p class="mb-3 text-secondary">
-                                            <?php echo nl2br(htmlspecialchars($review['review_text'])); ?></p>
+                                            <?php echo nl2br(htmlspecialchars($review['review_text'])); ?>
+                                        </p>
 
                                         <?php if (!empty($review['images'])): ?>
                                             <div class="d-flex gap-2 flex-wrap mb-3">
