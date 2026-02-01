@@ -65,24 +65,7 @@ include 'includes/navbar.php';
         padding: 24px;
     }
 
-    .guest-info-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 20px;
-        border-radius: 12px;
-        margin-bottom: 24px;
-    }
 
-    .guest-info-section h5 {
-        margin: 0;
-        font-weight: 600;
-    }
-
-    .guest-info-section p {
-        margin: 10px 0 0;
-        opacity: 0.9;
-        font-size: 14px;
-    }
 
     .form-floating label {
         color: #6c757d;
@@ -199,7 +182,7 @@ include 'includes/navbar.php';
     }
 
     .btn-place-order {
-        background: linear-gradient(135deg, var(--primary-color) 0%, #5a9c2e 100%);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark, #5a9c2e) 100%);
         border: none;
         padding: 15px 30px;
         font-size: 16px;
@@ -271,14 +254,14 @@ include 'includes/navbar.php';
         <!-- Notifications Section -->
         <?php if (!empty($error)): ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-circle me-2"></i><?php echo $error; ?>
+                <?php echo $error; ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
 
         <?php if (!empty($success)): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i><?php echo $success; ?>
+                <?php echo $success; ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
@@ -289,19 +272,12 @@ include 'includes/navbar.php';
                 <div class="col-lg-8">
 
                     <?php if (!is_logged_in()): ?>
-                        <!-- Guest Checkout Info -->
-                        <div class="guest-info-section">
-                            <h5><i class="fas fa-user-clock me-2"></i>Guest Checkout</h5>
-                            <p>No account needed! After your order, we'll create a temporary account so you can track your
-                                order. Login credentials will be sent to your email.</p>
-                        </div>
-
                         <!-- Login Prompt -->
                         <div class="login-prompt">
-                            <p><i class="fas fa-user me-2"></i>Already have an account?</p>
+                            <p>Already have an account?</p>
                             <a href="<?php echo SITE_URL; ?>/login?redirect=checkout"
                                 class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-sign-in-alt me-1"></i>Login
+                                Login
                             </a>
                         </div>
                     <?php endif; ?>
@@ -309,7 +285,7 @@ include 'includes/navbar.php';
                     <!-- Contact & Shipping Information -->
                     <div class="checkout-card">
                         <div class="card-header">
-                            <h5><i class="fas fa-shipping-fast me-2"></i>Shipping Information</h5>
+                            <h5>Shipping Information</h5>
                         </div>
                         <div class="card-body">
                             <?php if (is_logged_in() && !empty($addresses)): ?>
@@ -341,9 +317,7 @@ include 'includes/navbar.php';
                                                         <?php echo htmlspecialchars($address['state']); ?> -
                                                         <?php echo htmlspecialchars($address['pincode']); ?>
                                                     </p>
-                                                    <p class="text-muted small mb-0">
-                                                        <i
-                                                            class="fas fa-phone me-1"></i><?php echo htmlspecialchars($address['phone']); ?>
+                                                        <?php echo htmlspecialchars($address['phone']); ?>
                                                     </p>
                                                 </div>
                                             </div>
@@ -353,7 +327,7 @@ include 'includes/navbar.php';
                                                 data-bs-toggle="modal" data-bs-target="#addAddressModal"
                                                 style="min-height: 150px; border-style: dashed;">
                                                 <div class="text-center text-muted">
-                                                    <i class="fas fa-plus-circle fa-2x mb-2"></i>
+                                                    <span class="fs-4 fw-bold">+</span>
                                                     <p class="mb-0">Add New Address</p>
                                                 </div>
                                             </div>
@@ -395,13 +369,7 @@ include 'includes/navbar.php';
                                             <label for="phone">Phone Number *</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="alt_phone" name="alt_phone"
-                                                placeholder="Alternate Phone">
-                                            <label for="alt_phone">Alternate Phone (Optional)</label>
-                                        </div>
-                                    </div>
+
                                     <div class="col-12">
                                         <div class="form-floating">
                                             <input type="text" class="form-control" id="address_line1" name="address_line1"
@@ -479,7 +447,7 @@ include 'includes/navbar.php';
                     <!-- Order Notes -->
                     <div class="checkout-card">
                         <div class="card-header">
-                            <h5><i class="fas fa-sticky-note me-2"></i>Order Notes (Optional)</h5>
+                            <h5>Order Notes (Optional)</h5>
                         </div>
                         <div class="card-body">
                             <div class="form-floating">
@@ -493,7 +461,7 @@ include 'includes/navbar.php';
                     <!-- Payment Method -->
                     <div class="checkout-card">
                         <div class="card-header">
-                            <h5><i class="fas fa-credit-card me-2"></i>Payment Method</h5>
+                            <h5>Payment Method</h5>
                         </div>
                         <div class="card-body">
                             <div class="payment-option selected" onclick="selectPayment(this, 'razorpay')">
@@ -519,7 +487,7 @@ include 'includes/navbar.php';
                 <div class="col-lg-4">
                     <div class="checkout-card order-summary-card">
                         <div class="card-header">
-                            <h5><i class="fas fa-shopping-bag me-2"></i>Order Summary</h5>
+                            <h5>Order Summary</h5>
                         </div>
                         <div class="card-body">
                             <!-- Cart Items -->
@@ -564,11 +532,10 @@ include 'includes/navbar.php';
                             </div>
 
                             <button type="submit" class="btn-place-order mt-4" id="placeOrderBtn">
-                                <i class="fas fa-lock me-2"></i>Place Order
+                                Place Order
                             </button>
 
                             <div class="secure-badge">
-                                <i class="fas fa-shield-alt"></i>
                                 <span>Secure Checkout - 256-bit SSL Encrypted</span>
                             </div>
                         </div>
@@ -664,7 +631,7 @@ include 'includes/navbar.php';
     // Form validation
     document.getElementById('checkoutForm').addEventListener('submit', function (e) {
         const btn = document.getElementById('placeOrderBtn');
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+        btn.innerHTML = 'Processing...';
         btn.disabled = true;
     });
 </script>

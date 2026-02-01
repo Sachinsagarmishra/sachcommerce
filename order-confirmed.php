@@ -76,7 +76,7 @@ include 'includes/navbar.php';
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #83b735 0%, #5a9c2e 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark, #5a9c2e) 100%);
     position: absolute;
     animation: scaleUp 0.5s ease-out forwards;
 }
@@ -114,7 +114,7 @@ include 'includes/navbar.php';
 }
 
 .order-header {
-    background: linear-gradient(135deg, #83b735 0%, #5a9c2e 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark, #5a9c2e) 100%);
     color: white;
     padding: 24px;
     text-align: center;
@@ -291,47 +291,7 @@ include 'includes/navbar.php';
     font-weight: 600;
 }
 
-.what-next-section {
-    margin-top: 30px;
-}
 
-.timeline-step {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 24px;
-}
-
-.timeline-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #83b735 0%, #5a9c2e 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 20px;
-    margin-right: 16px;
-    flex-shrink: 0;
-}
-
-.timeline-icon.pending {
-    background: #e9ecef;
-    color: #6c757d;
-}
-
-.timeline-content h5 {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0 0 5px;
-    color: #2c3e50;
-}
-
-.timeline-content p {
-    font-size: 14px;
-    color: #6c757d;
-    margin: 0;
-}
 
 .action-buttons {
     display: flex;
@@ -407,7 +367,7 @@ include 'includes/navbar.php';
                 <?php if ($guest_password && $guest_email): ?>
                 <!-- Guest Account Created Alert -->
                 <div class="guest-account-alert">
-                    <h4><i class="fas fa-user-check me-2"></i>Account Created Successfully!</h4>
+                <h4>Account Created Successfully!</h4>
                     <p>We've created an account for you so you can track your order. Your login credentials have been sent to your email.</p>
                     <div class="credentials-box">
                         <div class="mb-2">
@@ -419,7 +379,7 @@ include 'includes/navbar.php';
                             <span class="value"><?php echo htmlspecialchars($guest_password); ?></span>
                         </div>
                     </div>
-                    <p class="mt-3 mb-0"><small><i class="fas fa-info-circle me-1"></i>Please save these credentials and change your password after first login.</small></p>
+                    <p class="mt-3 mb-0"><small>Please save these credentials and change your password after first login.</small></p>
                 </div>
                 <?php endif; ?>
                 
@@ -435,7 +395,7 @@ include 'includes/navbar.php';
                         <h1>Thank You for Your Order!</h1>
                         <p>Your order has been placed successfully</p>
                         <div class="order-number-badge">
-                            <i class="fas fa-receipt me-2"></i>Order #<?php echo htmlspecialchars($order['order_number']); ?>
+                            Order #<?php echo htmlspecialchars($order['order_number']); ?>
                         </div>
                     </div>
                     
@@ -450,9 +410,9 @@ include 'includes/navbar.php';
                                 <div class="info-item-label">Payment Method</div>
                                 <div class="info-item-value">
                                     <?php if ($order['payment_method'] === 'razorpay'): ?>
-                                        <i class="fas fa-credit-card me-1"></i>Online Payment
+                                        Online Payment
                                     <?php else: ?>
-                                        <i class="fas fa-money-bill-wave me-1"></i>Cash on Delivery
+                                        Cash on Delivery
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -460,9 +420,9 @@ include 'includes/navbar.php';
                                 <div class="info-item-label">Payment Status</div>
                                 <div class="info-item-value">
                                     <?php if ($order['payment_status'] === 'paid'): ?>
-                                        <span class="text-success"><i class="fas fa-check-circle me-1"></i>Paid</span>
+                                        <span class="text-success">Paid</span>
                                     <?php else: ?>
-                                        <span class="text-warning"><i class="fas fa-clock me-1"></i>Pending</span>
+                                        <span class="text-warning">Pending</span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -474,7 +434,7 @@ include 'includes/navbar.php';
                         
                         <!-- Order Items -->
                         <div class="order-items-section">
-                            <h3><i class="fas fa-box me-2"></i>Order Items</h3>
+                            <h3>Order Items</h3>
                             
                             <?php foreach ($order_items as $item): ?>
                             <div class="order-item-row">
@@ -531,72 +491,28 @@ include 'includes/navbar.php';
                         
                         <!-- Shipping Address -->
                         <div class="shipping-address-card">
-                            <h5><i class="fas fa-map-marker-alt me-2"></i>Shipping Address</h5>
+                            <h5>Shipping Address</h5>
                             <p>
                                 <strong><?php echo htmlspecialchars($order['customer_name']); ?></strong><br>
                                 <?php echo htmlspecialchars($order['shipping_address']); ?><br>
                                 <?php echo htmlspecialchars($order['shipping_city']); ?>, 
                                 <?php echo htmlspecialchars($order['shipping_state']); ?> - 
                                 <?php echo htmlspecialchars($order['shipping_pincode']); ?><br>
-                                <i class="fas fa-phone me-1"></i><?php echo htmlspecialchars($order['customer_phone']); ?><br>
-                                <i class="fas fa-envelope me-1"></i><?php echo htmlspecialchars($order['customer_email']); ?>
+                                Phone: <?php echo htmlspecialchars($order['customer_phone']); ?><br>
+                                Email: <?php echo htmlspecialchars($order['customer_email']); ?>
                             </p>
                         </div>
                         
-                        <!-- What's Next Section -->
-                        <div class="what-next-section">
-                            <h3 class="mb-4"><i class="fas fa-road me-2"></i>What's Next?</h3>
-                            
-                            <div class="timeline-step">
-                                <div class="timeline-icon">
-                                    <i class="fas fa-check"></i>
-                                </div>
-                                <div class="timeline-content">
-                                    <h5>Order Confirmed</h5>
-                                    <p>Your order has been received and is being processed</p>
-                                </div>
-                            </div>
-                            
-                            <div class="timeline-step">
-                                <div class="timeline-icon pending">
-                                    <i class="fas fa-box"></i>
-                                </div>
-                                <div class="timeline-content">
-                                    <h5>Processing</h5>
-                                    <p>We're preparing your order for shipment</p>
-                                </div>
-                            </div>
-                            
-                            <div class="timeline-step">
-                                <div class="timeline-icon pending">
-                                    <i class="fas fa-truck"></i>
-                                </div>
-                                <div class="timeline-content">
-                                    <h5>Shipped</h5>
-                                    <p>Your order will be shipped within 2-3 business days</p>
-                                </div>
-                            </div>
-                            
-                            <div class="timeline-step">
-                                <div class="timeline-icon pending">
-                                    <i class="fas fa-home"></i>
-                                </div>
-                                <div class="timeline-content">
-                                    <h5>Delivered</h5>
-                                    <p>Expected delivery: <?php echo $estimated_delivery_start; ?> - <?php echo $estimated_delivery_end; ?></p>
-                                </div>
-                            </div>
-                        </div>
                         
                         <!-- Action Buttons -->
                         <div class="action-buttons">
                             <?php if (is_logged_in() || $guest_password): ?>
                             <a href="<?php echo SITE_URL; ?>/orders" class="btn btn-primary">
-                                <i class="fas fa-list me-2"></i>View My Orders
+                                View My Orders
                             </a>
                             <?php endif; ?>
                             <a href="<?php echo SITE_URL; ?>/shop" class="btn btn-outline-primary">
-                                <i class="fas fa-shopping-bag me-2"></i>Continue Shopping
+                                Continue Shopping
                             </a>
                         </div>
                     </div>
@@ -607,10 +523,10 @@ include 'includes/navbar.php';
                     <p class="text-muted mb-2">Need help with your order?</p>
                     <p class="mb-0">
                         <a href="mailto:<?php echo SITE_EMAIL; ?>" class="text-decoration-none me-3">
-                            <i class="fas fa-envelope me-1"></i><?php echo SITE_EMAIL; ?>
+                            <?php echo SITE_EMAIL; ?>
                         </a>
                         <a href="tel:<?php echo str_replace(' ', '', SITE_PHONE); ?>" class="text-decoration-none">
-                            <i class="fas fa-phone me-1"></i><?php echo SITE_PHONE; ?>
+                            <?php echo SITE_PHONE; ?>
                         </a>
                     </p>
                 </div>
