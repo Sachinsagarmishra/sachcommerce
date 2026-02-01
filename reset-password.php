@@ -4,26 +4,27 @@ require_once 'includes/functions.php';
 
 $page_title = 'Reset Password';
 
-$token = $_GET['token'] ?? '';
-
-if (!$token) {
-    header('Location: ' . SITE_URL . '/login.php');
+if (!isset($_SESSION['otp_verified']) || !isset($_SESSION['reset_user_id'])) {
+    header('Location: login.php');
     exit;
 }
 
-// Verify token
-$stmt = $pdo->prepare("SELECT id, name FROM users WHERE reset_token = ? AND reset_token_expiry > NOW()");
-$stmt->execute([$token]);
+$user_id = $_SESSION['reset_user_id'];
+
+// Get user info (optional, for personalization)
+$stmt = $pdo->prepare("SELECT name FROM users WHERE id = ?");
+$stmt->execute([$user_id]);
 $user = $stmt->fetch();
 
 if (!$user) {
-    $invalid_token = true;
+    header('Location: login.php');
+    exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($invalid_token)) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
-    
+
     if (empty($password)) {
         $error = 'Please enter a password';
     } elseif (strlen($password) < PASSWORD_MIN_LENGTH) {
@@ -32,10 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($invalid_token)) {
         $error = 'Passwords do not match';
     } else {
         $password_hash = password_hash($password, PASSWORD_BCRYPT, ['cost' => BCRYPT_COST]);
-        
-        $stmt = $pdo->prepare("UPDATE users SET password = ?, reset_token = NULL, reset_token_expiry = NULL WHERE id = ?");
-        
-        if ($stmt->execute([$password_hash, $user['id']])) {
+
+        $stmt = $pdo->prepare("UPDATE users SET password = ?, forgot_otp = NULL, forgot_otp_expiry = NULL WHERE id = ?");
+
+        if ($stmt->execute([$password_hash, $user_id])) {
+            // Success - Clear session
+            unset($_SESSION['otp_verified'], $_SESSION['reset_user_id'], $_SESSION['reset_email']);
+
             $success = 'Password reset successful! You can now login.';
             header('refresh:2;url=' . SITE_URL . '/login.php');
         } else {
@@ -58,40 +62,29 @@ include 'includes/navbar.php';
                         <h2>Reset Password</h2>
                         <p class="text-muted">Enter your new password</p>
                     </div>
-                    
-                    <?php if (isset($invalid_token)): ?>
-                    <div class="alert alert-danger">
-                        Invalid or expired reset link. Please request a new one.
-                    </div>
-                    <div class="text-center">
-                        <a href="<?php echo SITE_URL; ?>/forgot-password.php" class="btn btn-primary">Request New Link</a>
-                    </div>
-                    <?php else: ?>
-                    
+
                     <?php if (isset($error)): ?>
-                    <div class="alert alert-danger"><?php echo $error; ?></div>
+                        <div class="alert alert-danger"><?php echo $error; ?></div>
                     <?php endif; ?>
-                    
+
                     <?php if (isset($success)): ?>
-                    <div class="alert alert-success"><?php echo $success; ?></div>
+                        <div class="alert alert-success"><?php echo $success; ?></div>
                     <?php endif; ?>
-                    
+
                     <form method="POST" action="">
                         <div class="mb-3">
                             <label class="form-label">New Password</label>
                             <input type="password" class="form-control" name="password" required autofocus>
                             <small class="text-muted">Minimum <?php echo PASSWORD_MIN_LENGTH; ?> characters</small>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label">Confirm Password</label>
                             <input type="password" class="form-control" name="confirm_password" required>
                         </div>
-                        
+
                         <button type="submit" class="btn btn-primary w-100">Reset Password</button>
                     </form>
-                    
-                    <?php endif; ?>
                 </div>
             </div>
         </div>
