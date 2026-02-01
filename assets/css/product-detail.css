@@ -11,7 +11,7 @@
 .price-section .selling-price {
     font-size: 1.8rem;
     font-weight: 600;
-    color: #000;
+    color: var(--primary-color) !important;
 }
 
 .price-section .regular-price {

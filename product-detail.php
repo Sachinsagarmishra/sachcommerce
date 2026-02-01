@@ -407,256 +407,242 @@ include 'includes/navbar.php';
     <!-- Product Tabs -->
     <div class="row mt-5">
         <div class="col-12">
-            <ul class="nav nav-tabs" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" data-bs-toggle="tab" href="#description">Description</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#reviews">Reviews
-                        (<?php echo $rating_data['total_reviews'] ?? 0; ?>)</a>
-                </li>
-            </ul>
-
-            <div class="tab-content p-4 border border-top-0">
-                <!-- Description Tab -->
-                <div id="description" class="tab-pane fade show active">
+            <div class="product-description-section mb-5">
+                <h4 class="fw-bold mb-4">Description</h4>
+                <div class="description-content">
                     <?php echo nl2br(htmlspecialchars($product['long_description'])); ?>
                 </div>
+            </div>
 
-                <!-- Reviews Tab -->
-                <div id="reviews" class="tab-pane fade">
-                    <!-- 1. Review Summary & Action -->
-                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-                        <div>
-                            <h4 class="fw-bold mb-1">Customer Reviews</h4>
-                            <div class="d-flex align-items-center">
-                                <?php echo display_rating($rating_data['avg_rating'] ?? 0, false); ?>
-                                <span
-                                    class="ms-2 fw-bold"><?php echo number_format($rating_data['avg_rating'] ?? 0, 1); ?>
-                                    out of 5</span>
-                                <span class="ms-2 text-muted small">(<?php echo $rating_data['total_reviews'] ?? 0; ?>
-                                    reviews)</span>
-                            </div>
+            <hr class="my-5">
+
+            <div id="reviews" class="product-reviews-section">
+                <!-- 1. Review Summary & Action -->
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <div>
+                        <h4 class="fw-bold mb-1">Customer Reviews</h4>
+                        <div class="d-flex align-items-center">
+                            <?php echo display_rating($rating_data['avg_rating'] ?? 0, false); ?>
+                            <span class="ms-2 fw-bold">5.0 out of 5</span>
+                            <span class="ms-2 text-muted small">(5 star rating)</span>
                         </div>
-                        <?php if (is_logged_in()): ?>
-                            <button class="btn btn-primary rounded-pill px-4" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#writeReviewCollapse">
-                                Write a Review
-                            </button>
+                    </div>
+                    <?php if (is_logged_in()): ?>
+                        <button class="btn btn-primary rounded-pill px-4" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#writeReviewCollapse">
+                            Write a Review
+                        </button>
+                    <?php else: ?>
+                        <a href="<?php echo SITE_URL; ?>/login" class="btn btn-outline-primary rounded-pill px-4">
+                            Login to Review
+                        </a>
+                    <?php endif; ?>
+                </div>
+
+                <!-- 2. Reviews with Images Gallery -->
+                <?php
+                $all_review_images = [];
+                foreach ($reviews as $rev) {
+                    if (!empty($rev['images'])) {
+                        foreach ($rev['images'] as $img) {
+                            $all_review_images[] = $img;
+                        }
+                    }
+                }
+                ?>
+                <?php if (!empty($all_review_images)): ?>
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3">Customer Photos</h6>
+                        <div class="d-flex gap-2 overflow-auto pb-2 gallery-scroll-container"
+                            style="scrollbar-width: thin;">
+                            <?php foreach ($all_review_images as $img): ?>
+                                <div class="flex-shrink-0"
+                                    style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid #eee;">
+                                    <a href="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>" target="_blank">
+                                        <img src="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
+                                            style="width: 100%; height: 100%; object-fit: cover;" alt="Review Image">
+                                    </a>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <!-- 3. Review Submission Form (Collapsed) -->
+                <?php if (is_logged_in()): ?>
+                    <div class="collapse mb-5" id="writeReviewCollapse">
+                        <div class="p-4 bg-light rounded-4 border">
+                            <h5 class="fw-bold mb-4">Submit Your Review</h5>
+                            <form id="reviewForm" enctype="multipart/form-data">
+                                <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+
+                                <div class="mb-3">
+                                    <label class="form-label d-block fw-bold small">RATING</label>
+                                    <div class="rating-input d-inline-flex flex-row-reverse border p-2 rounded bg-white">
+                                        <input type="radio" name="rating" value="5" id="star5" required>
+                                        <label for="star5" class="px-1"><i class="fas fa-star"></i></label>
+                                        <input type="radio" name="rating" value="4" id="star4">
+                                        <label for="star4" class="px-1"><i class="fas fa-star"></i></label>
+                                        <input type="radio" name="rating" value="3" id="star3">
+                                        <label for="star3" class="px-1"><i class="fas fa-star"></i></label>
+                                        <input type="radio" name="rating" value="2" id="star2">
+                                        <label for="star2" class="px-1"><i class="fas fa-star"></i></label>
+                                        <input type="radio" name="rating" value="1" id="star1">
+                                        <label for="star1" class="px-1"><i class="fas fa-star"></i></label>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small">YOUR COMMENT</label>
+                                    <textarea class="form-control" name="review_text" rows="4"
+                                        placeholder="How was your experience?" required></textarea>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold small">ATTACH PHOTOS (MAX 5)</label>
+                                    <input type="file" class="form-control" name="review_images[]" multiple
+                                        accept="image/*">
+                                </div>
+
+                                <button type="submit" class="btn btn-primary px-5 rounded-pill" id="submitReviewBtn">Submit
+                                    Review</button>
+                                <div id="reviewMessage" class="mt-3"></div>
+                            </form>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <!-- 4. Filter and List -->
+                <div class="reviews-list-container">
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                        <h5 class="fw-bold mb-0">Top reviews</h5>
+                        <div class="d-flex align-items-center gap-2">
+                            <label class="small fw-bold text-muted mb-0">SORT BY:</label>
+                            <select class="form-select form-select-sm rounded-pill px-3" id="reviewFilter"
+                                style="width: auto; min-width: 160px;">
+                                <option value="recent">Most Recent</option>
+                                <option value="highest">Highest Rating</option>
+                                <option value="lowest">Lowest Rating</option>
+                                <option value="helpful">Most Helpful</option>
+                                <option value="pics">Only Pictures</option>
+                                <option value="pics_first">Pictures First</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="reviewsList">
+                        <?php if (!empty($reviews)): ?>
+                            <?php foreach ($reviews as $review): ?>
+                                <?php
+                                $display_name = $review['user_name'];
+                                if ($display_name === 'Admin User')
+                                    $display_name = 'Customer';
+                                ?>
+                                <div class="mb-4 pb-4 border-bottom">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="fw-bold text-dark"><?php echo htmlspecialchars($display_name); ?></span>
+                                        <small
+                                            class="text-muted"><?php echo date('d M Y', strtotime($review['created_at'])); ?></small>
+                                    </div>
+                                    <div class="mb-2">
+                                        <?php echo display_rating($review['rating'], false); ?>
+                                    </div>
+                                    <p class="mb-3 text-secondary">
+                                        <?php echo nl2br(htmlspecialchars($review['review_text'])); ?>
+                                    </p>
+
+                                    <?php if (!empty($review['images'])): ?>
+                                        <div class="d-flex gap-2 flex-wrap mb-3">
+                                            <?php foreach ($review['images'] as $img): ?>
+                                                <div
+                                                    style="width: 70px; height: 70px; border-radius: 6px; overflow: hidden; border: 1px solid #ddd;">
+                                                    <a href="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
+                                                        target="_blank">
+                                                        <img src="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
+                                                            style="width: 100%; height: 100%; object-fit: cover;" alt="Review Image">
+                                                    </a>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <?php if (!empty($review['admin_reply'])): ?>
+                                        <div class="p-3 bg-light rounded-3 border-start border-4 border-primary">
+                                            <span class="d-block fw-bold small text-primary mb-1">Response from
+                                                TrendsOne:</span>
+                                            <p class="mb-0 small"><?php echo nl2br(htmlspecialchars($review['admin_reply'])); ?>
+                                            </p>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
                         <?php else: ?>
-                            <a href="<?php echo SITE_URL; ?>/login" class="btn btn-outline-primary rounded-pill px-4">
-                                Login to Review
-                            </a>
+                            <div class="text-center py-5">
+                                <p class="text-muted">No reviews yet for this product.</p>
+                            </div>
                         <?php endif; ?>
                     </div>
 
-                    <!-- 2. Reviews with Images Gallery -->
-                    <?php
-                    $all_review_images = [];
-                    foreach ($reviews as $rev) {
-                        if (!empty($rev['images'])) {
-                            foreach ($rev['images'] as $img) {
-                                $all_review_images[] = $img;
-                            }
-                        }
-                    }
-                    ?>
-                    <?php if (!empty($all_review_images)): ?>
-                        <div class="mb-4">
-                            <h6 class="fw-bold mb-3">Customer Photos</h6>
-                            <div class="d-flex gap-2 overflow-auto pb-2 gallery-scroll-container"
-                                style="scrollbar-width: thin;">
-                                <?php foreach ($all_review_images as $img): ?>
-                                    <div class="flex-shrink-0"
-                                        style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid #eee;">
-                                        <a href="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>" target="_blank">
-                                            <img src="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
-                                                style="width: 100%; height: 100%; object-fit: cover;" alt="Review Image">
-                                        </a>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-
-                    <!-- 3. Review Submission Form (Collapsed) -->
-                    <?php if (is_logged_in()): ?>
-                        <div class="collapse mb-5" id="writeReviewCollapse">
-                            <div class="p-4 bg-light rounded-4 border">
-                                <h5 class="fw-bold mb-4">Submit Your Review</h5>
-                                <form id="reviewForm" enctype="multipart/form-data">
-                                    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-
-                                    <div class="mb-3">
-                                        <label class="form-label d-block fw-bold small">RATING</label>
-                                        <div
-                                            class="rating-input d-inline-flex flex-row-reverse border p-2 rounded bg-white">
-                                            <input type="radio" name="rating" value="5" id="star5" required>
-                                            <label for="star5" class="px-1"><i class="fas fa-star"></i></label>
-                                            <input type="radio" name="rating" value="4" id="star4">
-                                            <label for="star4" class="px-1"><i class="fas fa-star"></i></label>
-                                            <input type="radio" name="rating" value="3" id="star3">
-                                            <label for="star3" class="px-1"><i class="fas fa-star"></i></label>
-                                            <input type="radio" name="rating" value="2" id="star2">
-                                            <label for="star2" class="px-1"><i class="fas fa-star"></i></label>
-                                            <input type="radio" name="rating" value="1" id="star1">
-                                            <label for="star1" class="px-1"><i class="fas fa-star"></i></label>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label fw-bold small">YOUR COMMENT</label>
-                                        <textarea class="form-control" name="review_text" rows="4"
-                                            placeholder="How was your experience?" required></textarea>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="form-label fw-bold small">ATTACH PHOTOS (MAX 5)</label>
-                                        <input type="file" class="form-control" name="review_images[]" multiple
-                                            accept="image/*">
-                                    </div>
-
-                                    <button type="submit" class="btn btn-primary px-5 rounded-pill"
-                                        id="submitReviewBtn">Submit Review</button>
-                                    <div id="reviewMessage" class="mt-3"></div>
-                                </form>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-
-                    <!-- 4. Filter and List -->
-                    <div class="reviews-list-container">
-                        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-                            <h5 class="fw-bold mb-0">Top reviews</h5>
-                            <div class="d-flex align-items-center gap-2">
-                                <label class="small fw-bold text-muted mb-0">SORT BY:</label>
-                                <select class="form-select form-select-sm rounded-pill px-3" id="reviewFilter"
-                                    style="width: auto; min-width: 160px;">
-                                    <option value="recent">Most Recent</option>
-                                    <option value="highest">Highest Rating</option>
-                                    <option value="lowest">Lowest Rating</option>
-                                    <option value="helpful">Most Helpful</option>
-                                    <option value="pics">Only Pictures</option>
-                                    <option value="pics_first">Pictures First</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div id="reviewsList">
-                            <?php if (!empty($reviews)): ?>
-                                <?php foreach ($reviews as $review): ?>
-                                    <?php
-                                    $display_name = $review['user_name'];
-                                    if ($display_name === 'Admin User')
-                                        $display_name = 'Customer';
-                                    ?>
-                                    <div class="mb-4 pb-4 border-bottom">
-                                        <div class="d-flex justify-content-between mb-2">
-                                            <span
-                                                class="fw-bold text-dark"><?php echo htmlspecialchars($display_name); ?></span>
-                                            <small
-                                                class="text-muted"><?php echo date('d M Y', strtotime($review['created_at'])); ?></small>
-                                        </div>
-                                        <div class="mb-2">
-                                            <?php echo display_rating($review['rating'], false); ?>
-                                        </div>
-                                        <p class="mb-3 text-secondary">
-                                            <?php echo nl2br(htmlspecialchars($review['review_text'])); ?>
-                                        </p>
-
-                                        <?php if (!empty($review['images'])): ?>
-                                            <div class="d-flex gap-2 flex-wrap mb-3">
-                                                <?php foreach ($review['images'] as $img): ?>
-                                                    <div
-                                                        style="width: 70px; height: 70px; border-radius: 6px; overflow: hidden; border: 1px solid #ddd;">
-                                                        <a href="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
-                                                            target="_blank">
-                                                            <img src="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
-                                                                style="width: 100%; height: 100%; object-fit: cover;"
-                                                                alt="Review Image">
-                                                        </a>
-                                                    </div>
-                                                <?php endforeach; ?>
-                                            </div>
-                                        <?php endif; ?>
-
-                                        <?php if (!empty($review['admin_reply'])): ?>
-                                            <div class="p-3 bg-light rounded-3 border-start border-4 border-primary">
-                                                <span class="d-block fw-bold small text-primary mb-1">Response from
-                                                    TrendsOne:</span>
-                                                <p class="mb-0 small"><?php echo nl2br(htmlspecialchars($review['admin_reply'])); ?>
-                                                </p>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <div class="text-center py-5">
-                                    <p class="text-muted">No reviews yet for this product.</p>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-
-                        <!-- Pagination Container -->
-                        <div id="reviewPagination" class="d-flex justify-content-center mt-4"></div>
-                    </div>
+                    <!-- Pagination Container -->
+                    <div id="reviewPagination" class="d-flex justify-content-center mt-4"></div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Related Products -->
-    <?php if (!empty($related_products)): ?>
-        <div class="row mt-5">
-            <div class="col-12">
-                <h3 class="mb-4">Related Products</h3>
-                <div class="row g-4">
-                    <?php foreach ($related_products as $related): ?>
-                        <div class="col-md-3">
-                            <div class="card product-card">
-                                <div class="product-image-wrapper">
-                                    <a href="<?php echo SITE_URL; ?>/products/<?php echo $related['slug']; ?>">
-                                        <img src="<?php echo $related['primary_image'] ? PRODUCT_IMAGE_URL . $related['primary_image'] : 'https://via.placeholder.com/300x250'; ?>"
-                                            class="product-image" alt="<?php echo htmlspecialchars($related['name']); ?>">
+<!-- Related Products -->
+<?php if (!empty($related_products)): ?>
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">Related Products</h3>
+            <div class="row g-4">
+                <?php foreach ($related_products as $related): ?>
+                    <div class="col-md-3">
+                        <div class="card product-card">
+                            <div class="product-image-wrapper">
+                                <a href="<?php echo SITE_URL; ?>/products/<?php echo $related['slug']; ?>">
+                                    <img src="<?php echo $related['primary_image'] ? PRODUCT_IMAGE_URL . $related['primary_image'] : 'https://via.placeholder.com/300x250'; ?>"
+                                        class="product-image" alt="<?php echo htmlspecialchars($related['name']); ?>">
+                                </a>
+                            </div>
+                            <div class="product-info">
+                                <h6 class="product-title">
+                                    <a href="<?php echo SITE_URL; ?>/products/<?php echo $related['slug']; ?>"
+                                        class="text-decoration-none text-dark">
+                                        <?php echo htmlspecialchars($related['name']); ?>
                                     </a>
+                                </h6>
+                                <div class="product-price">
+                                    <?php if ($related['sale_price']): ?>
+                                        <?php echo format_price($related['sale_price']); ?>
+                                        <span class="product-price-old"><?php echo format_price($related['price']); ?></span>
+                                    <?php else: ?>
+                                        <?php echo format_price($related['price']); ?>
+                                    <?php endif; ?>
                                 </div>
-                                <div class="product-info">
-                                    <h6 class="product-title">
-                                        <a href="<?php echo SITE_URL; ?>/products/<?php echo $related['slug']; ?>"
-                                            class="text-decoration-none text-dark">
-                                            <?php echo htmlspecialchars($related['name']); ?>
-                                        </a>
-                                    </h6>
-                                    <div class="product-price">
-                                        <?php if ($related['sale_price']): ?>
-                                            <?php echo format_price($related['sale_price']); ?>
-                                            <span class="product-price-old"><?php echo format_price($related['price']); ?></span>
-                                        <?php else: ?>
-                                            <?php echo format_price($related['price']); ?>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="product-rating mt-2">
-                                        <i class="fas fa-star text-warning small"></i>
-                                        <i class="fas fa-star text-warning small"></i>
-                                        <i class="fas fa-star text-warning small"></i>
-                                        <i class="fas fa-star text-warning small"></i>
-                                        <i class="fas fa-star text-warning small"></i>
-                                        <span class="text-muted small ms-1">(5.0)</span>
-                                    </div>
-                                </div>
-                                <div class="product-footer">
-                                    <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
-                                        data-product-id="<?php echo $related['id']; ?>">
-                                        <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                                    </button>
+                                <div class="product-rating mt-2">
+                                    <i class="fas fa-star text-warning small"></i>
+                                    <i class="fas fa-star text-warning small"></i>
+                                    <i class="fas fa-star text-warning small"></i>
+                                    <i class="fas fa-star text-warning small"></i>
+                                    <i class="fas fa-star text-warning small"></i>
+                                    <span class="text-muted small ms-1">(5.0)</span>
                                 </div>
                             </div>
+                            <div class="product-footer">
+                                <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
+                                    data-product-id="<?php echo $related['id']; ?>">
+                                    <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                                </button>
+                            </div>
                         </div>
-                    <?php endforeach; ?>
-                </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </div>
-    <?php endif; ?>
+    </div>
+<?php endif; ?>
 </div>
 
 <script>
