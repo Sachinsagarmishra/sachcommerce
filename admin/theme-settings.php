@@ -42,147 +42,154 @@ $heading_font_family = get_site_setting('heading_font_family', "'Jost', sans-ser
 $google_fonts_url = get_site_setting('google_fonts_url', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Jost:wght@400;500;600;700&display=swap');
 
 include 'includes/header.php';
+include 'includes/sidebar.php';
 ?>
 
 <div class="main-content">
     <?php include 'includes/navbar.php'; ?>
 
-    <div class="content-wrapper p-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="h4 mb-0">Theme Settings</h2>
-        </div>
-
-        <?php
-        $flash = get_flash_message();
-        if ($flash):
-            ?>
-            <div class="alert alert-<?php echo $flash['type']; ?> alert-dismissible fade show" role="alert">
-                <?php echo $flash['message']; ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="content-wrapper">
+        <div class="container-fluid py-4">
+            <div class="page-header mb-4">
+                <h1 class="h3 fw-bold">Theme Settings</h1>
+                <p class="text-muted">Customize your store's appearance, colors, and typography.</p>
             </div>
-        <?php endif; ?>
 
-        <form action="" method="POST" class="card shadow-sm">
-            <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+            <?php
+            $flash = get_flash_message();
+            if ($flash):
+            ?>
+                <div class="alert alert-<?php echo $flash['type']; ?> alert-dismissible fade show shadow-sm border-0" role="alert">
+                    <i class="fas <?php echo $flash['type'] === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'; ?> me-2"></i>
+                    <?php echo $flash['message']; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
 
-            <div class="card-body">
-                <div class="row">
-                    <!-- Color Settings -->
-                    <div class="col-md-6 border-end">
-                        <h5 class="mb-4 text-primary"><i class="fas fa-palette me-2"></i> Color Palette</h5>
+            <form action="" method="POST" class="card shadow-sm border-0">
+                <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
 
-                        <div class="mb-3">
-                            <label class="form-label">Primary Color</label>
-                            <div class="input-group">
-                                <input type="color" class="form-control form-control-color" name="primary_color"
-                                    value="<?php echo $primary_color; ?>">
-                                <input type="text" class="form-control" value="<?php echo $primary_color; ?>"
-                                    onchange="this.previousElementSibling.value = this.value">
+                <div class="card-body p-lg-5">
+                    <div class="row g-5">
+                        <!-- Color Settings -->
+                        <div class="col-lg-6">
+                            <h5 class="mb-4 text-primary d-flex align-items-center">
+                                <span class="bg-primary-subtle text-primary p-2 rounded me-3">
+                                    <i class="fas fa-palette"></i>
+                                </span>
+                                Color Palette
+                            </h5>
+
+                            <div class="mb-4">
+                                <label class="form-label">Primary Color</label>
+                                <div class="input-group input-group-lg">
+                                    <input type="color" class="form-control form-control-color border-end-0" name="primary_color" value="<?php echo $primary_color; ?>" style="width: 80px;">
+                                    <input type="text" class="form-control" value="<?php echo $primary_color; ?>" onchange="this.previousElementSibling.value = this.value">
+                                </div>
+                                <div class="form-text mt-2">Used for brand elements, links, and accents.</div>
                             </div>
-                            <div class="form-text">Used for links, icons, and primary elements.</div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Secondary Color</label>
-                            <div class="input-group">
-                                <input type="color" class="form-control form-control-color" name="secondary_color"
-                                    value="<?php echo $secondary_color; ?>">
-                                <input type="text" class="form-control" value="<?php echo $secondary_color; ?>"
-                                    onchange="this.previousElementSibling.value = this.value">
+                            <div class="mb-4">
+                                <label class="form-label">Secondary Color</label>
+                                <div class="input-group input-group-lg">
+                                    <input type="color" class="form-control form-control-color border-end-0" name="secondary_color" value="<?php echo $secondary_color; ?>" style="width: 80px;">
+                                    <input type="text" class="form-control" value="<?php echo $secondary_color; ?>" onchange="this.previousElementSibling.value = this.value">
+                                </div>
+                                <div class="form-text mt-2">Used for auxiliary text and secondary backgrounds.</div>
                             </div>
-                            <div class="form-text">Used for secondary text and backgrounds.</div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Button Background Color</label>
-                            <div class="input-group">
-                                <input type="color" class="form-control form-control-color" name="btn_primary_bg"
-                                    value="<?php echo $btn_primary_bg; ?>">
-                                <input type="text" class="form-control" value="<?php echo $btn_primary_bg; ?>"
-                                    onchange="this.previousElementSibling.value = this.value">
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label">Button Background</label>
+                                    <div class="input-group">
+                                        <input type="color" class="form-control form-control-color border-end-0" name="btn_primary_bg" value="<?php echo $btn_primary_bg; ?>">
+                                        <input type="text" class="form-control" value="<?php echo $btn_primary_bg; ?>" onchange="this.previousElementSibling.value = this.value">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label">Button Text</label>
+                                    <div class="input-group">
+                                        <input type="color" class="form-control form-control-color border-end-0" name="btn_primary_text" value="<?php echo $btn_primary_text; ?>">
+                                        <input type="text" class="form-control" value="<?php echo $btn_primary_text; ?>" onchange="this.previousElementSibling.value = this.value">
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Button Text Color</label>
-                            <div class="input-group">
-                                <input type="color" class="form-control form-control-color" name="btn_primary_text"
-                                    value="<?php echo $btn_primary_text; ?>">
-                                <input type="text" class="form-control" value="<?php echo $btn_primary_text; ?>"
-                                    onchange="this.previousElementSibling.value = this.value">
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Header Background Color</label>
-                            <div class="input-group">
-                                <input type="color" class="form-control form-control-color" name="header_bg"
-                                    value="<?php echo $header_bg; ?>">
-                                <input type="text" class="form-control" value="<?php echo $header_bg; ?>"
-                                    onchange="this.previousElementSibling.value = this.value">
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Footer Background Color</label>
-                            <div class="input-group">
-                                <input type="color" class="form-control form-control-color" name="footer_bg"
-                                    value="<?php echo $footer_bg; ?>">
-                                <input type="text" class="form-control" value="<?php echo $footer_bg; ?>"
-                                    onchange="this.previousElementSibling.value = this.value">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Font Settings -->
-                    <div class="col-md-6 ps-md-4">
-                        <h5 class="mb-4 text-primary"><i class="fas fa-font me-2"></i> Typography Settings</h5>
-
-                        <div class="mb-3">
-                            <label class="form-label">Google Fonts URL</label>
-                            <input type="text" class="form-control" name="google_fonts_url"
-                                value="<?php echo htmlspecialchars($google_fonts_url); ?>">
-                            <div class="form-text">Paste the Google Fonts
-                                <link> href URL here.
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label">Header Background</label>
+                                    <div class="input-group">
+                                        <input type="color" class="form-control form-control-color border-end-0" name="header_bg" value="<?php echo $header_bg; ?>">
+                                        <input type="text" class="form-control" value="<?php echo $header_bg; ?>" onchange="this.previousElementSibling.value = this.value">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label">Footer Background</label>
+                                    <div class="input-group">
+                                        <input type="color" class="form-control form-control-color border-end-0" name="footer_bg" value="<?php echo $footer_bg; ?>">
+                                        <input type="text" class="form-control" value="<?php echo $footer_bg; ?>" onchange="this.previousElementSibling.value = this.value">
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Body Font Family</label>
-                            <input type="text" class="form-control" name="body_font_family"
-                                value="<?php echo htmlspecialchars($body_font_family); ?>">
-                            <div class="form-text">Example: 'Inter', sans-serif</div>
-                        </div>
+                        <!-- Font Settings -->
+                        <div class="col-lg-6 ps-lg-5 border-start">
+                            <h5 class="mb-4 text-primary d-flex align-items-center">
+                                <span class="bg-primary-subtle text-primary p-2 rounded me-3">
+                                    <i class="fas fa-font"></i>
+                                </span>
+                                Typography Settings
+                            </h5>
 
-                        <div class="mb-3">
-                            <label class="form-label">Heading Font Family</label>
-                            <input type="text" class="form-control" name="heading_font_family"
-                                value="<?php echo htmlspecialchars($heading_font_family); ?>">
-                            <div class="form-text">Used for H1-H6 and titles. Example: 'Jost', sans-serif</div>
-                        </div>
+                            <div class="mb-4">
+                                <label class="form-label">Google Fonts URL</label>
+                                <input type="text" class="form-control form-control-lg" name="google_fonts_url" value="<?php echo htmlspecialchars($google_fonts_url); ?>" placeholder="https://fonts.googleapis.com/...">
+                                <div class="form-text mt-2">Paste the Google Fonts &lt;link&gt; href URL here.</div>
+                            </div>
 
-                        <div class="mt-5 p-4 bg-light rounded shadow-sm border">
-                            <h6><i class="fas fa-eye me-2"></i> Preview</h6>
-                            <p style="font-family: <?php echo $body_font_family; ?>;">This is a preview of the body
-                                text. Let's see how it looks.</p>
-                            <h4 style="font-family: <?php echo $heading_font_family; ?>;">Sample Heading Content</h4>
-                            <button type="button" class="btn btn-primary"
-                                style="background-color: <?php echo $btn_primary_bg; ?>; border-color: <?php echo $btn_primary_bg; ?>; color: <?php echo $btn_primary_text; ?>;">Sample
-                                Button</button>
+                            <div class="mb-4">
+                                <label class="form-label">Body Font Family</label>
+                                <input type="text" class="form-control form-control-lg" name="body_font_family" value="<?php echo htmlspecialchars($body_font_family); ?>">
+                                <div class="form-text mt-2">Default: 'Inter', sans-serif</div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Heading Font Family</label>
+                                <input type="text" class="form-control form-control-lg" name="heading_font_family" value="<?php echo htmlspecialchars($heading_font_family); ?>">
+                                <div class="form-text mt-2">Default: 'Jost', sans-serif (Used for headings and titles)</div>
+                            </div>
+
+                            <div class="mt-5 p-4 bg-light rounded-4 shadow-sm border border-dashed text-center">
+                                <h6 class="mb-4 text-muted text-uppercase fw-bold letter-spacing-1 small">Live Preview</h6>
+                                <div class="preview-box p-3 bg-white rounded-3 mb-3 shadow-sm">
+                                    <h3 class="mb-3" style="font-family: <?php echo $heading_font_family; ?>;">TrendsOne Branding</h3>
+                                    <p class="mb-4 text-muted" style="font-family: <?php echo $body_font_family; ?>;">Explore the latest collections in fashion and lifestyle with premium materials and designs.</p>
+                                    <button type="button" class="btn btn-primary px-4 py-2 fw-bold" style="background-color: <?php echo $btn_primary_bg; ?>; border-color: <?php echo $btn_primary_bg; ?>; color: <?php echo $btn_primary_text; ?>;">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                                <p class="small text-muted mb-0"><i class="fas fa-info-circle me-1"></i> Preview reflects current saved settings.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="card-footer text-end p-3">
-                <button type="submit" name="update_theme" class="btn btn-primary">
-                    <i class="fas fa-save me-2"></i> Save Changes
-                </button>
-            </div>
-        </form>
+                <div class="card-footer bg-white border-top p-4 text-end">
+                    <button type="submit" name="update_theme" class="btn btn-primary btn-lg px-5 shadow-sm">
+                        <i class="fas fa-save me-2"></i> Save All Changes
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <?php include 'includes/footer.php'; ?>
 </div>
 
-<?php include 'includes/sidebar.php'; ?>
+<style>
+.bg-primary-subtle { background-color: rgba(78, 115, 223, 0.1); }
+.letter-spacing-1 { letter-spacing: 1px; }
+.border-dashed { border-style: dashed !important; }
+.rounded-4 { border-radius: 1rem !important; }
+</style>
