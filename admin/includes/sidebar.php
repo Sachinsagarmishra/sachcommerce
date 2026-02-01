@@ -68,6 +68,14 @@ $settings_open = in_array($current_page, $settings_pages) || strpos($current_pag
                 </a>
             </li>
 
+            <!-- Transactions -->
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'transactions.php') ? 'active' : ''; ?>"
+                    href="transactions.php">
+                    <i class="fas fa-exchange-alt"></i> Transactions
+                </a>
+            </li>
+
             <!-- Customers -->
             <li class="nav-item">
                 <a class="nav-link <?php echo (in_array($current_page, ['customers.php', 'view-customer.php', 'edit-customer.php'])) ? 'active' : ''; ?>"
