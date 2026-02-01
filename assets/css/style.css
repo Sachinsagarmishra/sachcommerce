@@ -879,7 +879,22 @@ h6,
     padding: 20px 0;
 }
 
-.review-date {
-    font-size: 0.85rem;
-    color: #666;
+.gallery-scroll-container img {
+    max-width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+.review-images-flex img,
+.gallery-scroll-container img {
+    transition: transform 0.2s;
+}
+
+.gallery-scroll-container::-webkit-scrollbar {
+    height: 4px;
+}
+
+.gallery-scroll-container::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
 }

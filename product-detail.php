@@ -362,186 +362,150 @@ include 'includes/navbar.php';
 
                 <!-- Reviews Tab -->
                 <div id="reviews" class="tab-pane fade">
-                    <div class="row">
-                        <!-- Left Summary (Amazon Style) -->
-                        <div class="col-lg-4 mb-4">
-                            <h4 class="fw-bold mb-3">Customer reviews</h4>
-                            <div class="d-flex align-items-center mb-2">
+                    <!-- 1. Review Summary & Action -->
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                        <div>
+                            <h4 class="fw-bold mb-1">Customer Reviews</h4>
+                            <div class="d-flex align-items-center">
                                 <?php echo display_rating($rating_data['avg_rating'] ?? 0, false); ?>
                                 <span
-                                    class="ms-2 fw-bold h5 mb-0"><?php echo number_format($rating_data['avg_rating'] ?? 0, 1); ?>
+                                    class="ms-2 fw-bold"><?php echo number_format($rating_data['avg_rating'] ?? 0, 1); ?>
                                     out of 5</span>
-                            </div>
-                            <p class="text-muted small"><?php echo $rating_data['total_reviews'] ?? 0; ?> global ratings
-                            </p>
-
-                            <hr>
-
-                            <!-- Write a product review section -->
-                            <div class="mt-4">
-                                <h5 class="fw-bold">Review this product</h5>
-                                <p class="text-muted small">Share your thoughts with other customers</p>
-                                <?php if (is_logged_in()): ?>
-                                    <button class="btn btn-outline-dark w-100 rounded-pill py-2" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#writeReviewCollapse">
-                                        Write a product review
-                                    </button>
-                                <?php else: ?>
-                                    <a href="<?php echo SITE_URL; ?>/login"
-                                        class="btn btn-outline-dark w-100 rounded-pill py-2">
-                                        Login to write a review
-                                    </a>
-                                <?php endif; ?>
+                                <span class="ms-2 text-muted small">(<?php echo $rating_data['total_reviews'] ?? 0; ?>
+                                    reviews)</span>
                             </div>
                         </div>
+                        <?php if (is_logged_in()): ?>
+                            <button class="btn btn-primary rounded-pill px-4" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#writeReviewCollapse">
+                                Write a Review
+                            </button>
+                        <?php else: ?>
+                            <a href="<?php echo SITE_URL; ?>/login" class="btn btn-outline-primary rounded-pill px-4">
+                                Login to Review
+                            </a>
+                        <?php endif; ?>
+                    </div>
 
-                        <!-- Right Content: Images Gallery & Reviews List -->
-                        <div class="col-lg-8">
-                            <?php
-                            // Collect all approved images for gallery
-                            $all_review_images = [];
-                            foreach ($reviews as $rev) {
-                                if (!empty($rev['images'])) {
-                                    foreach ($rev['images'] as $img) {
-                                        $all_review_images[] = $img;
-                                    }
-                                }
+                    <!-- 2. Reviews with Images Gallery -->
+                    <?php
+                    $all_review_images = [];
+                    foreach ($reviews as $rev) {
+                        if (!empty($rev['images'])) {
+                            foreach ($rev['images'] as $img) {
+                                $all_review_images[] = $img;
                             }
-                            ?>
-
-                            <?php if (!empty($all_review_images)): ?>
-                                <div class="reviews-gallery-container mb-4">
-                                    <h5 class="fw-bold mb-3">Reviews with images</h5>
-                                    <div class="gallery-grid">
-                                        <?php foreach ($all_review_images as $img): ?>
-                                            <div class="gallery-item" style="min-width: 100px; height: 100px;">
-                                                <a href="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
-                                                    target="_blank">
-                                                    <img src="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
-                                                        alt="Customer Photo">
-                                                </a>
-                                            </div>
-                                        <?php endforeach; ?>
+                        }
+                    }
+                    ?>
+                    <?php if (!empty($all_review_images)): ?>
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-3">Customer Photos</h6>
+                            <div class="d-flex gap-2 overflow-auto pb-2 gallery-scroll-container"
+                                style="scrollbar-width: thin;">
+                                <?php foreach ($all_review_images as $img): ?>
+                                    <div class="flex-shrink-0"
+                                        style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid #eee;">
+                                        <a href="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>" target="_blank">
+                                            <img src="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
+                                                style="width: 100%; height: 100%; object-fit: cover;" alt="Review Image">
+                                        </a>
                                     </div>
-                                </div>
-                            <?php endif; ?>
-
-                            <!-- Review Submission Form (Collapsed) -->
-                            <?php if (is_logged_in()): ?>
-                                <div class="collapse mb-4" id="writeReviewCollapse">
-                                    <div class="card card-body border-0 bg-light rounded-4 shadow-sm">
-                                        <h5 class="fw-bold mb-4">Create Review</h5>
-                                        <form id="reviewForm" enctype="multipart/form-data">
-                                            <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-
-                                            <div class="mb-3">
-                                                <label class="form-label fw-bold small text-uppercase">Overall
-                                                    Rating</label>
-                                                <div class="rating-input">
-                                                    <input type="radio" name="rating" value="5" id="star5" required>
-                                                    <label for="star5" title="5 stars"><i class="fas fa-star"></i></label>
-                                                    <input type="radio" name="rating" value="4" id="star4">
-                                                    <label for="star4" title="4 stars"><i class="fas fa-star"></i></label>
-                                                    <input type="radio" name="rating" value="3" id="star3">
-                                                    <label for="star3" title="3 stars"><i class="fas fa-star"></i></label>
-                                                    <input type="radio" name="rating" value="2" id="star2">
-                                                    <label for="star2" title="2 stars"><i class="fas fa-star"></i></label>
-                                                    <input type="radio" name="rating" value="1" id="star1">
-                                                    <label for="star1" title="1 star"><i class="fas fa-star"></i></label>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label class="form-label fw-bold small text-uppercase">Review
-                                                    Comment</label>
-                                                <textarea class="form-control border-0 bg-white" name="review_text" rows="4"
-                                                    placeholder="Share your experience with this product..."
-                                                    required></textarea>
-                                            </div>
-
-                                            <div class="mb-4">
-                                                <label class="form-label fw-bold small text-uppercase">Upload Photos
-                                                    (Optional)</label>
-                                                <input type="file" class="form-control border-0" name="review_images[]"
-                                                    multiple accept="image/png, image/jpeg, image/webp">
-                                                <div class="form-text small">Select up to 5 images (PNG, JPG, WEBP). Max 5MB
-                                                    each.</div>
-                                            </div>
-
-                                            <div class="d-flex gap-2">
-                                                <button type="submit" class="btn btn-danger px-4 rounded-pill"
-                                                    id="submitReviewBtn">
-                                                    Submit Review
-                                                </button>
-                                                <button class="btn btn-light px-4 rounded-pill" type="button"
-                                                    data-bs-toggle="collapse" data-bs-target="#writeReviewCollapse">
-                                                    Cancel
-                                                </button>
-                                            </div>
-
-                                            <div id="reviewMessage" class="mt-3"></div>
-                                        </form>
-                                    </div>
-                                </div>
-                            <?php endif; ?>
-
-                            <!-- Reviews List -->
-                            <div class="reviews-list-container">
-                                <h5 class="fw-bold mb-4">Top reviews</h5>
-                                <?php if (!empty($reviews)): ?>
-                                    <?php foreach ($reviews as $review): ?>
-                                        <div class="review-item mb-4 border-bottom pb-4">
-                                            <div class="review-user-info d-flex align-items-center mb-2">
-                                                <span
-                                                    class="fw-bold"><?php echo htmlspecialchars($review['user_name']); ?></span>
-                                            </div>
-                                            <div class="d-flex align-items-center mb-2">
-                                                <?php echo display_rating($review['rating'], false); ?>
-                                                <?php if (!empty($review['title'])): ?>
-                                                    <span
-                                                        class="ms-2 fw-bold"><?php echo htmlspecialchars($review['title']); ?></span>
-                                                <?php endif; ?>
-                                            </div>
-                                            <div class="review-date mb-2">
-                                                Reviewed on <?php echo date('d F Y', strtotime($review['created_at'])); ?>
-                                            </div>
-                                            <p class="review-text mb-2">
-                                                <?php echo nl2br(htmlspecialchars($review['review_text'])); ?>
-                                            </p>
-
-                                            <?php if (!empty($review['images'])): ?>
-                                                <div class="review-images-flex mb-3">
-                                                    <?php foreach ($review['images'] as $img): ?>
-                                                        <a href="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
-                                                            target="_blank" class="gallery-item-small">
-                                                            <img src="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
-                                                                class="review-img-thumb" style="width: 60px; height: 60px;"
-                                                                alt="Review Image">
-                                                        </a>
-                                                    <?php endforeach; ?>
-                                                </div>
-                                            <?php endif; ?>
-
-                                            <?php if (!empty($review['admin_reply'])): ?>
-                                                <div
-                                                    class="admin-reply-box bg-light p-3 rounded-3 border-start border-4 border-primary">
-                                                    <span class="admin-reply-label d-block fw-bold small text-primary mb-1">Response
-                                                        from TrendsOne:</span>
-                                                    <p class="mb-0 small">
-                                                        <?php echo nl2br(htmlspecialchars($review['admin_reply'])); ?>
-                                                    </p>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <div class="text-center py-5 bg-light rounded-4">
-                                        <i class="fas fa-star-half-alt fa-3x text-muted mb-3"></i>
-                                        <p class="text-muted">No reviews yet. Be the first to share your experience!</p>
-                                    </div>
-                                <?php endif; ?>
+                                <?php endforeach; ?>
                             </div>
                         </div>
+                    <?php endif; ?>
+
+                    <!-- 3. Review Submission Form (Collapsed) -->
+                    <?php if (is_logged_in()): ?>
+                        <div class="collapse mb-5" id="writeReviewCollapse">
+                            <div class="p-4 bg-light rounded-4 border">
+                                <h5 class="fw-bold mb-4">Submit Your Review</h5>
+                                <form id="reviewForm" enctype="multipart/form-data">
+                                    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+
+                                    <div class="mb-3">
+                                        <label class="form-label d-block fw-bold small">RATING</label>
+                                        <div
+                                            class="rating-input d-inline-flex flex-row-reverse border p-2 rounded bg-white">
+                                            <input type="radio" name="rating" value="5" id="star5" required>
+                                            <label for="star5" class="px-1"><i class="fas fa-star"></i></label>
+                                            <input type="radio" name="rating" value="4" id="star4">
+                                            <label for="star4" class="px-1"><i class="fas fa-star"></i></label>
+                                            <input type="radio" name="rating" value="3" id="star3">
+                                            <label for="star3" class="px-1"><i class="fas fa-star"></i></label>
+                                            <input type="radio" name="rating" value="2" id="star2">
+                                            <label for="star2" class="px-1"><i class="fas fa-star"></i></label>
+                                            <input type="radio" name="rating" value="1" id="star1">
+                                            <label for="star1" class="px-1"><i class="fas fa-star"></i></label>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold small">YOUR COMMENT</label>
+                                        <textarea class="form-control" name="review_text" rows="4"
+                                            placeholder="How was your experience?" required></textarea>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold small">ATTACH PHOTOS (MAX 5)</label>
+                                        <input type="file" class="form-control" name="review_images[]" multiple
+                                            accept="image/*">
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary px-5 rounded-pill"
+                                        id="submitReviewBtn">Submit Review</button>
+                                    <div id="reviewMessage" class="mt-3"></div>
+                                </form>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <!-- 4. Top Reviews List -->
+                    <div class="reviews-list-container">
+                        <?php if (!empty($reviews)): ?>
+                            <?php foreach ($reviews as $review): ?>
+                                <div class="mb-4 pb-4 border-bottom">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span
+                                            class="fw-bold text-dark"><?php echo htmlspecialchars($review['user_name']); ?></span>
+                                        <small
+                                            class="text-muted"><?php echo date('d M Y', strtotime($review['created_at'])); ?></small>
+                                    </div>
+                                    <div class="mb-2">
+                                        <?php echo display_rating($review['rating'], false); ?>
+                                    </div>
+                                    <p class="mb-3 text-secondary">
+                                        <?php echo nl2br(htmlspecialchars($review['review_text'])); ?></p>
+
+                                    <?php if (!empty($review['images'])): ?>
+                                        <div class="d-flex gap-2 flex-wrap mb-3">
+                                            <?php foreach ($review['images'] as $img): ?>
+                                                <div
+                                                    style="width: 70px; height: 70px; border-radius: 6px; overflow: hidden; border: 1px solid #ddd;">
+                                                    <a href="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
+                                                        target="_blank">
+                                                        <img src="<?php echo SITE_URL; ?>/uploads/reviews/<?php echo $img; ?>"
+                                                            style="width: 100%; height: 100%; object-fit: cover;" alt="Review Image">
+                                                    </a>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <?php if (!empty($review['admin_reply'])): ?>
+                                        <div class="p-3 bg-light rounded-3 border-start border-4 border-primary">
+                                            <span class="d-block fw-bold small text-primary mb-1">Response from TrendsOne:</span>
+                                            <p class="mb-0 small"><?php echo nl2br(htmlspecialchars($review['admin_reply'])); ?></p>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="text-center py-5">
+                                <p class="text-muted">No reviews yet for this product.</p>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
