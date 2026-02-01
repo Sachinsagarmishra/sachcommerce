@@ -83,18 +83,24 @@ include 'includes/navbar.php';
     .product-main-image {
         flex: 1;
         border: 1px solid #eee;
-        border-radius: 8px;
+        border-radius: 4px;
         overflow: hidden;
-        background: #f9f9f9;
+        background: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
         position: relative;
+        aspect-ratio: 1 / 1 !important;
+        width: 100%;
+        height: auto;
     }
 
     .product-main-image img {
         max-width: 100%;
-        max-height: 600px;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
         transition: transform 0.3s ease;
         cursor: zoom-in;
     }
@@ -669,19 +675,29 @@ include 'includes/navbar.php';
         const zoomBtn = document.getElementById('zoomToggle');
 
         let currentIndex = 0;
-        const images = Array.from(thumbnails).map(t => t.getAttribute('data-image'));
+        const thumbnailArray = Array.from(thumbnails);
+        const images = thumbnailArray.map(t => t.getAttribute('data-image'));
+
+        if (images.length === 0 && mainImage) {
+            const singleImg = mainImage.getAttribute('src');
+            if (singleImg) images.push(singleImg);
+        }
 
         function updateMainImage(index) {
+            if (images.length === 0) return;
             currentIndex = index;
             const newSrc = images[currentIndex];
             mainImage.src = newSrc;
 
+            // Sync zoom origin reset
+            mainImage.style.transformOrigin = 'center center';
+
             // Update thumbnails active state
-            thumbnails.forEach((t, i) => {
+            thumbnailArray.forEach((t, i) => {
                 if (i === index) t.classList.add('active');
                 else t.classList.remove('active');
             });
-
+            
             // Re-sync with mobile/desktop thumbs
             document.querySelectorAll(`.product-thumb-item[data-image="${newSrc}"]`).forEach(t => t.classList.add('active'));
         }
@@ -692,6 +708,7 @@ include 'includes/navbar.php';
 
         if (prevBtn) {
             prevBtn.addEventListener('click', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 let nextIndex = currentIndex - 1;
                 if (nextIndex < 0) nextIndex = images.length - 1;
@@ -701,6 +718,7 @@ include 'includes/navbar.php';
 
         if (nextBtn) {
             nextBtn.addEventListener('click', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 let nextIndex = currentIndex + 1;
                 if (nextIndex >= images.length) nextIndex = 0;
@@ -710,13 +728,19 @@ include 'includes/navbar.php';
 
         // Zoom Logic
         function toggleZoom(e) {
-            if (e) e.stopPropagation();
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            if (!mainImageWrapper) return;
             mainImageWrapper.classList.toggle('zoomed');
-            const icon = zoomBtn.querySelector('i');
-            if (mainImageWrapper.classList.contains('zoomed')) {
-                icon.className = 'fas fa-compress-alt';
-            } else {
-                icon.className = 'fas fa-expand-alt';
+            if (zoomBtn) {
+                const icon = zoomBtn.querySelector('i');
+                if (mainImageWrapper.classList.contains('zoomed')) {
+                    icon.className = 'fas fa-compress-alt';
+                } else {
+                    icon.className = 'fas fa-expand-alt';
+                }
             }
         }
 
@@ -724,24 +748,26 @@ include 'includes/navbar.php';
         if (mainImage) mainImage.addEventListener('click', toggleZoom);
 
         // Zoom mouse follow
-        mainImageWrapper.addEventListener('mousemove', function (e) {
-            if (this.classList.contains('zoomed')) {
-                const rect = this.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+        if (mainImageWrapper) {
+            mainImageWrapper.addEventListener('mousemove', function (e) {
+                if (this.classList.contains('zoomed') && mainImage) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
 
-                const xPerc = (x / rect.width) * 100;
-                const yPerc = (y / rect.height) * 100;
+                    const xPerc = (x / rect.width) * 100;
+                    const yPerc = (y / rect.height) * 100;
 
-                mainImage.style.transformOrigin = `${xPerc}% ${yPerc}%`;
-            }
-        });
+                    mainImage.style.transformOrigin = `${xPerc}% ${yPerc}%`;
+                }
+            });
 
-        mainImageWrapper.addEventListener('mouseleave', function () {
-            if (this.classList.contains('zoomed')) {
-                toggleZoom();
-            }
-        });
+            mainImageWrapper.addEventListener('mouseleave', function () {
+                if (this.classList.contains('zoomed')) {
+                    toggleZoom();
+                }
+            });
+        }
 
         function shareProduct() {
             if (navigator.share) {
@@ -751,12 +777,9 @@ include 'includes/navbar.php';
                     url: window.location.href
                 });
             } else {
-                // Fallback: copy to clipboard
                 navigator.clipboard.writeText(window.location.href);
                 if (typeof showToast === 'function') {
                     showToast('Success', 'Link copied to clipboard!', 'success');
-                } else {
-                    alert('Link copied to clipboard!');
                 }
             }
         }
@@ -777,7 +800,6 @@ include 'includes/navbar.php';
             let totalSeconds = hours * 3600 + minutes * 60 + seconds;
 
             if (totalSeconds <= 0) {
-                // Reset to 24h or stop
                 countdownElement.innerText = "00:00:00";
                 return;
             }
@@ -795,192 +817,183 @@ include 'includes/navbar.php';
         }
         setInterval(updateCountdown, 1000);
 
-        // Quantity Picker Logic
-        document.addEventListener('DOMContentLoaded', function () {
-            const qtyInput = document.getElementById('productQuantity');
-            const minusBtn = document.querySelector('.qty-btn-minus');
-            const plusBtn = document.querySelector('.qty-btn-plus');
+        // Sub-elements initialization
+        const qtyInput = document.getElementById('productQuantity');
+        const minusBtn = document.querySelector('.qty-btn-minus');
+        const plusBtn = document.querySelector('.qty-btn-plus');
 
-            if (qtyInput && minusBtn && plusBtn) {
-                minusBtn.addEventListener('click', function () {
-                    let val = parseInt(qtyInput.value);
-                    if (val > 1) qtyInput.value = val - 1;
-                });
+        if (qtyInput && minusBtn && plusBtn) {
+            minusBtn.addEventListener('click', function () {
+                let val = parseInt(qtyInput.value);
+                if (val > 1) qtyInput.value = val - 1;
+            });
 
-                plusBtn.addEventListener('click', function () {
-                    let val = parseInt(qtyInput.value);
-                    let max = parseInt(qtyInput.getAttribute('max')) || 99;
-                    if (val < max) qtyInput.value = val + 1;
-                });
-            }
+            plusBtn.addEventListener('click', function () {
+                let val = parseInt(qtyInput.value);
+                let max = parseInt(qtyInput.getAttribute('max')) || 99;
+                if (val < max) qtyInput.value = val + 1;
+            });
+        }
 
-            // Review Form Submission
-            const reviewForm = document.getElementById('reviewForm');
-            if (reviewForm) {
-                reviewForm.addEventListener('submit', function (e) {
-                    e.preventDefault();
+        // Review Form Submission
+        const reviewForm = document.getElementById('reviewForm');
+        if (reviewForm) {
+            reviewForm.addEventListener('submit', function (e) {
+                e.preventDefault();
 
-                    const submitBtn = document.getElementById('submitReviewBtn');
-                    const messageDiv = document.getElementById('reviewMessage');
-                    const formData = new FormData(this);
+                const submitBtn = document.getElementById('submitReviewBtn');
+                const messageDiv = document.getElementById('reviewMessage');
+                const formData = new FormData(this);
 
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
-                    messageDiv.innerHTML = '';
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
+                messageDiv.innerHTML = '';
 
-                    fetch('<?php echo SITE_URL; ?>/api/submit-review.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                messageDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
-                                reviewForm.reset();
-                            } else {
-                                messageDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            messageDiv.innerHTML = `<div class="alert alert-danger">Something went wrong. Please try again later.</div>`;
-                        })
-                        .finally(() => {
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = 'Submit Review';
-                        });
-                });
-            }
-
-            // Review Filtering and Pagination
-            const reviewsList = document.getElementById('reviewsList');
-            const reviewFilter = document.getElementById('reviewFilter');
-            const reviewPagination = document.getElementById('reviewPagination');
-            const productId = <?php echo $product['id']; ?>;
-            const siteUrl = '<?php echo SITE_URL; ?>';
-
-            function loadReviews(page = 1) {
-                const filter = reviewFilter ? reviewFilter.value : 'recent';
-
-                // Show loading state
-                reviewsList.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
-
-                fetch(`${siteUrl}/api/get-reviews.php?product_id=${productId}&filter=${filter}&page=${page}`)
+                fetch('<?php echo SITE_URL; ?>/api/submit-review.php', {
+                    method: 'POST',
+                    body: formData
+                })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            renderReviews(data.reviews);
-                            renderPagination(data.pagination);
+                            messageDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                            reviewForm.reset();
                         } else {
-                            reviewsList.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                            messageDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
                         }
                     })
                     .catch(error => {
-                        console.error('Error fetching reviews:', error);
-                        reviewsList.innerHTML = '<div class="alert alert-danger">Failed to load reviews.</div>';
+                        console.error('Error:', error);
+                        messageDiv.innerHTML = `<div class="alert alert-danger">Something went wrong. Please try again later.</div>`;
+                    })
+                    .finally(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = 'Submit Review';
                     });
+            });
+        }
+
+        // Review Filtering and Pagination
+        const reviewsList = document.getElementById('reviewsList');
+        const reviewFilter = document.getElementById('reviewFilter');
+        const reviewPagination = document.getElementById('reviewPagination');
+        const productId = <?php echo $product['id']; ?>;
+        const siteUrl = '<?php echo SITE_URL; ?>';
+
+        function loadReviews(page = 1) {
+            const filter = reviewFilter ? reviewFilter.value : 'recent';
+            reviewsList.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
+
+            fetch(`${siteUrl}/api/get-reviews.php?product_id=${productId}&filter=${filter}&page=${page}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        renderReviews(data.reviews);
+                        renderPagination(data.pagination);
+                    } else {
+                        reviewsList.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching reviews:', error);
+                    reviewsList.innerHTML = '<div class="alert alert-danger">Failed to load reviews.</div>';
+                });
+        }
+
+        function renderReviews(reviews) {
+            if (reviews.length === 0) {
+                reviewsList.innerHTML = '<div class="text-center py-5"><p class="text-muted">No reviews found matching your criteria.</p></div>';
+                return;
             }
 
-            function renderReviews(reviews) {
-                if (reviews.length === 0) {
-                    reviewsList.innerHTML = '<div class="text-center py-5"><p class="text-muted">No reviews found matching your criteria.</p></div>';
-                    return;
-                }
-
-                let html = '';
-                reviews.forEach(review => {
-                    let imagesHtml = '';
-                    if (review.images && review.images.length > 0) {
-                        imagesHtml = '<div class="d-flex gap-2 flex-wrap mb-3">';
-                        review.images.forEach(img => {
-                            imagesHtml += `
-                            <div style="width: 70px; height: 70px; border-radius: 6px; overflow: hidden; border: 1px solid #ddd;">
-                                <a href="${siteUrl}/uploads/reviews/${img}" target="_blank">
-                                    <img src="${siteUrl}/uploads/reviews/${img}" style="width: 100%; height: 100%; object-fit: cover;" alt="Review Image">
-                                </a>
-                            </div>`;
-                        });
-                        imagesHtml += '</div>';
-                    }
-
-                    let replyHtml = '';
-                    if (review.admin_reply) {
-                        replyHtml = `
-                        <div class="p-3 bg-light rounded-3 border-start border-4 border-primary mt-3">
-                            <span class="d-block fw-bold small text-primary mb-1">Response from TrendsOne:</span>
-                            <p class="mb-0 small">${review.admin_reply}</p>
+            let html = '';
+            reviews.forEach(review => {
+                let imagesHtml = '';
+                if (review.images && review.images.length > 0) {
+                    imagesHtml = '<div class="d-flex gap-2 flex-wrap mb-3">';
+                    review.images.forEach(img => {
+                        imagesHtml += `
+                        <div style="width: 70px; height: 70px; border-radius: 6px; overflow: hidden; border: 1px solid #ddd;">
+                            <a href="${siteUrl}/uploads/reviews/${img}" target="_blank">
+                                <img src="${siteUrl}/uploads/reviews/${img}" style="width: 100%; height: 100%; object-fit: cover;" alt="Review Image">
+                            </a>
                         </div>`;
-                    }
-
-                    html += `
-                    <div class="mb-4 pb-4 border-bottom">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="fw-bold text-dark">${review.user_name}</span>
-                            <small class="text-muted">${review.formatted_date}</small>
-                        </div>
-                        <div class="mb-2">
-                            ${review.rating_html}
-                        </div>
-                        <p class="mb-3 text-secondary">${review.review_text.replace(/\n/g, '<br>')}</p>
-                        ${imagesHtml}
-                        ${replyHtml}
-                    </div>`;
-                });
-                reviewsList.innerHTML = html;
-            }
-
-            function renderPagination(pagination) {
-                const { current_page, total_pages } = pagination;
-                if (total_pages < 1) {
-                    reviewPagination.innerHTML = '';
-                    return;
-                }
-
-                let html = '<nav><ul class="pagination pagination-sm">';
-
-                // Previous
-                html += `
-                <li class="page-item ${current_page === 1 ? 'disabled' : ''}">
-                    <a class="page-link rounded-circle mx-1" href="#" data-page="${current_page - 1}">&laquo;</a>
-                </li>`;
-
-                for (let i = 1; i <= total_pages; i++) {
-                    html += `
-                    <li class="page-item ${current_page === i ? 'active' : ''}">
-                        <a class="page-link rounded-circle mx-1" href="#" data-page="${i}">${i}</a>
-                    </li>`;
-                }
-
-                // Next
-                html += `
-                <li class="page-item ${current_page === total_pages ? 'disabled' : ''}">
-                    <a class="page-link rounded-circle mx-1" href="#" data-page="${current_page + 1}">&raquo;</a>
-                </li>`;
-
-                html += '</ul></nav>';
-                reviewPagination.innerHTML = html;
-
-                // Add click listeners
-                reviewPagination.querySelectorAll('.page-link').forEach(link => {
-                    link.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        const page = parseInt(this.getAttribute('data-page'));
-                        if (page && page !== current_page) {
-                            loadReviews(page);
-                            // Scroll to reviews list
-                            document.getElementById('reviewsTabContent')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }
                     });
+                    imagesHtml += '</div>';
+                }
+
+                let replyHtml = '';
+                if (review.admin_reply) {
+                    replyHtml = `
+                    <div class="p-3 bg-light rounded-3 border-start border-4 border-primary mt-3">
+                        <span class="d-block fw-bold small text-primary mb-1">Response from TrendsOne:</span>
+                        <p class="mb-0 small">${review.admin_reply}</p>
+                    </div>`;
+                }
+
+                html += `
+                <div class="mb-4 pb-4 border-bottom">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="fw-bold text-dark">${review.user_name}</span>
+                        <small class="text-muted">${review.formatted_date}</small>
+                    </div>
+                    <div class="mb-2">
+                        ${review.rating_html}
+                    </div>
+                    <p class="mb-3 text-secondary">${review.review_text.replace(/\n/g, '<br>')}</p>
+                    ${imagesHtml}
+                    ${replyHtml}
+                </div>`;
+            });
+            reviewsList.innerHTML = html;
+        }
+
+        function renderPagination(pagination) {
+            const { current_page, total_pages } = pagination;
+            if (total_pages < 1) {
+                reviewPagination.innerHTML = '';
+                return;
+            }
+
+            let html = '<nav><ul class="pagination pagination-sm">';
+            html += `
+            <li class="page-item ${current_page === 1 ? 'disabled' : ''}">
+                <a class="page-link rounded-circle mx-1" href="#" data-page="${current_page - 1}">&laquo;</a>
+            </li>`;
+
+            for (let i = 1; i <= total_pages; i++) {
+                html += `
+                <li class="page-item ${current_page === i ? 'active' : ''}">
+                    <a class="page-link rounded-circle mx-1" href="#" data-page="${i}">${i}</a>
+                </li>`;
+            }
+
+            html += `
+            <li class="page-item ${current_page === total_pages ? 'disabled' : ''}">
+                <a class="page-link rounded-circle mx-1" href="#" data-page="${current_page + 1}">&raquo;</a>
+            </li>`;
+
+            html += '</ul></nav>';
+            reviewPagination.innerHTML = html;
+
+            reviewPagination.querySelectorAll('.page-link').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const page = parseInt(this.getAttribute('data-page'));
+                    if (page && page !== current_page) {
+                        loadReviews(page);
+                        document.getElementById('reviewsTabContent')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 });
-            }
+            });
+        }
 
-            if (reviewFilter) {
-                reviewFilter.addEventListener('change', () => loadReviews(1));
-            }
+        if (reviewFilter) {
+            reviewFilter.addEventListener('change', () => loadReviews(1));
+        }
 
-            // Load reviews automatically on page load to ensure pagination/filters are active
-            loadReviews(1);
-        });
+        loadReviews(1);
+    });
 </script>
 
 <?php include 'includes/footer.php'; ?>
