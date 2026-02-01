@@ -215,6 +215,14 @@ include 'includes/navbar.php';
                                             <?php echo format_price($product['price']); ?>
                                         <?php endif; ?>
                                     </div>
+                                    <div class="product-rating mt-2">
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <span class="text-muted small ms-1">(5.0)</span>
+                                    </div>
                                 </div>
                                 <div class="product-footer">
                                     <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"

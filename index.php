@@ -148,6 +148,14 @@ include 'includes/navbar.php';
                                             <span class="product-price"><?php echo format_price($product['price']); ?></span>
                                         <?php endif; ?>
                                     </div>
+                                    <div class="product-rating mb-2">
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <span class="text-muted small ms-1">(5.0)</span>
+                                    </div>
                                     <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
                                         data-product-id="<?php echo $product['id']; ?>">
                                         <i class="fas fa-shopping-cart"></i> Add to Cart
@@ -203,6 +211,14 @@ include 'includes/navbar.php';
                                         <?php else: ?>
                                             <span class="product-price"><?php echo format_price($product['price']); ?></span>
                                         <?php endif; ?>
+                                    </div>
+                                    <div class="product-rating mb-2">
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <span class="text-muted small ms-1">(5.0)</span>
                                     </div>
                                     <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
                                         data-product-id="<?php echo $product['id']; ?>">

@@ -274,31 +274,18 @@ include 'includes/navbar.php';
             </div>
 
             <div class="rating-section mb-3">
-                <?php if ($rating_data && $rating_data['total_reviews'] > 0): ?>
-                    <div class="rating-pill d-inline-flex align-items-center bg-light rounded-pill px-3 py-1 border"
-                        style="background-color: #f9f4f1 !important; border-color: #f0e6e0 !important;">
-                        <div class="stars me-2">
-                            <?php echo display_rating($rating_data['avg_rating'], false); ?>
-                        </div>
-                        <span class="fw-bold" style="color: #1a2b4c; font-size: 0.95rem;">
-                            (<?php echo number_format($rating_data['avg_rating'], 1); ?>)
-                        </span>
+                <div class="rating-pill d-inline-flex align-items-center bg-light rounded-pill px-3 py-1 border"
+                    style="background-color: #f9f4f1 !important; border-color: #f0e6e0 !important;">
+                    <div class="stars me-2">
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
                     </div>
-                    <span class="text-muted small ms-2"><?php echo $rating_data['total_reviews']; ?> reviews</span>
-                <?php else: ?>
-                    <div class="rating-pill d-inline-flex align-items-center bg-light rounded-pill px-3 py-1 border"
-                        style="background-color: #f9f4f1 !important; border-color: #f0e6e0 !important;">
-                        <div class="stars me-2">
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                        </div>
-                        <span class="fw-bold" style="color: #1a2b4c; font-size: 0.95rem;">(5.0)</span>
-                    </div>
-                    <span class="text-muted small ms-2">5 star rating</span>
-                <?php endif; ?>
+                    <span class="fw-bold" style="color: #1a2b4c; font-size: 0.95rem;">(5.0)</span>
+                </div>
+                <span class="text-muted small ms-2">5 star rating</span>
             </div>
 
             <div class="short-description mb-4">
@@ -648,6 +635,14 @@ include 'includes/navbar.php';
                                             <?php echo format_price($related['price']); ?>
                                         <?php endif; ?>
                                     </div>
+                                    <div class="product-rating mt-2">
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <i class="fas fa-star text-warning small"></i>
+                                        <span class="text-muted small ms-1">(5.0)</span>
+                                    </div>
                                 </div>
                                 <div class="product-footer">
                                     <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
@@ -697,7 +692,7 @@ include 'includes/navbar.php';
                 if (i === index) t.classList.add('active');
                 else t.classList.remove('active');
             });
-            
+
             // Re-sync with mobile/desktop thumbs
             document.querySelectorAll(`.product-thumb-item[data-image="${newSrc}"]`).forEach(t => t.classList.add('active'));
         }
