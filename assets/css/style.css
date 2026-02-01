@@ -21,6 +21,13 @@ body {
     font-family: 'Inter', sans-serif;
     color: #333;
     line-height: 1.6;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+html {
+    overflow-x: hidden;
+    width: 100%;
 }
 
 h1,
@@ -54,6 +61,11 @@ h6,
 
 .navbar-brand {
     font-size: 24px;
+}
+
+.navbar-brand img {
+    max-width: 180px;
+    height: auto;
 }
 
 .navbar-nav .nav-link {
@@ -321,6 +333,74 @@ h6,
 
 .social-links a:hover {
     transform: translateY(-3px);
+}
+
+/* Hero Slider */
+.hero-slider {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+    background: #f0f0f0;
+}
+
+.hero-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    visibility: hidden;
+}
+
+.hero-slide.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.hero-slide picture,
+.hero-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.slider-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.slider-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.slider-dot.active {
+    background: #fff;
+    transform: scale(1.2);
+}
+
+@media (max-width: 768px) {
+    .hero-slider {
+        height: 350px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-slider {
+        height: 300px;
+    }
 }
 
 /* Back to Top Button */

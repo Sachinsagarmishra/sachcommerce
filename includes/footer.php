@@ -231,149 +231,153 @@ if ($fake_enabled === '1' && !empty($fake_products_ids)):
         </div>
 
         <style>
+        .fake-notification {
+            position: fixed;
+            bottom: -150px;
+            left: 20px;
+            width: 330px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 9999;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+        .fake-notification.show {
+            bottom: 20px;
+        }
+        .fake-notif-content {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            gap: 12px;
+            position: relative;
+        }
+        .fake-notif-image {
+            width: 55px;
+            height: 55px;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .fake-notif-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .fake-notif-badge {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            background: #28a745;
+            color: #fff;
+            width: 16px;
+            height: 16px;
+            font-size: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+        .fake-notif-details {
+            flex-grow: 1;
+            min-width: 0;
+        }
+        .fake-notif-title {
+            margin: 0;
+            font-size: 10px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1;
+        }
+        .fake-notif-product-name {
+            margin: 2px 0;
+            font-weight: 700;
+            color: #333;
+            text-decoration: none;
+            font-size: 13px;
+            line-height: 1.3;
+        }
+        .fake-notif-product-name:hover {
+            color: var(--primary-color, #007bff);
+        }
+        .fake-notif-location {
+            margin: 0;
+            font-size: 11px;
+            color: #444;
+            line-height: 1.2;
+        }
+        .fake-notif-location strong {
+            color: #000;
+        }
+        .fake-notif-meta {
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            line-height: 1;
+        }
+        .fake-notif-verified {
+            font-size: 9px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .fake-notif-time {
+            font-size: 9px;
+        }
+        .fake-notif-close {
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #ccc;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+        .fake-notif-close:hover {
+            color: #333;
+        }
+        .fake-notif-progress {
+            height: 2px;
+            width: 100%;
+            background: #f0f0f0;
+        }
+        #fakeNotifProgress {
+            height: 100%;
+            width: 0%;
+            background: var(--primary-color, #007bff);
+        }
+
+        @media (max-width: 576px) {
             .fake-notification {
-                position: fixed;
-                bottom: -150px;
-                left: 20px;
-                width: 330px;
-                background: #fff;
-                border-radius: 12px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-                z-index: 9999;
-                transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-                overflow: hidden;
-                border: 1px solid #eee;
-            }
-
-            .fake-notification.show {
-                bottom: 20px;
-            }
-
-            .fake-notif-content {
-                display: flex;
-                align-items: center;
-                padding: 12px 15px;
-                gap: 12px;
-                position: relative;
-            }
-
-            .fake-notif-image {
-                width: 60px;
-                height: 60px;
-                flex-shrink: 0;
-                position: relative;
-            }
-
-            .fake-notif-image img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                border-radius: 8px;
-            }
-
-            .fake-notif-badge {
-                position: absolute;
-                top: -5px;
-                left: -5px;
-                background: #28a745;
-                color: #fff;
-                width: 18px;
-                height: 18px;
-                font-size: 10px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 50%;
-                border: 2px solid #fff;
-            }
-
-            .fake-notif-details {
-                flex-grow: 1;
-                min-width: 0;
-            }
-
-            .fake-notif-title {
-                margin: 0;
-                font-size: 11px;
-                color: #666;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-
-            .fake-notif-product-name {
-                margin: 2px 0;
-                font-weight: 700;
-                color: #333;
-                text-decoration: none;
-                font-size: 14px;
-            }
-
-            .fake-notif-product-name:hover {
-                color: var(--primary-color, #007bff);
-            }
-
-            .fake-notif-location {
-                margin: 0;
-                font-size: 12px;
-                color: #444;
-            }
-
-            .fake-notif-location strong {
-                color: #000;
-            }
-
-            .fake-notif-meta {
-                margin-top: 3px;
-                display: flex;
-                align-items: center;
-            }
-
-            .fake-notif-verified {
-                font-size: 10px;
-                font-weight: bold;
-                text-transform: uppercase;
-            }
-
-            .fake-notif-time {
-                font-size: 10px;
-            }
-
-            .fake-notif-close {
-                position: absolute;
-                top: 5px;
-                right: 8px;
-                background: none;
-                border: none;
-                font-size: 18px;
-                color: #ccc;
-                cursor: pointer;
+                width: 280px;
+                left: 15px;
                 padding: 0;
-                line-height: 1;
             }
-
-            .fake-notif-close:hover {
-                color: #333;
+            .fake-notif-content {
+                padding: 10px;
+                gap: 10px;
             }
-
-            .fake-notif-progress {
-                height: 3px;
-                width: 100%;
-                background: #f0f0f0;
+            .fake-notif-image {
+                width: 45px;
+                height: 45px;
             }
-
-            #fakeNotifProgress {
-                height: 100%;
-                width: 0%;
-                background: var(--primary-color, #007bff);
+            .fake-notif-product-name {
+                font-size: 12px;
             }
-
-            @media (max-width: 480px) {
-                .fake-notification {
-                    width: calc(100% - 40px);
-                    left: 20px;
-                }
+            .fake-notif-location {
+                font-size: 10px;
             }
-        </style>
+            .fake-notification.show {
+                bottom: 15px;
+            }
+        }
+    </style>
 
         <script>
             const fakeProducts = <?php echo json_encode($fake_products_list); ?>;
