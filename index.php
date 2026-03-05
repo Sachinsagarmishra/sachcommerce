@@ -215,14 +215,14 @@ foreach ($all_home_sections as $sec) {
 
         if (!empty($assigned_categories)): ?>
             <section class="section-padding <?php echo ($sec['display_order'] % 2 == 0) ? 'bg-light' : ''; ?>">
-                <div class="container">
-                    <div class="text-center mb-5">
-                        <h2 class="section-title mb-2"><?php echo htmlspecialchars($title); ?></h2>
+                <div class="container category-tabs">
+                    <div class="text-center mb-4">
+                        <h2 class="section-title mb-4" style="font-size: 42px;"><?php echo htmlspecialchars($title); ?></h2>
 
-                        <ul class="nav nav-tabs justify-content-center border-0 mb-4" id="categoryTabs" role="tablist">
+                        <ul class="nav nav-tabs justify-content-center border-0 mb-2" id="categoryTabs" role="tablist">
                             <?php foreach ($assigned_categories as $index => $cat): ?>
-                                <li class="nav-item m-1" role="presentation">
-                                    <button class="nav-link rounded-pill px-4 <?php echo $index === 0 ? 'active' : ''; ?>"
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link <?php echo $index === 0 ? 'active' : ''; ?>"
                                         id="cat-tab-<?php echo $cat['id']; ?>" data-bs-toggle="tab"
                                         data-bs-target="#cat-content-<?php echo $cat['id']; ?>" type="button"
                                         role="tab"><?php echo htmlspecialchars($cat['name']); ?></button>
@@ -244,11 +244,11 @@ foreach ($all_home_sections as $sec) {
                             ?>
                             <div class="tab-pane fade <?php echo $index === 0 ? 'show active' : ''; ?>"
                                 id="cat-content-<?php echo $cat['id']; ?>" role="tabpanel">
-                                <div class="row g-4">
+                                <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
                                     <?php if (!empty($cat_products)): ?>
                                         <?php foreach ($cat_products as $product): ?>
-                                            <div class="col-6 col-md-4 col-lg-3">
-                                                <div class="card product-card">
+                                            <div class="col">
+                                                <div class="card product-card h-100">
                                                     <?php include 'includes/templates/product-card-body.php'; ?>
                                                 </div>
                                             </div>
@@ -377,25 +377,31 @@ foreach ($all_home_sections as $sec) {
     if (!empty($products)):
         $is_even = ($sec['display_order'] % 2 == 0);
         ?>
-        <section class="section-padding <?php echo $is_even ? 'bg-light' : ''; ?>">
+        <section class="section-padding <?php echo $is_even ? 'bg-white' : 'bg-light'; ?>">
             <div class="container">
-                <div class="text-center mb-5">
-                    <h2 class="section-title mb-2"><?php echo htmlspecialchars($title); ?></h2>
-                    <?php if ($desc): ?>
-                        <p class="text-muted mx-auto mb-2" style="max-width: 600px;"><?php echo htmlspecialchars($desc); ?></p>
-                    <?php endif; ?>
+                <div class="d-flex justify-content-between align-items-end mb-4">
+                    <div>
+                        <h2 class="section-title mb-1"><?php echo htmlspecialchars($title); ?></h2>
+                        <?php if ($desc): ?>
+                            <p class="text-muted mb-0 small"><?php echo htmlspecialchars($desc); ?></p>
+                        <?php endif; ?>
+                    </div>
                     <?php if ($cta): ?>
-                        <a href="<?php echo $cta; ?>" class="btn btn-sm btn-outline-primary">View All</a>
+                        <a href="<?php echo $cta; ?>" class="btn btn-sm btn-link text-dark fw-bold text-decoration-none p-0">View
+                            All <i class="fas fa-arrow-right ms-1" style="font-size: 10px;"></i></a>
                     <?php endif; ?>
                 </div>
-                <div class="row g-4">
-                    <?php foreach ($products as $product): ?>
-                        <div class="col-6 col-md-4 col-lg-3">
-                            <div class="card product-card">
-                                <?php include 'includes/templates/product-card-body.php'; ?>
+
+                <div class="products-carousel-wrapper">
+                    <div class="products-carousel">
+                        <?php foreach ($products as $product): ?>
+                            <div class="carousel-item-card">
+                                <div class="card product-card h-100">
+                                    <?php include 'includes/templates/product-card-body.php'; ?>
+                                </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
         </section>

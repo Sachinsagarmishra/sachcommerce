@@ -1308,3 +1308,83 @@ h6,
     color: #000 !important;
     border-bottom: 2px solid #eee !important;
 }
+/* Updated Carousel and Tabs Styles */
+.category-tabs .nav-tabs {
+    border-bottom: none !important;
+    gap: 30px !important;
+}
+
+.category-tabs .nav-link {
+    color: #666 !important;
+    background: transparent !important;
+    border: none !important;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    transition: all 0.3s ease !important;
+    padding: 8px 0 !important;
+    border-bottom: 2px solid transparent !important;
+    border-radius: 0 !important;
+    text-transform: capitalize !important;
+}
+
+.category-tabs .nav-link.active {
+    color: #000 !important;
+    border-bottom: 2px solid #000 !important;
+}
+
+.category-tabs .nav-link:hover:not(.active) {
+    color: #333 !important;
+    border-bottom: 2px solid #ddd !important;
+}
+
+/* Products Horizontal Carousel */
+.products-carousel-wrapper {
+    position: relative !important;
+    padding: 10px 0 !important;
+}
+
+.products-carousel {
+    display: flex !important;
+    gap: 20px !important;
+    overflow-x: auto !important;
+    padding: 15px 5px !important;
+    scroll-behavior: smooth !important;
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+}
+
+.products-carousel::-webkit-scrollbar {
+    display: none !important;
+}
+
+.products-carousel .carousel-item-card {
+    min-width: 280px !important;
+    max-width: 280px !important;
+    flex: 0 0 auto !important;
+}
+
+@media (max-width: 768px) {
+    .products-carousel .carousel-item-card {
+        min-width: 220px !important;
+        max-width: 220px !important;
+    }
+    
+    .category-tabs .nav-tabs {
+        gap: 15px !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        justify-content: flex-start !important;
+        padding-bottom: 5px !important;
+        -ms-overflow-style: none !important;
+        scrollbar-width: none !important;
+    }
+    
+    .category-tabs .nav-tabs::-webkit-scrollbar {
+        display: none !important;
+    }
+    
+    .category-tabs .nav-link {
+        white-space: nowrap !important;
+        font-size: 14px !important;
+    }
+}
