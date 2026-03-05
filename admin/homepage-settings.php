@@ -71,6 +71,14 @@ foreach ($db_tables as $t_name => $t_sql) {
             if (!in_array('is_custom', $cols)) {
                 $pdo->exec("ALTER TABLE homepage_sections ADD COLUMN is_custom TINYINT(1) DEFAULT 0 AFTER is_active");
             }
+
+            // Ensure tabbed_categories exists
+            $check = $pdo->prepare("SELECT 1 FROM homepage_sections WHERE section_key = 'tabbed_categories'");
+            $check->execute();
+            if (!$check->fetch()) {
+                $pdo->exec("INSERT INTO homepage_sections (section_key, section_name, display_title, display_description, display_order) 
+                           VALUES ('tabbed_categories', 'Category Tabs (Dynamic)', 'Our Best Collections', 'Each collection is exclusively made in small batches to create as little as possible.', 4)");
+            }
         }
     } catch (Exception $e) {
         $pdo->exec($t_sql);
@@ -99,12 +107,11 @@ if (isset($_POST['update_order'])) {
     if (verify_csrf_token($_POST['csrf_token'])) {
         foreach ($_POST['order'] as $id => $order) {
             $is_active = isset($_POST['active'][$id]) ? 1 : 0;
-            $name = $_POST['name'][$id];
             $title = $_POST['title'][$id];
             $desc = $_POST['description'][$id];
             $cta = $_POST['cta'][$id];
-            $stmt = $pdo->prepare("UPDATE homepage_sections SET display_order = ?, is_active = ?, section_name = ?, display_title = ?, display_description = ?, cta_link = ? WHERE id = ?");
-            $stmt->execute([$order, $is_active, $name, $title, $desc, $cta, $id]);
+            $stmt = $pdo->prepare("UPDATE homepage_sections SET display_order = ?, is_active = ?, display_title = ?, display_description = ?, cta_link = ? WHERE id = ?");
+            $stmt->execute([$order, $is_active, $title, $desc, $cta, $id]);
         }
         set_flash_message('success', 'Homepage layout updated successfully.');
         redirect('homepage-settings.php');
@@ -310,10 +317,7 @@ include 'includes/sidebar.php';
                                                 </td>
                                                 <td>
                                                     <div class="mb-1">
-                                                        <input type="text" name="name[<?php echo $section['id']; ?>]"
-                                                            value="<?php echo htmlspecialchars($section['section_name']); ?>"
-                                                            class="form-control form-control-sm fw-bold mb-1"
-                                                            placeholder="Internal Name">
+                                                        <strong class="text-primary small"><?php echo htmlspecialchars($section['section_name']); ?></strong>
                                                     </div>
                                                     <input type="text" name="title[<?php echo $section['id']; ?>]"
                                                         value="<?php echo htmlspecialchars($section['display_title'] ?? ''); ?>"
