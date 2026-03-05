@@ -29,8 +29,11 @@ $db_tables = [
         id INT AUTO_INCREMENT PRIMARY KEY,
         section_key VARCHAR(50) UNIQUE NOT NULL,
         section_name VARCHAR(100) NOT NULL,
+        display_title VARCHAR(255) DEFAULT NULL,
+        cta_link VARCHAR(255) DEFAULT NULL,
         display_order INT DEFAULT 0,
-        is_active TINYINT(1) DEFAULT 1
+        is_active TINYINT(1) DEFAULT 1,
+        is_custom TINYINT(1) DEFAULT 0
     )",
     'curated_items' => "CREATE TABLE IF NOT EXISTS curated_items (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -52,38 +55,83 @@ $db_tables = [
 foreach ($db_tables as $t_name => $t_sql) {
     try {
         @$pdo->query("SELECT 1 FROM $t_name LIMIT 1");
+        // Migration: check if columns exist in homepage_sections
+        if ($t_name == 'homepage_sections') {
+            $cols = $pdo->query("DESCRIBE homepage_sections")->fetchAll(PDO::FETCH_COLUMN);
+            if (!in_array('display_title', $cols)) {
+                $pdo->exec("ALTER TABLE homepage_sections ADD COLUMN display_title VARCHAR(255) DEFAULT NULL AFTER section_name");
+            }
+            if (!in_array('cta_link', $cols)) {
+                $pdo->exec("ALTER TABLE homepage_sections ADD COLUMN cta_link VARCHAR(255) DEFAULT NULL AFTER display_title");
+            }
+            if (!in_array('is_custom', $cols)) {
+                $pdo->exec("ALTER TABLE homepage_sections ADD COLUMN is_custom TINYINT(1) DEFAULT 0 AFTER is_active");
+            }
+        }
     } catch (Exception $e) {
         $pdo->exec($t_sql);
         if ($t_name == 'homepage_sections') {
             $initial_sections = [
-                ['hero', 'Hero Slider'],
-                ['categories', 'Categories Horizontal Grid'],
-                ['marquee', 'Announcement Marquee'],
-                ['curated', 'Curated for You (Videos)'],
-                ['featured', 'Featured Products'],
-                ['new_arrivals', 'New Arrivals'],
-                ['best_sellers', 'Best Sellers'],
-                ['features', 'Service Features (Shipping/Support)']
+                ['hero', 'Hero Slider', null, null],
+                ['categories', 'Categories Horizontal Grid', null, null],
+                ['marquee', 'Announcement Marquee', null, null],
+                ['curated', 'Curated for You (Videos)', null, null],
+                ['featured', 'Featured Products', 'Featured Products', SITE_URL . '/shop'],
+                ['new_arrivals', 'New Arrivals', 'New Arrivals', SITE_URL . '/shop?filter=new'],
+                ['best_sellers', 'Best Sellers', 'Best Sellers', SITE_URL . '/shop?filter=bestseller'],
+                ['features', 'Service Features (Shipping/Support)', null, null]
             ];
-            $stmt = $pdo->prepare("INSERT INTO homepage_sections (section_key, section_name, display_order) VALUES (?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO homepage_sections (section_key, section_name, display_title, cta_link, display_order) VALUES (?, ?, ?, ?, ?)");
             foreach ($initial_sections as $index => $sec) {
-                $stmt->execute([$sec[0], $sec[1], $index + 1]);
+                $stmt->execute([$sec[0], $sec[1], $sec[2], $sec[3], $index + 1]);
             }
         }
     }
 }
 
-// Handle Section Order Update
+// Handle Section Order & Content Update
 if (isset($_POST['update_order'])) {
     if (verify_csrf_token($_POST['csrf_token'])) {
         foreach ($_POST['order'] as $id => $order) {
             $is_active = isset($_POST['active'][$id]) ? 1 : 0;
-            $stmt = $pdo->prepare("UPDATE homepage_sections SET display_order = ?, is_active = ? WHERE id = ?");
-            $stmt->execute([$order, $is_active, $id]);
+            $title = $_POST['title'][$id];
+            $cta = $_POST['cta'][$id];
+            $stmt = $pdo->prepare("UPDATE homepage_sections SET display_order = ?, is_active = ?, display_title = ?, cta_link = ? WHERE id = ?");
+            $stmt->execute([$order, $is_active, $title, $cta, $id]);
         }
         set_flash_message('success', 'Homepage layout updated successfully.');
         redirect('homepage-settings.php');
     }
+}
+
+// Handle Add Custom Section
+if (isset($_POST['add_custom_section'])) {
+    if (verify_csrf_token($_POST['csrf_token'])) {
+        $name = $_POST['section_name'];
+        $title = $_POST['display_title'] ?: $name;
+        $cta = $_POST['cta_link'];
+        $key = 'custom_' . strtolower(preg_replace('/[^a-zA-Z0-9]/', '_', $name)) . '_' . time();
+
+        $stmt = $pdo->prepare("INSERT INTO homepage_sections (section_key, section_name, display_title, cta_link, is_custom, display_order) VALUES (?, ?, ?, ?, 1, 99)");
+        $stmt->execute([$key, $name, $title, $cta]);
+
+        set_flash_message('success', 'Custom section created.');
+        redirect('homepage-settings.php');
+    }
+}
+
+// Handle Delete Custom Section
+if (isset($_GET['delete_section'])) {
+    $id = intval($_GET['delete_section']);
+    $stmt = $pdo->prepare("SELECT section_key, is_custom FROM homepage_sections WHERE id = ?");
+    $stmt->execute([$id]);
+    $sec = $stmt->fetch();
+    if ($sec && $sec['is_custom']) {
+        $pdo->prepare("DELETE FROM homepage_section_items WHERE section_key = ?")->execute([$sec['section_key']]);
+        $pdo->prepare("DELETE FROM homepage_sections WHERE id = ?")->execute([$id]);
+        set_flash_message('success', 'Custom section deleted.');
+    }
+    redirect('homepage-settings.php');
 }
 
 // Handle Marquee Text Update
@@ -219,23 +267,25 @@ include 'includes/sidebar.php';
             <?php endif; ?>
 
             <div class="row">
-                <!-- Section Ordering -->
-                <div class="col-lg-6">
                     <div class="card shadow-sm border-0 rounded-4 mb-4">
                         <div class="card-header bg-white border-0 py-3 mt-1">
-                            <h5 class="mb-0 fw-bold"><i class="fas fa-sort-amount-down text-primary me-2"></i> Section
-                                Display Order</h5>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-bold"><i class="fas fa-sort-amount-down text-primary me-2"></i>
+                                    Section Management</h5>
+                            </div>
                         </div>
-                        <div class="card-body p-4">
+                        <div class="card-body p-3">
                             <form action="" method="POST">
                                 <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                                 <div class="table-responsive">
-                                    <table class="table table-hover align-middle">
+                                    <table class="table table-hover align-middle" style="font-size: 0.85rem;">
                                         <thead class="table-light">
                                             <tr>
-                                                <th width="50">Order</th>
-                                                <th>Section Name</th>
-                                                <th width="100" class="text-center">Visible</th>
+                                                <th width="40">Order</th>
+                                                <th>Section / Display Title</th>
+                                                <th>CTA Link (View All)</th>
+                                                <th width="60" class="text-center">Active</th>
+                                                <th width="40"></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -244,14 +294,20 @@ include 'includes/sidebar.php';
                                                     <td>
                                                         <input type="number" name="order[<?php echo $section['id']; ?>]"
                                                             value="<?php echo $section['display_order']; ?>"
-                                                            class="form-control form-control-sm text-center"
-                                                            style="width: 50px;">
+                                                            class="form-control form-control-sm text-center px-1">
                                                     </td>
                                                     <td>
-                                                        <span
-                                                            class="fw-medium"><?php echo $section['section_name']; ?></span>
-                                                        <br><small
-                                                            class="text-muted"><?php echo $section['section_key']; ?></small>
+                                                        <div class="mb-1">
+                                                            <small class="text-muted fw-bold"><?php echo $section['section_name']; ?></small>
+                                                        </div>
+                                                        <input type="text" name="title[<?php echo $section['id']; ?>]"
+                                                            value="<?php echo htmlspecialchars($section['display_title'] ?? ''); ?>"
+                                                            class="form-control form-control-sm" placeholder="Display Title">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="cta[<?php echo $section['id']; ?>]"
+                                                            value="<?php echo htmlspecialchars($section['cta_link'] ?? ''); ?>"
+                                                            class="form-control form-control-sm" placeholder="URL Link">
                                                     </td>
                                                     <td class="text-center">
                                                         <div class="form-check form-switch d-inline-block">
@@ -259,16 +315,54 @@ include 'includes/sidebar.php';
                                                                 name="active[<?php echo $section['id']; ?>]" <?php echo $section['is_active'] ? 'checked' : ''; ?>>
                                                         </div>
                                                     </td>
+                                                    <td>
+                                                        <?php if ($section['is_custom']): ?>
+                                                            <a href="?delete_section=<?php echo $section['id']; ?>"
+                                                                class="text-danger small" onclick="return confirm('Delete section and its links?')">
+                                                                <i class="fas fa-trash"></i>
+                                                            </a>
+                                                        <?php endif; ?>
+                                                    </td>
                                                 </tr>
                                             <?php endforeach; ?>
                                         </tbody>
                                     </table>
                                 </div>
                                 <div class="mt-3">
-                                    <button type="submit" name="update_order" class="btn btn-primary">
-                                        <i class="fas fa-save me-2"></i> Save Layout
+                                    <button type="submit" name="update_order" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-save me-1"></i> Save Layout & Labels
                                     </button>
                                 </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Add Custom Section -->
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-white border-0 py-3 mt-1">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-plus text-success me-2"></i> Create Custom Section
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form action="" method="POST">
+                                <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Internal Name (e.g. Summer Special)</label>
+                                    <input type="text" name="section_name" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Display Title on Site</label>
+                                    <input type="text" name="display_title" class="form-control"
+                                        placeholder="Our Summer Collection">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">CTA Link (URL)</label>
+                                    <input type="text" name="cta_link" class="form-control"
+                                        placeholder="<?php echo SITE_URL; ?>/shop?collection=summer">
+                                </div>
+                                <button type="submit" name="add_custom_section" class="btn btn-success fw-bold w-100">
+                                    <i class="fas fa-magic me-2"></i> Create Section
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -311,10 +405,14 @@ include 'includes/sidebar.php';
                                     <div class="col-md-5">
                                         <select name="section_key" class="form-select select-type" required>
                                             <option value="">Select Section...</option>
-                                            <option value="categories">Categories (Manual List)</option>
-                                            <option value="featured">Featured Products (Manual)</option>
-                                            <option value="new_arrivals">New Arrivals (Manual)</option>
-                                            <option value="best_sellers">Best Sellers (Manual)</option>
+                                            <?php foreach ($sections as $sec):
+                                                if (in_array($sec['section_key'], ['hero', 'marquee', 'curated', 'features']))
+                                                    continue;
+                                                ?>
+                                                <option value="<?php echo $sec['section_key']; ?>">
+                                                    <?php echo $sec['section_name']; ?>
+                                                </option>
+                                            <?php endforeach; ?>
                                         </select>
                                     </div>
                                     <div class="col-md-5" id="item-selector">
@@ -333,8 +431,12 @@ include 'includes/sidebar.php';
 
                             <div class="section-items-list mt-3">
                                 <?php
-                                $keys = ['categories' => 'Categories', 'featured' => 'Featured Products', 'new_arrivals' => 'New Arrivals', 'best_sellers' => 'Best Sellers'];
-                                foreach ($keys as $k => $label): ?>
+                                foreach ($sections as $sec):
+                                    $k = $sec['section_key'];
+                                    if (in_array($k, ['hero', 'marquee', 'curated', 'features']))
+                                        continue;
+                                    $label = $sec['section_name'];
+                                    ?>
                                     <div class="mb-3 pb-2 border-bottom">
                                         <h6 class="fw-bold mb-2 small text-uppercase text-muted"><?php echo $label; ?></h6>
                                         <?php if (isset($manual_items[$k])): ?>

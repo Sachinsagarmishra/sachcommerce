@@ -71,13 +71,17 @@ $best_sellers = $manual_best ?: ($db_connected ? get_best_sellers(8) : []);
 $manual_cats = $db_connected ? get_homepage_section_items('categories', 15) : null;
 $categories = $manual_cats ?: ($db_connected ? get_menu_categories(10) : []);
 
-// 3. Section order from DB
-$active_sections = [];
+// 3. Section Metadata from DB
+$all_home_sections = [];
 try {
-    $stmt = $pdo->query("SELECT section_key FROM homepage_sections WHERE is_active = 1 ORDER BY display_order ASC");
-    $active_sections = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $stmt = $pdo->query("SELECT * FROM homepage_sections WHERE is_active = 1 ORDER BY display_order ASC");
+    $all_home_sections = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
-    $active_sections = ['hero', 'categories', 'marquee', 'curated', 'featured', 'new_arrivals', 'best_sellers', 'features'];
+    // Basic Fallback
+    $fallbacks = ['hero', 'categories', 'marquee', 'curated', 'featured', 'new_arrivals', 'best_sellers', 'features'];
+    foreach ($fallbacks as $f) {
+        $all_home_sections[] = ['section_key' => $f, 'section_name' => $f, 'display_title' => null, 'cta_link' => null, 'is_custom' => 0];
+    }
 }
 
 // 4. Get Curated Items
@@ -236,77 +240,6 @@ ob_start(); ?>
 </section>
 <?php $sections_html['curated'] = ob_get_clean();
 
-// 5. Featured
-ob_start(); ?>
-<section class="section-padding">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="section-title mb-0">Featured Products</h2><a href="<?php echo SITE_URL; ?>/shop"
-                class="btn btn-outline-primary">View All</a>
-        </div>
-        <div class="row g-4">
-            <?php if (!empty($featured_products)):
-                foreach ($featured_products as $product): ?>
-                    <div class="col-6 col-md-4 col-lg-3">
-                        <div class="card product-card">
-                            <?php include 'includes/templates/product-card-body.php'; ?>
-                        </div>
-                    </div>
-                <?php endforeach; else: ?>
-                <div class="col-12 text-center py-5">
-                    <p class="text-muted">No Featured Products Yet</p>
-                </div><?php endif; ?>
-        </div>
-    </div>
-</section>
-<?php $sections_html['featured'] = ob_get_clean();
-
-// 6. New Arrivals
-ob_start();
-if (!empty($new_arrivals)): ?>
-    <section class="section-padding bg-light">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="section-title mb-0">New Arrivals</h2><a href="<?php echo SITE_URL; ?>/shop?filter=new"
-                    class="btn btn-outline-primary">View All</a>
-            </div>
-            <div class="row g-4">
-                <?php foreach ($new_arrivals as $product): ?>
-                    <div class="col-6 col-md-4 col-lg-3">
-                        <div class="card product-card">
-                            <?php include 'includes/templates/product-card-body.php'; ?>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-    </section>
-<?php endif;
-$sections_html['new_arrivals'] = ob_get_clean();
-
-// 7. Best Sellers
-ob_start();
-if (!empty($best_sellers)): ?>
-    <section class="section-padding">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="section-title mb-0">Best Sellers</h2><a href="<?php echo SITE_URL; ?>/shop?filter=bestseller"
-                    class="btn btn-outline-primary">View All</a>
-            </div>
-            <div class="row g-4">
-                <?php foreach ($best_sellers as $product): ?>
-                    <div class="col-6 col-md-4 col-lg-3">
-                        <div class="card product-card">
-                            <?php include 'includes/templates/product-card-body.php'; ?>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-    </section>
-<?php endif;
-$sections_html['best_sellers'] = ob_get_clean();
-
 // 8. Features
 ob_start(); ?>
 <section class="section-padding bg-white border-top">
@@ -334,10 +267,55 @@ ob_start(); ?>
 <?php $sections_html['features'] = ob_get_clean();
 
 // Output Sections in Order
-foreach ($active_sections as $key) {
-    if (isset($sections_html[$key])) {
-        echo $sections_html[$key];
+foreach ($all_home_sections as $sec) {
+    $key = $sec['section_key'];
+    $title = $sec['display_title'] ?: $sec['section_name'];
+    $cta = $sec['cta_link'];
+
+    // If it's a pre-rendered specialized section (hero, categories, marquee, curated, features)
+    if (in_array($key, ['hero', 'categories', 'marquee', 'curated', 'features'])) {
+        if (isset($sections_html[$key])) {
+            echo $sections_html[$key];
+        }
+        continue;
     }
+
+    // Otherwise, treat as a Product Grid Section (Product sections are rendered dynamically)
+    $products = [];
+    if ($key == 'featured')
+        $products = $featured_products;
+    elseif ($key == 'new_arrivals')
+        $products = $new_arrivals;
+    elseif ($key == 'best_sellers')
+        $products = $best_sellers;
+    else {
+        // Custom section or other
+        $products = get_homepage_section_items($key);
+    }
+
+    if (!empty($products)):
+        $is_even = ($sec['display_order'] % 2 == 0);
+        ?>
+        <section class="section-padding <?php echo $is_even ? 'bg-light' : ''; ?>">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="section-title mb-0"><?php echo htmlspecialchars($title); ?></h2>
+                    <?php if ($cta): ?>
+                        <a href="<?php echo $cta; ?>" class="btn btn-outline-primary">View All</a>
+                    <?php endif; ?>
+                </div>
+                <div class="row g-4">
+                    <?php foreach ($products as $product): ?>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="card product-card">
+                                <?php include 'includes/templates/product-card-body.php'; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </section>
+    <?php endif;
 }
 
 include 'includes/footer.php';
