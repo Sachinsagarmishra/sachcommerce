@@ -165,6 +165,11 @@ include 'includes/navbar.php';
                             </div>
                             <div class="product-info">
                                 <div class="product-brand">Brand: <?php echo SITE_NAME; ?></div>
+                                <?php
+                                $random_ratings = [4, 4.5, 5];
+                                $random_rating = $random_ratings[array_rand($random_ratings)];
+                                echo display_rating($random_rating, false);
+                                ?>
                                 <h6 class="product-name">
                                     <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>"
                                         class="text-decoration-none text-dark">
@@ -247,6 +252,11 @@ include 'includes/navbar.php';
                             </div>
                             <div class="product-info">
                                 <div class="product-brand">Brand: <?php echo SITE_NAME; ?></div>
+                                <?php
+                                $random_ratings = [4, 4.5, 5];
+                                $random_rating = $random_ratings[array_rand($random_ratings)];
+                                echo display_rating($random_rating, false);
+                                ?>
                                 <h6 class="product-name">
                                     <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>"
                                         class="text-decoration-none text-dark">
