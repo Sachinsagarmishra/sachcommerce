@@ -218,9 +218,6 @@ foreach ($all_home_sections as $sec) {
                 <div class="container">
                     <div class="text-center mb-5">
                         <h2 class="section-title mb-2"><?php echo htmlspecialchars($title); ?></h2>
-                        <?php if ($desc): ?>
-                            <p class="text-muted mx-auto mb-4" style="max-width: 600px;"><?php echo htmlspecialchars($desc); ?></p>
-                        <?php endif; ?>
 
                         <ul class="nav nav-tabs justify-content-center border-0 mb-4" id="categoryTabs" role="tablist">
                             <?php foreach ($assigned_categories as $index => $cat): ?>

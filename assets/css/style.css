@@ -40,6 +40,7 @@ h6,
 .section-title,
 .navbar-brand {
     font-family: 'Jost', sans-serif;
+    font-weight: 600 !important;
 }
 
 /* Top Bar */
@@ -359,7 +360,7 @@ h6,
 /* Section Title */
 .section-title {
     font-size: 32px;
-    font-weight: 700;
+    font-weight: 600 !important;
     margin-bottom: 30px;
     text-align: center;
     color: var(--dark-color);
@@ -1285,6 +1286,7 @@ h6,
 .curated-view:hover {
     transform: scale(1.2) !important;
 }
+
 /* Category Tabs Section */
 .category-tabs .nav-link {
     color: #666 !important;
