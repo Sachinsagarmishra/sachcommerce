@@ -1115,18 +1115,19 @@ h6,
 }
 
 .marquee-content {
-    display: inline-block !important;
-    animation: marquee-scroll 30s linear infinite !important;
-    padding-left: 100% !important;
+    display: flex !important;
+    animation: marquee-scroll 40s linear infinite !important;
     font-size: 14px !important;
     font-weight: 500 !important;
     letter-spacing: 0.5px !important;
     text-transform: uppercase !important;
+    padding-left: 0 !important;
 }
 
 .marquee-item {
-    display: inline-flex !important;
+    display: flex !important;
     align-items: center !important;
+    flex-shrink: 0 !important;
 }
 
 .marquee-separator {
@@ -1141,7 +1142,7 @@ h6,
     }
 
     100% {
-        transform: translateX(-100%);
+        transform: translateX(-50%);
     }
 }
 

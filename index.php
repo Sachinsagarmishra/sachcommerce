@@ -133,6 +133,20 @@ ob_start(); ?>
         <span class="marquee-item">Free Shipping On All Orders Above $100 USD <span
                 class="marquee-separator">✦</span></span>
         <span class="marquee-item">Upto 50% Items In Sale <span class="marquee-separator">✦</span></span>
+        <span class="marquee-item">Order by Oct 5th For Guaranteed Diwali Delivery <span
+                class="marquee-separator">✦</span></span>
+        <span class="marquee-item">$20 Duty/Tariff Fee - <a href="#" class="text-white text-decoration-underline">Learn
+                More</a> <span class="marquee-separator">✦</span></span>
+        <span class="marquee-item">Free Shipping On All Orders Above $100 USD <span
+                class="marquee-separator">✦</span></span>
+        <span class="marquee-item">Upto 50% Items In Sale <span class="marquee-separator">✦</span></span>
+        <span class="marquee-item">Order by Oct 5th For Guaranteed Diwali Delivery <span
+                class="marquee-separator">✦</span></span>
+        <span class="marquee-item">$20 Duty/Tariff Fee - <a href="#" class="text-white text-decoration-underline">Learn
+                More</a> <span class="marquee-separator">✦</span></span>
+        <span class="marquee-item">Free Shipping On All Orders Above $100 USD <span
+                class="marquee-separator">✦</span></span>
+        <span class="marquee-item">Upto 50% Items In Sale <span class="marquee-separator">✦</span></span>
     </div>
 </div>
 <?php $sections_html['marquee'] = ob_get_clean();
