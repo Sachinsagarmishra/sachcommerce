@@ -111,6 +111,14 @@ $site_name = get_site_setting('site_name', SITE_NAME);
                 </a>
             </li>
 
+            <!-- Homepage Settings (Reordering) -->
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'homepage-settings.php') ? 'active' : ''; ?>"
+                    href="homepage-settings.php">
+                    <i class="fas fa-layer-group"></i> Homepage Layout
+                </a>
+            </li>
+
             <!-- Reviews -->
             <li class="nav-item">
                 <a class="nav-link <?php echo ($current_page == 'reviews.php') ? 'active' : ''; ?>" href="reviews.php">

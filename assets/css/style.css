@@ -129,7 +129,7 @@ h6,
     width: 100% !important;
     height: 100% !important;
     object-fit: contain !important;
-    padding: 20px !important;
+    padding: 0px !important;
     transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
 }
 
@@ -1102,7 +1102,7 @@ h6,
 
 /* Announcement Marquee */
 .announcement-marquee {
-    background: #621415 !important;
+    background: var(--primary-color) !important;
     color: #fff !important;
     padding: 12px 0 !important;
     overflow: hidden !important;
