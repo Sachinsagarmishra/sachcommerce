@@ -175,16 +175,8 @@ foreach ($all_home_sections as $sec) {
 
     // SPECIAL SECTIONS WITH DYNAMIC TITLES (Categories, Curated, Features)
     if ($key == 'categories') { ?>
-        <section class="section-padding bg-light">
+        <section class="section-padding bg-white">
             <div class="container">
-                <div class="text-center mb-5">
-                    <h2 class="section-title mb-2"><?php echo htmlspecialchars($title); ?></h2>
-                    <?php if ($desc): ?>
-                        <p class="text-muted mx-auto" style="max-width: 600px;"><?php echo htmlspecialchars($desc); ?></p>
-                    <?php endif; ?>
-                    <?php if ($cta): ?><a href="<?php echo $cta; ?>" class="btn btn-sm btn-outline-primary">View
-                            All</a><?php endif; ?>
-                </div>
                 <div class="categories-horizontal-wrapper">
                     <?php if (!empty($categories)): ?>
                         <?php foreach ($categories as $category): ?>
@@ -214,7 +206,7 @@ foreach ($all_home_sections as $sec) {
         }
 
         if (!empty($assigned_categories)): ?>
-            <section class="section-padding <?php echo ($sec['display_order'] % 2 == 0) ? 'bg-light' : ''; ?>">
+            <section class="section-padding bg-white">
                 <div class="container category-tabs">
                     <div class="text-center mb-4">
                         <h2 class="section-title mb-4" style="font-size: 42px;"><?php echo htmlspecialchars($title); ?></h2>
@@ -377,7 +369,7 @@ foreach ($all_home_sections as $sec) {
     if (!empty($products)):
         $is_even = ($sec['display_order'] % 2 == 0);
         ?>
-        <section class="section-padding <?php echo $is_even ? 'bg-white' : 'bg-light'; ?>">
+        <section class="section-padding bg-white">
             <div class="container">
                 <div class="d-flex justify-content-between align-items-end mb-4">
                     <div>
