@@ -15,23 +15,64 @@ try {
     $db_connected = false;
 }
 
-// Get basic data
-$featured_products = $db_connected ? get_featured_products(8) : [];
-$new_arrivals = $db_connected ? get_new_arrivals(8) : [];
-$best_sellers = $db_connected ? get_best_sellers(8) : [];
-$categories = $db_connected ? get_menu_categories(10) : [];
+// 1. Marquee Text
+$marquee_text_raw = get_site_setting('marquee_text', 'Order by Oct 5th For Guaranteed Diwali Delivery ✦ $20 Duty/Tariff Fee ✦ Free Shipping On All Orders Above $100 USD ✦ Upto 50% Items In Sale');
+$marquee_items = array_map('trim', explode('✦', $marquee_text_raw));
 
-// Get section order from DB
+// 2. Manual Section Items
+function get_homepage_section_items($section_key, $limit = 8)
+{
+    global $pdo;
+    try {
+        $stmt = $pdo->prepare("SELECT hsi.*, 
+            CASE WHEN hsi.item_type = 'product' THEN 'products' ELSE 'categories' END as table_name
+            FROM homepage_section_items hsi 
+            WHERE hsi.section_key = ? 
+            ORDER BY hsi.display_order ASC, hsi.id ASC 
+            LIMIT ?");
+        $stmt->execute([$section_key, $limit]);
+        $items = $stmt->fetchAll();
+
+        if (empty($items))
+            return null;
+
+        $results = [];
+        foreach ($items as $item) {
+            $table = $item['table_name'];
+            $id = $item['item_id'];
+            $res = $pdo->query("SELECT * FROM $table WHERE id = $id AND status = 'active'")->fetch();
+            if ($res)
+                $results[] = $res;
+        }
+        return $results;
+    } catch (Exception $e) {
+        return null;
+    }
+}
+
+// Get basic data with manual overrides
+$manual_featured = $db_connected ? get_homepage_section_items('featured') : null;
+$featured_products = $manual_featured ?: ($db_connected ? get_featured_products(8) : []);
+
+$manual_new = $db_connected ? get_homepage_section_items('new_arrivals') : null;
+$new_arrivals = $manual_new ?: ($db_connected ? get_new_arrivals(8) : []);
+
+$manual_best = $db_connected ? get_homepage_section_items('best_sellers') : null;
+$best_sellers = $manual_best ?: ($db_connected ? get_best_sellers(8) : []);
+
+$manual_cats = $db_connected ? get_homepage_section_items('categories', 15) : null;
+$categories = $manual_cats ?: ($db_connected ? get_menu_categories(10) : []);
+
+// 3. Section order from DB
 $active_sections = [];
 try {
     $stmt = $pdo->query("SELECT section_key FROM homepage_sections WHERE is_active = 1 ORDER BY display_order ASC");
     $active_sections = $stmt->fetchAll(PDO::FETCH_COLUMN);
 } catch (Exception $e) {
-    // Default order if table missing
     $active_sections = ['hero', 'categories', 'marquee', 'curated', 'featured', 'new_arrivals', 'best_sellers', 'features'];
 }
 
-// Get Curated Items
+// 4. Get Curated Items
 $curated_db_items = [];
 try {
     $stmt = $pdo->query("SELECT c.*, p.name, p.slug, p.price, p.sale_price, p.primary_image 
@@ -42,7 +83,7 @@ try {
 } catch (Exception $e) {
 }
 
-// Get banners
+// 5. Get banners
 $hero_banners = [];
 if ($db_connected) {
     try {
@@ -119,34 +160,12 @@ ob_start(); ?>
 ob_start(); ?>
 <div class="announcement-marquee">
     <div class="marquee-content">
-        <span class="marquee-item">Order by Oct 5th For Guaranteed Diwali Delivery <span
-                class="marquee-separator">✦</span></span>
-        <span class="marquee-item">$20 Duty/Tariff Fee - <a href="#" class="text-white text-decoration-underline">Learn
-                More</a> <span class="marquee-separator">✦</span></span>
-        <span class="marquee-item">Free Shipping On All Orders Above $100 USD <span
-                class="marquee-separator">✦</span></span>
-        <span class="marquee-item">Upto 50% Items In Sale <span class="marquee-separator">✦</span></span>
-        <span class="marquee-item">Order by Oct 5th For Guaranteed Diwali Delivery <span
-                class="marquee-separator">✦</span></span>
-        <span class="marquee-item">$20 Duty/Tariff Fee - <a href="#" class="text-white text-decoration-underline">Learn
-                More</a> <span class="marquee-separator">✦</span></span>
-        <span class="marquee-item">Free Shipping On All Orders Above $100 USD <span
-                class="marquee-separator">✦</span></span>
-        <span class="marquee-item">Upto 50% Items In Sale <span class="marquee-separator">✦</span></span>
-        <span class="marquee-item">Order by Oct 5th For Guaranteed Diwali Delivery <span
-                class="marquee-separator">✦</span></span>
-        <span class="marquee-item">$20 Duty/Tariff Fee - <a href="#" class="text-white text-decoration-underline">Learn
-                More</a> <span class="marquee-separator">✦</span></span>
-        <span class="marquee-item">Free Shipping On All Orders Above $100 USD <span
-                class="marquee-separator">✦</span></span>
-        <span class="marquee-item">Upto 50% Items In Sale <span class="marquee-separator">✦</span></span>
-        <span class="marquee-item">Order by Oct 5th For Guaranteed Diwali Delivery <span
-                class="marquee-separator">✦</span></span>
-        <span class="marquee-item">$20 Duty/Tariff Fee - <a href="#" class="text-white text-decoration-underline">Learn
-                More</a> <span class="marquee-separator">✦</span></span>
-        <span class="marquee-item">Free Shipping On All Orders Above $100 USD <span
-                class="marquee-separator">✦</span></span>
-        <span class="marquee-item">Upto 50% Items In Sale <span class="marquee-separator">✦</span></span>
+        <?php 
+        // Display items twice for seamless looping
+        for($i=0; $i<4; $i++):
+            foreach ($marquee_items as $item): ?>
+            <span class="marquee-item"><?php echo $item; ?> <span class="marquee-separator">✦</span></span>
+        <?php endforeach; endfor; ?>
     </div>
 </div>
 <?php $sections_html['marquee'] = ob_get_clean();
