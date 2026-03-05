@@ -176,9 +176,10 @@ foreach ($all_home_sections as $sec) {
     if ($key == 'categories') { ?>
         <section class="section-padding bg-light">
             <div class="container">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="section-title mb-0"><?php echo htmlspecialchars($title); ?></h2>
-                    <?php if ($cta): ?><a href="<?php echo $cta; ?>" class="btn btn-outline-primary">View All</a><?php endif; ?>
+                <div class="text-center mb-5">
+                    <h2 class="section-title mb-2"><?php echo htmlspecialchars($title); ?></h2>
+                    <?php if ($cta): ?><a href="<?php echo $cta; ?>" class="btn btn-sm btn-outline-primary">View
+                            All</a><?php endif; ?>
                 </div>
                 <div class="categories-horizontal-wrapper">
                     <?php if (!empty($categories)): ?>
@@ -204,9 +205,10 @@ foreach ($all_home_sections as $sec) {
     if ($key == 'curated') { ?>
         <section class="curated-section">
             <div class="container-fluid px-md-5">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="curated-title"><?php echo htmlspecialchars($title); ?></h2>
-                    <?php if ($cta): ?><a href="<?php echo $cta; ?>" class="btn btn-outline-primary">View All</a><?php endif; ?>
+                <div class="text-center mb-5">
+                    <h2 class="curated-title mb-2"><?php echo htmlspecialchars($title); ?></h2>
+                    <?php if ($cta): ?><a href="<?php echo $cta; ?>" class="btn btn-sm btn-outline-primary">View
+                            All</a><?php endif; ?>
                 </div>
                 <div class="curated-grid">
                     <?php
@@ -304,10 +306,10 @@ foreach ($all_home_sections as $sec) {
         ?>
         <section class="section-padding <?php echo $is_even ? 'bg-light' : ''; ?>">
             <div class="container">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="section-title mb-0"><?php echo htmlspecialchars($title); ?></h2>
+                <div class="text-center mb-5">
+                    <h2 class="section-title mb-2"><?php echo htmlspecialchars($title); ?></h2>
                     <?php if ($cta): ?>
-                        <a href="<?php echo $cta; ?>" class="btn btn-outline-primary">View All</a>
+                        <a href="<?php echo $cta; ?>" class="btn btn-sm btn-outline-primary">View All</a>
                     <?php endif; ?>
                 </div>
                 <div class="row g-4">
