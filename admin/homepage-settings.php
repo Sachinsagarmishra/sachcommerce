@@ -102,51 +102,6 @@ foreach ($db_tables as $t_name => $t_sql) {
     }
 }
 
-// Handle Section Order & Content Update
-if (isset($_POST['update_order'])) {
-    if (verify_csrf_token($_POST['csrf_token'])) {
-        foreach ($_POST['order'] as $id => $order) {
-            $is_active = isset($_POST['active'][$id]) ? 1 : 0;
-            $title = $_POST['title'][$id];
-            $desc = $_POST['description'][$id];
-            $cta = $_POST['cta'][$id];
-            $stmt = $pdo->prepare("UPDATE homepage_sections SET display_order = ?, is_active = ?, display_title = ?, display_description = ?, cta_link = ? WHERE id = ?");
-            $stmt->execute([$order, $is_active, $title, $desc, $cta, $id]);
-        }
-        set_flash_message('success', 'Homepage layout updated successfully.');
-        redirect('homepage-settings.php');
-    }
-}
-
-// Handle Add Custom Section
-if (isset($_POST['add_custom_section'])) {
-    if (verify_csrf_token($_POST['csrf_token'])) {
-        $name = $_POST['section_name'];
-        $title = $_POST['display_title'] ?: $name;
-        $cta = $_POST['cta_link'];
-        $key = 'custom_' . strtolower(preg_replace('/[^a-zA-Z0-9]/', '_', $name)) . '_' . time();
-
-        $stmt = $pdo->prepare("INSERT INTO homepage_sections (section_key, section_name, display_title, cta_link, is_custom, display_order) VALUES (?, ?, ?, ?, 1, 99)");
-        $stmt->execute([$key, $name, $title, $cta]);
-
-        set_flash_message('success', 'Custom section created.');
-        redirect('homepage-settings.php');
-    }
-}
-
-// Handle Delete Custom Section
-if (isset($_GET['delete_section'])) {
-    $id = intval($_GET['delete_section']);
-    $stmt = $pdo->prepare("SELECT section_key, is_custom FROM homepage_sections WHERE id = ?");
-    $stmt->execute([$id]);
-    $sec = $stmt->fetch();
-    if ($sec && $sec['is_custom']) {
-        $pdo->prepare("DELETE FROM homepage_section_items WHERE section_key = ?")->execute([$sec['section_key']]);
-        $pdo->prepare("DELETE FROM homepage_sections WHERE id = ?")->execute([$id]);
-        set_flash_message('success', 'Custom section deleted.');
-    }
-    redirect('homepage-settings.php');
-}
 
 // Handle Marquee Text Update
 if (isset($_POST['save_marquee'])) {
@@ -285,266 +240,162 @@ include 'includes/sidebar.php';
                 </div>
             <?php endif; ?>
 
+
             <div class="row">
-                <div class="card shadow-sm border-0 rounded-4 mb-4">
-                    <div class="card-header bg-white border-0 py-3 mt-1">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0 fw-bold"><i class="fas fa-sort-amount-down text-primary me-2"></i>
-                                Section Management</h5>
+                <!-- Marquee Setting -->
+                <div class="col-lg-12">
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-white border-0 py-3 mt-1">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-bullhorn text-warning me-2"></i> Announcement
+                                Marquee Text</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form action="" method="POST">
+                                <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Marquee Content (Use ✦ to separate
+                                        items)</label>
+                                    <textarea name="marquee_text" class="form-control" rows="4"
+                                        required><?php echo htmlspecialchars($marquee_text); ?></textarea>
+                                </div>
+                                <button type="submit" name="save_marquee" class="btn btn-warning text-dark fw-bold">
+                                    <i class="fas fa-check me-2"></i> Update Text
+                                </button>
+                            </form>
                         </div>
                     </div>
-                    <div class="card-body p-3">
-                        <form action="" method="POST">
-                            <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle" style="font-size: 0.85rem;">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th width="40">Order</th>
-                                            <th>Section / Display Title</th>
-                                            <th>CTA Link (View All)</th>
-                                            <th width="60" class="text-center">Active</th>
-                                            <th width="40"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($sections as $section): ?>
-                                            <tr>
-                                                <td>
-                                                    <input type="number" name="order[<?php echo $section['id']; ?>]"
-                                                        value="<?php echo $section['display_order']; ?>"
-                                                        class="form-control form-control-sm text-center px-1">
-                                                </td>
-                                                <td>
-                                                    <div class="mb-1">
-                                                        <strong class="text-primary small"><?php echo htmlspecialchars($section['section_name']); ?></strong>
-                                                    </div>
-                                                    <input type="text" name="title[<?php echo $section['id']; ?>]"
-                                                        value="<?php echo htmlspecialchars($section['display_title'] ?? ''); ?>"
-                                                        class="form-control form-control-sm mb-1"
-                                                        placeholder="Display Title">
-                                                    <textarea name="description[<?php echo $section['id']; ?>]"
-                                                        class="form-control form-control-sm" rows="2"
-                                                        placeholder="Description/Subtitle"><?php echo htmlspecialchars($section['display_description'] ?? ''); ?></textarea>
-                                                </td>
-                                                <td>
-                                                    <input type="text" name="cta[<?php echo $section['id']; ?>]"
-                                                        value="<?php echo htmlspecialchars($section['cta_link'] ?? ''); ?>"
-                                                        class="form-control form-control-sm" placeholder="URL Link">
-                                                </td>
-                                                <td class="text-center">
-                                                    <div class="form-check form-switch d-inline-block">
-                                                        <input class="form-check-input" type="checkbox"
-                                                            name="active[<?php echo $section['id']; ?>]" <?php echo $section['is_active'] ? 'checked' : ''; ?>>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <?php if ($section['is_custom']): ?>
-                                                        <a href="?delete_section=<?php echo $section['id']; ?>"
-                                                            class="text-danger small"
-                                                            onclick="return confirm('Delete section and its links?')">
-                                                            <i class="fas fa-trash"></i>
-                                                        </a>
-                                                    <?php endif; ?>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="mt-3">
-                                <button type="submit" name="update_order" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-save me-1"></i> Save Layout & Labels
-                                </button>
-                            </div>
-                        </form>
-                    </div>
                 </div>
 
-                <!-- Add Custom Section -->
-                <div class="card shadow-sm border-0 rounded-4 mb-4">
-                    <div class="card-header bg-white border-0 py-3 mt-1">
-                        <h5 class="mb-0 fw-bold"><i class="fas fa-plus text-success me-2"></i> Create Custom Section
-                        </h5>
-                    </div>
-                    <div class="card-body p-4">
-                        <form action="" method="POST">
-                            <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-                            <div class="mb-3">
-                                <label class="form-label small fw-bold">Internal Name (e.g. Summer Special)</label>
-                                <input type="text" name="section_name" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label small fw-bold">Display Title on Site</label>
-                                <input type="text" name="display_title" class="form-control"
-                                    placeholder="Our Summer Collection">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label small fw-bold">CTA Link (URL)</label>
-                                <input type="text" name="cta_link" class="form-control"
-                                    placeholder="<?php echo SITE_URL; ?>/shop?collection=summer">
-                            </div>
-                            <button type="submit" name="add_custom_section" class="btn btn-success fw-bold w-100">
-                                <i class="fas fa-magic me-2"></i> Create Section
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Marquee Setting -->
-                <div class="card shadow-sm border-0 rounded-4 mb-4">
-                    <div class="card-header bg-white border-0 py-3 mt-1">
-                        <h5 class="mb-0 fw-bold"><i class="fas fa-bullhorn text-warning me-2"></i> Announcement
-                            Marquee Text</h5>
-                    </div>
-                    <div class="card-body p-4">
-                        <form action="" method="POST">
-                            <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-                            <div class="mb-3">
-                                <label class="form-label small fw-bold">Marquee Content (Use ✦ to separate
-                                    items)</label>
-                                <textarea name="marquee_text" class="form-control" rows="4"
-                                    required><?php echo htmlspecialchars($marquee_text); ?></textarea>
-                            </div>
-                            <button type="submit" name="save_marquee" class="btn btn-warning text-dark fw-bold">
-                                <i class="fas fa-check me-2"></i> Update Text
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Manual Selection -->
-            <div class="col-lg-6">
-                <!-- Manual Item Management -->
-                <div class="card shadow-sm border-0 rounded-4 mb-4">
-                    <div class="card-header bg-white border-0 py-3 mt-1">
-                        <h5 class="mb-0 fw-bold"><i class="fas fa-plus-circle text-info me-2"></i> Manual Section
-                            Items</h5>
-                    </div>
-                    <div class="card-body p-4">
-                        <form action="" method="POST" class="mb-4">
-                            <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <select name="section_key" class="form-select select-type" required>
-                                        <option value="">Select Section...</option>
-                                        <?php foreach ($sections as $sec):
-                                            if (in_array($sec['section_key'], ['hero', 'marquee', 'curated', 'features']))
-                                                continue;
-                                            ?>
-                                            <option value="<?php echo $sec['section_key']; ?>"
-                                                data-type="<?php echo ($sec['section_key'] == 'categories' || $sec['section_key'] == 'tabbed_categories') ? 'category' : 'product'; ?>">
-                                                <?php echo $sec['section_name']; ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="col-md-5" id="item-selector">
-                                    <select name="item_id" class="form-select select2" required>
-                                        <option value="">Select Item...</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <button type="submit" name="add_section_item"
-                                        class="btn btn-info w-100">Add</button>
-                                </div>
-                            </div>
-                        </form>
-
-                        <hr>
-
-                        <div class="section-items-list mt-3">
-                            <?php
-                            foreach ($sections as $sec):
-                                $k = $sec['section_key'];
-                                if (in_array($k, ['hero', 'marquee', 'curated', 'features']))
-                                    continue;
-                                $label = $sec['section_name'];
-                                ?>
-                                <div class="mb-3 pb-2 border-bottom">
-                                    <h6 class="fw-bold mb-2 small text-uppercase text-muted"><?php echo $label; ?></h6>
-                                    <?php if (isset($manual_items[$k])): ?>
-                                        <div class="d-flex flex-wrap gap-2">
-                                            <?php foreach ($manual_items[$k] as $item): ?>
-                                                <div class="badge bg-light text-dark border p-2 d-flex align-items-center">
-                                                    <?php echo htmlspecialchars($item['item_name']); ?>
-                                                    <a href="?delete_item=<?php echo $item['id']; ?>" class="ms-2 text-danger"
-                                                        onclick="return confirm('Remove?')"><i class="fas fa-times"></i></a>
-                                                </div>
+                <!-- Manual Selection -->
+                <div class="col-lg-6">
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-white border-0 py-3 mt-1">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-plus-circle text-info me-2"></i> Manual Section
+                                Items</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form action="" method="POST" class="mb-4">
+                                <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                                <div class="row g-2">
+                                    <div class="col-md-5">
+                                        <select name="section_key" class="form-select select-type" required>
+                                            <option value="">Select Section...</option>
+                                            <?php foreach ($sections as $sec):
+                                                if (in_array($sec['section_key'], ['hero', 'marquee', 'curated', 'features']))
+                                                    continue;
+                                                ?>
+                                                <option value="<?php echo $sec['section_key']; ?>"
+                                                    data-type="<?php echo ($sec['section_key'] == 'categories' || $sec['section_key'] == 'tabbed_categories') ? 'category' : 'product'; ?>">
+                                                    <?php echo $sec['section_name']; ?>
+                                                </option>
                                             <?php endforeach; ?>
-                                        </div>
-                                    <?php else: ?>
-                                        <span class="text-muted small">Automatic (Default)</span>
-                                    <?php endif; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-5" id="item-selector">
+                                        <select name="item_id" class="form-select select2" required>
+                                            <option value="">Select Item...</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" name="add_section_item"
+                                            class="btn btn-info w-100">Add</button>
+                                    </div>
                                 </div>
-                            <?php endforeach; ?>
+                            </form>
+
+                            <hr>
+
+                            <div class="section_items_list mt-3">
+                                <?php foreach ($sections as $sec):
+                                    $k = $sec['section_key'];
+                                    if (in_array($k, ['hero', 'marquee', 'curated', 'features']))
+                                        continue;
+                                    $label = $sec['section_name'];
+                                    ?>
+                                    <div class="mb-3 pb-2 border-bottom">
+                                        <h6 class="fw-bold mb-2 small text-uppercase text-muted"><?php echo $label; ?></h6>
+                                        <?php if (isset($manual_items[$k])): ?>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <?php foreach ($manual_items[$k] as $item): ?>
+                                                    <div class="badge bg-light text-dark border p-2 d-flex align-items-center">
+                                                        <?php echo htmlspecialchars($item['item_name']); ?>
+                                                        <a href="?delete_item=<?php echo $item['id']; ?>" class="ms-2 text-danger"
+                                                            onclick="return confirm('Remove?')"><i class="fas fa-times"></i></a>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        <?php else: ?>
+                                            <span class="text-muted small">Automatic (Default)</span>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Curated Videos -->
-                <div class="card shadow-sm border-0 rounded-4 mb-4">
-                    <div class="card-header bg-white border-0 py-3 mt-1">
-                        <h5 class="mb-0 fw-bold"><i class="fas fa-video text-success me-2"></i> Curated Video
-                            Gallery</h5>
-                    </div>
-                    <div class="card-body p-4">
-                        <form action="" method="POST" enctype="multipart/form-data"
-                            class="mb-4 p-3 bg-light rounded-3 border">
-                            <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-                            <div class="row g-3">
-                                <div class="col-md-12">
-                                    <label class="form-label small fw-bold">Select Video (MP4)</label>
-                                    <input type="file" name="video" class="form-control" accept="video/*" required>
-                                </div>
-                                <div class="col-md-12">
-                                    <label class="form-label small fw-bold">Linked Product</label>
-                                    <select name="product_id" class="form-select select2" required>
-                                        <option value="">Choose a product...</option>
-                                        <?php foreach ($all_products as $p): ?>
-                                            <option value="<?php echo $p['id']; ?>">
-                                                <?php echo htmlspecialchars($p['name']); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="col-md-12">
-                                    <button type="submit" name="add_curated" class="btn btn-success w-100">
-                                        <i class="fas fa-upload me-2"></i> Add Video
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-
-                        <div class="row g-2">
-                            <?php foreach ($curated_items as $item): ?>
-                                <div class="col-md-6">
-                                    <div class="card h-100 border rounded-3 overflow-hidden position-relative">
-                                        <video style="height: 120px; width: 100%; object-fit: cover;" muted>
-                                            <source src="../uploads/videos/<?php echo $item['video_path']; ?>"
-                                                type="video/mp4">
-                                        </video>
-                                        <div class="card-body p-2">
-                                            <p class="small fw-bold mb-0 text-truncate">
-                                                <?php echo htmlspecialchars($item['product_name']); ?>
-                                            </p>
-                                            <a href="?delete_curated=<?php echo $item['id']; ?>"
-                                                class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2"
-                                                onclick="return confirm('Delete?')">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </div>
+                <div class="col-lg-6">
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-white border-0 py-3 mt-1">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-video text-success me-2"></i> Curated Video
+                                Gallery</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form action="" method="POST" enctype="multipart/form-data"
+                                class="mb-4 p-3 bg-light rounded-3 border">
+                                <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                                <div class="row g-3">
+                                    <div class="col-md-12">
+                                        <label class="form-label small fw-bold">Select Video (MP4)</label>
+                                        <input type="file" name="video" class="form-control" accept="video/*" required>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label small fw-bold">Linked Product</label>
+                                        <select name="product_id" class="form-select select2" required>
+                                            <option value="">Choose a product...</option>
+                                            <?php foreach ($all_products as $p): ?>
+                                                <option value="<?php echo $p['id']; ?>">
+                                                    <?php echo htmlspecialchars($p['name']); ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <button type="submit" name="add_curated" class="btn btn-success w-100">
+                                            <i class="fas fa-upload me-2"></i> Add Video
+                                        </button>
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
+                            </form>
+
+                            <div class="row g-2">
+                                <?php foreach ($curated_items as $item): ?>
+                                    <div class="col-md-6">
+                                        <div class="card h-100 border rounded-3 overflow-hidden position-relative">
+                                            <video style="height: 120px; width: 100%; object-fit: cover;" muted>
+                                                <source src="../uploads/videos/<?php echo $item['video_path']; ?>"
+                                                    type="video/mp4">
+                                            </video>
+                                            <div class="card-body p-2">
+                                                <p class="small fw-bold mb-0 text-truncate">
+                                                    <?php echo htmlspecialchars($item['product_name']); ?></p>
+                                                <a href="?delete_curated=<?php echo $item['id']; ?>"
+                                                    class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2"
+                                                    onclick="return confirm('Delete?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
+            </div> <!-- End Row -->
+        </div> <!-- End Container -->
+    </div> <!-- End Content Wrapper -->
+</div> <!-- End Main Content -->
 
 <?php include 'includes/footer.php'; ?>
 </div>
