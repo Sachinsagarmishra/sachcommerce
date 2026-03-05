@@ -144,30 +144,6 @@ ob_start(); ?>
 </section>
 <?php $sections_html['hero'] = ob_get_clean();
 
-// 2. Categories
-ob_start(); ?>
-<section class="section-padding bg-light">
-    <div class="container">
-        <div class="categories-horizontal-wrapper">
-            <?php if (!empty($categories)): ?>
-                <?php foreach ($categories as $category): ?>
-                    <a href="<?php echo SITE_URL; ?>/shop?category=<?php echo $category['slug']; ?>"
-                        class="category-item-circular">
-                        <div class="category-image-circle">
-                            <?php if (!empty($category['image'])): ?>
-                                <img src="<?php echo CATEGORY_IMAGE_URL . $category['image']; ?>"
-                                    alt="<?php echo htmlspecialchars($category['name']); ?>">
-                            <?php else: ?><i class="fas fa-tag"></i><?php endif; ?>
-                        </div>
-                        <span class="category-name-circular"><?php echo htmlspecialchars($category['name']); ?></span>
-                    </a>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
-    </div>
-</section>
-<?php $sections_html['categories'] = ob_get_clean();
-
 // 3. Marquee
 ob_start(); ?>
 <div class="announcement-marquee">
@@ -182,105 +158,136 @@ ob_start(); ?>
 </div>
 <?php $sections_html['marquee'] = ob_get_clean();
 
-// 4. Curated
-ob_start(); ?>
-<section class="curated-section">
-    <div class="container-fluid px-md-5">
-        <h2 class="curated-title">Curated for You!</h2>
-        <div class="curated-grid">
-            <?php
-            $curated_data = !empty($curated_db_items) ? $curated_db_items : [];
-
-            // If empty, show dummy/fallback
-            if (empty($curated_data)) {
-                $fallback_products = array_slice($featured_products, 0, 6);
-                $dummy_videos = [
-                    'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-posing-in-a-red-dress-12503-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-young-woman-walking-on-the-beach-in-a-dress-42523-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-woman-smiling-while-carrying-shopping-bags-41487-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-close-up-of-a-woman-posing-in-a-pink-dress-12499-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-woman-walking-with-a-red-dress-and-a-hat-12501-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-girl-in-white-dress-posing-in-front-of-a-mirror-12505-large.mp4'
-                ];
-                foreach ($fallback_products as $idx => $p) {
-                    $curated_data[] = array_merge($p, ['video_path' => $dummy_videos[$idx % 6], 'is_external' => true]);
-                }
-            }
-
-            foreach ($curated_data as $item):
-                $video_url = isset($item['is_external']) ? $item['video_path'] : SITE_URL . '/uploads/videos/' . $item['video_path'];
-                ?>
-                <div class="curated-card">
-                    <div class="curated-video-wrapper">
-                        <video class="curated-video" autoplay muted loop playsinline>
-                            <source src="<?php echo $video_url; ?>" type="video/mp4">
-                        </video>
-                    </div>
-                    <div class="curated-card-overlay"
-                        onclick="window.location.href='<?php echo SITE_URL; ?>/products/<?php echo $item['slug']; ?>'">
-                        <img src="<?php echo $item['primary_image'] ? PRODUCT_IMAGE_URL . $item['primary_image'] : 'https://via.placeholder.com/100'; ?>"
-                            class="curated-thumb" alt="">
-                        <div class="curated-info">
-                            <p class="curated-name"><?php echo htmlspecialchars($item['name']); ?></p>
-                            <span class="curated-price">
-                                <?php if ($item['sale_price']): ?>
-                                    <span class="text-white"><?php echo format_price($item['sale_price']); ?></span>
-                                    <span
-                                        class="text-white-50 text-decoration-line-through small ms-1"><?php echo format_price($item['price']); ?></span>
-                                <?php else: ?>
-                                    <span class="text-white"><?php echo format_price($item['price']); ?></span>
-                                <?php endif; ?>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-<?php $sections_html['curated'] = ob_get_clean();
-
-// 8. Features
-ob_start(); ?>
-<section class="section-padding bg-white border-top">
-    <div class="container">
-        <div class="row g-4 text-center">
-            <div class="col-md-3"><i class="fas fa-shipping-fast fa-3x text-primary mb-3"></i>
-                <h5>Free Shipping</h5>
-                <p class="text-muted small">On orders above <?php echo format_price(FREE_SHIPPING_THRESHOLD); ?></p>
-            </div>
-            <div class="col-md-3"><i class="fas fa-shield-alt fa-3x text-success mb-3"></i>
-                <h5>Secure Payment</h5>
-                <p class="text-muted small">Razorpay integration with COD option</p>
-            </div>
-            <div class="col-md-3"><i class="fas fa-undo fa-3x text-warning mb-3"></i>
-                <h5>Easy Returns</h5>
-                <p class="text-muted small">7-day return policy</p>
-            </div>
-            <div class="col-md-3"><i class="fas fa-headset fa-3x text-info mb-3"></i>
-                <h5>24/7 Support</h5>
-                <p class="text-muted small">Customer support available</p>
-            </div>
-        </div>
-    </div>
-</section>
-<?php $sections_html['features'] = ob_get_clean();
-
 // Output Sections in Order
 foreach ($all_home_sections as $sec) {
     $key = $sec['section_key'];
     $title = $sec['display_title'] ?: $sec['section_name'];
     $cta = $sec['cta_link'];
 
-    // If it's a pre-rendered specialized section (hero, categories, marquee, curated, features)
-    if (in_array($key, ['hero', 'categories', 'marquee', 'curated', 'features'])) {
+    // PRE-RENDERED SPECIAL SECTIONS (Marquee and Hero)
+    if (in_array($key, ['hero', 'marquee'])) {
         if (isset($sections_html[$key])) {
             echo $sections_html[$key];
         }
         continue;
     }
 
-    // Otherwise, treat as a Product Grid Section (Product sections are rendered dynamically)
+    // SPECIAL SECTIONS WITH DYNAMIC TITLES (Categories, Curated, Features)
+    if ($key == 'categories') { ?>
+        <section class="section-padding bg-light">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="section-title mb-0"><?php echo htmlspecialchars($title); ?></h2>
+                    <?php if ($cta): ?><a href="<?php echo $cta; ?>" class="btn btn-outline-primary">View All</a><?php endif; ?>
+                </div>
+                <div class="categories-horizontal-wrapper">
+                    <?php if (!empty($categories)): ?>
+                        <?php foreach ($categories as $category): ?>
+                            <a href="<?php echo SITE_URL; ?>/shop?category=<?php echo $category['slug']; ?>"
+                                class="category-item-circular">
+                                <div class="category-image-circle">
+                                    <?php if (!empty($category['image'])): ?>
+                                        <img src="<?php echo CATEGORY_IMAGE_URL . $category['image']; ?>"
+                                            alt="<?php echo htmlspecialchars($category['name']); ?>">
+                                    <?php else: ?><i class="fas fa-tag"></i><?php endif; ?>
+                                </div>
+                                <span class="category-name-circular"><?php echo htmlspecialchars($category['name']); ?></span>
+                            </a>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </section>
+        <?php continue;
+    }
+
+    if ($key == 'curated') { ?>
+        <section class="curated-section">
+            <div class="container-fluid px-md-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="curated-title"><?php echo htmlspecialchars($title); ?></h2>
+                    <?php if ($cta): ?><a href="<?php echo $cta; ?>" class="btn btn-outline-primary">View All</a><?php endif; ?>
+                </div>
+                <div class="curated-grid">
+                    <?php
+                    $curated_data = !empty($curated_db_items) ? $curated_db_items : [];
+                    if (empty($curated_data)) {
+                        $fallback_products = array_slice($featured_products, 0, 6);
+                        $dummy_videos = [
+                            'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-posing-in-a-red-dress-12503-large.mp4',
+                            'https://assets.mixkit.co/videos/preview/mixkit-young-woman-walking-on-the-beach-in-a-dress-42523-large.mp4',
+                            'https://assets.mixkit.co/videos/preview/mixkit-woman-smiling-while-carrying-shopping-bags-41487-large.mp4',
+                            'https://assets.mixkit.co/videos/preview/mixkit-close-up-of-a-woman-posing-in-a-pink-dress-12499-large.mp4',
+                            'https://assets.mixkit.co/videos/preview/mixkit-woman-walking-with-a-red-dress-and-a-hat-12501-large.mp4',
+                            'https://assets.mixkit.co/videos/preview/mixkit-girl-in-white-dress-posing-in-front-of-a-mirror-12505-large.mp4'
+                        ];
+                        foreach ($fallback_products as $idx => $p) {
+                            $curated_data[] = array_merge($p, ['video_path' => $dummy_videos[$idx % 6], 'is_external' => true]);
+                        }
+                    }
+                    foreach ($curated_data as $item):
+                        $video_url = isset($item['is_external']) ? $item['video_path'] : SITE_URL . '/uploads/videos/' . $item['video_path'];
+                        ?>
+                        <div class="curated-card">
+                            <div class="curated-video-wrapper">
+                                <video class="curated-video" autoplay muted loop playsinline>
+                                    <source src="<?php echo $video_url; ?>" type="video/mp4">
+                                </video>
+                            </div>
+                            <div class="curated-card-overlay"
+                                onclick="window.location.href='<?php echo SITE_URL; ?>/products/<?php echo $item['slug']; ?>'">
+                                <img src="<?php echo $item['primary_image'] ? PRODUCT_IMAGE_URL . $item['primary_image'] : 'https://via.placeholder.com/100'; ?>"
+                                    class="curated-thumb" alt="">
+                                <div class="curated-info">
+                                    <p class="curated-name"><?php echo htmlspecialchars($item['name']); ?></p>
+                                    <span class="curated-price">
+                                        <?php if ($item['sale_price']): ?>
+                                            <span class="text-white"><?php echo format_price($item['sale_price']); ?></span>
+                                            <span
+                                                class="text-white-50 text-decoration-line-through small ms-1"><?php echo format_price($item['price']); ?></span>
+                                        <?php else: ?>
+                                            <span class="text-white"><?php echo format_price($item['price']); ?></span>
+                                        <?php endif; ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </section>
+        <?php continue;
+    }
+
+    if ($key == 'features') { ?>
+        <section class="section-padding bg-white border-top">
+            <div class="container">
+                <?php if ($title): ?>
+                    <h2 class="section-title text-center mb-5"><?php echo htmlspecialchars($title); ?></h2><?php endif; ?>
+                <div class="row g-4 text-center">
+                    <div class="col-md-3"><i class="fas fa-shipping-fast fa-3x text-primary mb-3"></i>
+                        <h5>Free Shipping</h5>
+                        <p class="text-muted small">On orders above <?php echo format_price(FREE_SHIPPING_THRESHOLD); ?></p>
+                    </div>
+                    <div class="col-md-3"><i class="fas fa-shield-alt fa-3x text-success mb-3"></i>
+                        <h5>Secure Payment</h5>
+                        <p class="text-muted small">Razorpay integration with COD option</p>
+                    </div>
+                    <div class="col-md-3"><i class="fas fa-undo fa-3x text-warning mb-3"></i>
+                        <h5>Easy Returns</h5>
+                        <p class="text-muted small">7-day return policy</p>
+                    </div>
+                    <div class="col-md-3"><i class="fas fa-headset fa-3x text-info mb-3"></i>
+                        <h5>24/7 Support</h5>
+                        <p class="text-muted small">Customer support available</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <?php continue;
+    }
+
+    // DYNAMIC PRODUCT GRID SECTIONS (Standard and Custom)
     $products = [];
     if ($key == 'featured')
         $products = $featured_products;
@@ -289,7 +296,6 @@ foreach ($all_home_sections as $sec) {
     elseif ($key == 'best_sellers')
         $products = $best_sellers;
     else {
-        // Custom section or other
         $products = get_homepage_section_items($key);
     }
 

@@ -94,10 +94,11 @@ if (isset($_POST['update_order'])) {
     if (verify_csrf_token($_POST['csrf_token'])) {
         foreach ($_POST['order'] as $id => $order) {
             $is_active = isset($_POST['active'][$id]) ? 1 : 0;
+            $name = $_POST['name'][$id];
             $title = $_POST['title'][$id];
             $cta = $_POST['cta'][$id];
-            $stmt = $pdo->prepare("UPDATE homepage_sections SET display_order = ?, is_active = ?, display_title = ?, cta_link = ? WHERE id = ?");
-            $stmt->execute([$order, $is_active, $title, $cta, $id]);
+            $stmt = $pdo->prepare("UPDATE homepage_sections SET display_order = ?, is_active = ?, section_name = ?, display_title = ?, cta_link = ? WHERE id = ?");
+            $stmt->execute([$order, $is_active, $name, $title, $cta, $id]);
         }
         set_flash_message('success', 'Homepage layout updated successfully.');
         redirect('homepage-settings.php');
@@ -298,7 +299,9 @@ include 'includes/sidebar.php';
                                                     </td>
                                                     <td>
                                                         <div class="mb-1">
-                                                            <small class="text-muted fw-bold"><?php echo $section['section_name']; ?></small>
+                                                            <input type="text" name="name[<?php echo $section['id']; ?>]"
+                                                                value="<?php echo htmlspecialchars($section['section_name']); ?>"
+                                                                class="form-control form-control-sm fw-bold mb-1" placeholder="Internal Name">
                                                         </div>
                                                         <input type="text" name="title[<?php echo $section['id']; ?>]"
                                                             value="<?php echo htmlspecialchars($section['display_title'] ?? ''); ?>"
