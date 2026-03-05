@@ -20,33 +20,41 @@ $marquee_text_raw = get_site_setting('marquee_text', 'Order by Oct 5th For Guara
 $marquee_items = array_map('trim', explode('✦', $marquee_text_raw));
 
 // 2. Manual Section Items
-function get_homepage_section_items($section_key, $limit = 8)
-{
-    global $pdo;
-    try {
-        $stmt = $pdo->prepare("SELECT hsi.*, 
-            CASE WHEN hsi.item_type = 'product' THEN 'products' ELSE 'categories' END as table_name
-            FROM homepage_section_items hsi 
-            WHERE hsi.section_key = ? 
-            ORDER BY hsi.display_order ASC, hsi.id ASC 
-            LIMIT ?");
-        $stmt->execute([$section_key, $limit]);
-        $items = $stmt->fetchAll();
+if (!function_exists('get_homepage_section_items')) {
+    function get_homepage_section_items($section_key, $limit = 8)
+    {
+        global $pdo;
+        try {
+            $stmt = $pdo->prepare("SELECT hsi.*, 
+                CASE WHEN hsi.item_type = 'product' THEN 'products' ELSE 'categories' END as table_name
+                FROM homepage_section_items hsi 
+                WHERE hsi.section_key = ? 
+                ORDER BY hsi.display_order ASC, hsi.id ASC 
+                LIMIT ?");
+            // PostgreSQL/SQLite vs MySQL limit parameter handling
+            $stmt->bindValue(1, $section_key, PDO::PARAM_STR);
+            $stmt->bindValue(2, (int) $limit, PDO::PARAM_INT);
+            $stmt->execute();
+            $items = $stmt->fetchAll();
 
-        if (empty($items))
+            if (empty($items))
+                return null;
+
+            $results = [];
+            foreach ($items as $item) {
+                $table = $item['table_name'];
+                $id = (int) $item['item_id'];
+                // Safer fetch with prepared stmt
+                $i_stmt = $pdo->prepare("SELECT * FROM $table WHERE id = ? AND status = 'active'");
+                $i_stmt->execute([$id]);
+                $res = $i_stmt->fetch();
+                if ($res)
+                    $results[] = $res;
+            }
+            return $results;
+        } catch (Exception $e) {
             return null;
-
-        $results = [];
-        foreach ($items as $item) {
-            $table = $item['table_name'];
-            $id = $item['item_id'];
-            $res = $pdo->query("SELECT * FROM $table WHERE id = $id AND status = 'active'")->fetch();
-            if ($res)
-                $results[] = $res;
         }
-        return $results;
-    } catch (Exception $e) {
-        return null;
     }
 }
 
@@ -160,12 +168,12 @@ ob_start(); ?>
 ob_start(); ?>
 <div class="announcement-marquee">
     <div class="marquee-content">
-        <?php 
+        <?php
         // Display items twice for seamless looping
-        for($i=0; $i<4; $i++):
+        for ($i = 0; $i < 4; $i++):
             foreach ($marquee_items as $item): ?>
-            <span class="marquee-item"><?php echo $item; ?> <span class="marquee-separator">✦</span></span>
-        <?php endforeach; endfor; ?>
+                <span class="marquee-item"><?php echo $item; ?> <span class="marquee-separator">✦</span></span>
+            <?php endforeach; endfor; ?>
     </div>
 </div>
 <?php $sections_html['marquee'] = ob_get_clean();

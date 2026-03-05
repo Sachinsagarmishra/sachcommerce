@@ -5,52 +5,70 @@ require_once 'includes/auth-check.php';
 
 $page_title = 'Homepage Settings';
 
-// Ensure tables exist (Silent fail/Lazy creation)
-try {
-    $pdo->query("SELECT 1 FROM homepage_sections LIMIT 1");
-} catch (Exception $e) {
-    // Run SQL here to be safe and seamless.
-    $pdo->exec("CREATE TABLE IF NOT EXISTS homepage_sections (
+// Function to update site setting (local copy if not defined global or as helper)
+if (!function_exists('update_site_setting')) {
+    function update_site_setting($key, $value)
+    {
+        global $pdo;
+        try {
+            $stmt = $pdo->prepare("SELECT id FROM site_settings WHERE setting_key = ?");
+            $stmt->execute([$key]);
+            if ($stmt->fetch()) {
+                $pdo->prepare("UPDATE site_settings SET setting_value = ? WHERE setting_key = ?")->execute([$value, $key]);
+            } else {
+                $pdo->prepare("INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?)")->execute([$key, $value]);
+            }
+        } catch (Exception $e) {
+        }
+    }
+}
+
+// Ensure tables exist
+$db_tables = [
+    'homepage_sections' => "CREATE TABLE IF NOT EXISTS homepage_sections (
         id INT AUTO_INCREMENT PRIMARY KEY,
         section_key VARCHAR(50) UNIQUE NOT NULL,
         section_name VARCHAR(100) NOT NULL,
         display_order INT DEFAULT 0,
         is_active TINYINT(1) DEFAULT 1
-    )");
-
-    $pdo->exec("CREATE TABLE IF NOT EXISTS curated_items (
+    )",
+    'curated_items' => "CREATE TABLE IF NOT EXISTS curated_items (
         id INT AUTO_INCREMENT PRIMARY KEY,
         video_path VARCHAR(255) NOT NULL,
         product_id INT NOT NULL,
         display_order INT DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )");
-
-    $pdo->exec("CREATE TABLE IF NOT EXISTS homepage_section_items (
+    )",
+    'homepage_section_items' => "CREATE TABLE IF NOT EXISTS homepage_section_items (
         id INT AUTO_INCREMENT PRIMARY KEY,
         section_key VARCHAR(50) NOT NULL,
         item_type ENUM('product', 'category') NOT NULL,
         item_id INT NOT NULL,
         display_order INT DEFAULT 0,
         INDEX(section_key)
-    )");
+    )"
+];
 
-    $sections = [
-        ['hero', 'Hero Slider'],
-        ['categories', 'Categories Horizontal Grid'],
-        ['marquee', 'Announcement Marquee'],
-        ['curated', 'Curated for You (Videos)'],
-        ['featured', 'Featured Products'],
-        ['new_arrivals', 'New Arrivals'],
-        ['best_sellers', 'Best Sellers'],
-        ['features', 'Service Features (Shipping/Support)']
-    ];
-
-    $check = $pdo->query("SELECT COUNT(*) FROM homepage_sections")->fetchColumn();
-    if ($check == 0) {
-        $stmt = $pdo->prepare("INSERT INTO homepage_sections (section_key, section_name, display_order) VALUES (?, ?, ?)");
-        foreach ($sections as $index => $section) {
-            $stmt->execute([$section[0], $section[1], $index + 1]);
+foreach ($db_tables as $t_name => $t_sql) {
+    try {
+        @$pdo->query("SELECT 1 FROM $t_name LIMIT 1");
+    } catch (Exception $e) {
+        $pdo->exec($t_sql);
+        if ($t_name == 'homepage_sections') {
+            $initial_sections = [
+                ['hero', 'Hero Slider'],
+                ['categories', 'Categories Horizontal Grid'],
+                ['marquee', 'Announcement Marquee'],
+                ['curated', 'Curated for You (Videos)'],
+                ['featured', 'Featured Products'],
+                ['new_arrivals', 'New Arrivals'],
+                ['best_sellers', 'Best Sellers'],
+                ['features', 'Service Features (Shipping/Support)']
+            ];
+            $stmt = $pdo->prepare("INSERT INTO homepage_sections (section_key, section_name, display_order) VALUES (?, ?, ?)");
+            foreach ($initial_sections as $index => $sec) {
+                $stmt->execute([$sec[0], $sec[1], $index + 1]);
+            }
         }
     }
 }
@@ -148,24 +166,32 @@ if (isset($_GET['delete_curated'])) {
 }
 
 // Fetch Data
-$sections = $pdo->query("SELECT * FROM homepage_sections ORDER BY display_order ASC")->fetchAll();
-$curated_items = $pdo->query("SELECT c.*, p.name as product_name FROM curated_items c JOIN products p ON c.product_id = p.id ORDER BY c.display_order ASC")->fetchAll();
-$all_products = $pdo->query("SELECT id, name FROM products WHERE status = 'active' ORDER BY name ASC")->fetchAll();
-$all_categories = $pdo->query("SELECT id, name FROM categories WHERE status = 'active' ORDER BY name ASC")->fetchAll();
+try {
+    $sections = $pdo->query("SELECT * FROM homepage_sections ORDER BY display_order ASC")->fetchAll();
+    $curated_items = $pdo->query("SELECT c.*, p.name as product_name FROM curated_items c JOIN products p ON c.product_id = p.id ORDER BY c.display_order ASC")->fetchAll();
+    $all_products = $pdo->query("SELECT id, name FROM products WHERE status = 'active' ORDER BY name ASC")->fetchAll();
+    $all_categories = $pdo->query("SELECT id, name FROM categories WHERE status = 'active' ORDER BY name ASC")->fetchAll();
+} catch (Exception $e) {
+    $sections = $curated_items = $all_products = $all_categories = [];
+}
 
 $marquee_text = get_site_setting('marquee_text', 'Order by Oct 5th For Guaranteed Diwali Delivery ✦ $20 Duty/Tariff Fee ✦ Free Shipping On All Orders Above $100 USD ✦ Upto 50% Items In Sale');
 
 // Fetch manual section items
 $manual_items = [];
-$res = $pdo->query("SELECT hsi.*, 
-    CASE WHEN hsi.item_type = 'product' THEN p.name ELSE c.name END as item_name
-    FROM homepage_section_items hsi 
-    LEFT JOIN products p ON hsi.item_id = p.id AND hsi.item_type = 'product'
-    LEFT JOIN categories c ON hsi.item_id = c.id AND hsi.item_type = 'category'
-    ORDER BY hsi.section_key, hsi.display_order ASC")->fetchAll();
+try {
+    $res = $pdo->query("SELECT hsi.*, 
+        CASE WHEN hsi.item_type = 'product' THEN p.name ELSE c.name END as item_name
+        FROM homepage_section_items hsi 
+        LEFT JOIN products p ON hsi.item_id = p.id AND hsi.item_type = 'product'
+        LEFT JOIN categories c ON hsi.item_id = c.id AND hsi.item_type = 'category'
+        ORDER BY hsi.section_key, hsi.display_order ASC")->fetchAll();
 
-foreach ($res as $r) {
-    $manual_items[$r['section_key']][] = $r;
+    foreach ($res as $r) {
+        $manual_items[$r['section_key']][] = $r;
+    }
+} catch (Exception $e) {
+    // Table might be missing or query failed
 }
 
 include 'includes/header.php';
@@ -374,7 +400,8 @@ include 'includes/sidebar.php';
                                             </video>
                                             <div class="card-body p-2">
                                                 <p class="small fw-bold mb-0 text-truncate">
-                                                    <?php echo htmlspecialchars($item['product_name']); ?></p>
+                                                    <?php echo htmlspecialchars($item['product_name']); ?>
+                                                </p>
                                                 <a href="?delete_curated=<?php echo $item['id']; ?>"
                                                     class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2"
                                                     onclick="return confirm('Delete?')">
@@ -417,19 +444,4 @@ include 'includes/sidebar.php';
         });
     });
 </script>
-<?php
-// Function to update site setting (local copy if not defined global or as helper)
-if (!function_exists('update_site_setting')) {
-    function update_site_setting($key, $value)
-    {
-        global $pdo;
-        $stmt = $pdo->prepare("SELECT id FROM site_settings WHERE setting_key = ?");
-        $stmt->execute([$key]);
-        if ($stmt->fetch()) {
-            $pdo->prepare("UPDATE site_settings SET setting_value = ? WHERE setting_key = ?")->execute([$value, $key]);
-        } else {
-            $pdo->prepare("INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?)")->execute([$key, $value]);
-        }
-    }
-}
 ?>
