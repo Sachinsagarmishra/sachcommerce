@@ -93,6 +93,22 @@ function get_category_by_slug($slug)
 }
 
 /**
+ * Get category name by ID
+ */
+function get_category_name($category_id)
+{
+    static $cat_names = [];
+    if (!isset($cat_names[$category_id])) {
+        global $pdo;
+        $stmt = $pdo->prepare("SELECT name FROM categories WHERE id = ?");
+        $stmt->execute([$category_id]);
+        $name = $stmt->fetchColumn();
+        $cat_names[$category_id] = $name ?: 'General';
+    }
+    return $cat_names[$category_id];
+}
+
+/**
  * Get products by category
  */
 function get_products_by_category($category_id, $limit = null, $offset = 0)

@@ -36,9 +36,7 @@
     </div>
 </div>
 <div class="product-info">
-    <div class="product-brand">Brand:
-        <?php echo SITE_NAME; ?>
-    </div>
+    <div class="product-brand"><?php echo htmlspecialchars(get_category_name($product['category_id'])); ?></div>
     <?php
     $random_ratings = [4, 4.5, 5];
     $random_rating = $random_ratings[array_rand($random_ratings)];
