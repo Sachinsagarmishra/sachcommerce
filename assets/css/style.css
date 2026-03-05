@@ -1101,11 +1101,16 @@ h6,
     border-color: #ddd;
 }
 
+/* Global Section Styling */
+.section-padding {
+    padding: 60px 0 !important;
+}
+
 /* Announcement Marquee */
 .announcement-marquee {
     background: var(--primary-color) !important;
     color: #fff !important;
-    padding: 12px 0 !important;
+    padding: 15px 0 !important;
     overflow: hidden !important;
     white-space: nowrap !important;
     position: relative !important;

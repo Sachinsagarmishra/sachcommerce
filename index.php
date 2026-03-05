@@ -142,7 +142,7 @@ ob_start(); ?>
 
 // 2. Categories
 ob_start(); ?>
-<section class="py-4 bg-light">
+<section class="section-padding bg-light">
     <div class="container">
         <div class="categories-horizontal-wrapper">
             <?php if (!empty($categories)): ?>
@@ -238,7 +238,7 @@ ob_start(); ?>
 
 // 5. Featured
 ob_start(); ?>
-<section class="py-5">
+<section class="section-padding">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="section-title mb-0">Featured Products</h2><a href="<?php echo SITE_URL; ?>/shop"
@@ -264,7 +264,7 @@ ob_start(); ?>
 // 6. New Arrivals
 ob_start();
 if (!empty($new_arrivals)): ?>
-    <section class="py-5 bg-light">
+    <section class="section-padding bg-light">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="section-title mb-0">New Arrivals</h2><a href="<?php echo SITE_URL; ?>/shop?filter=new"
@@ -287,7 +287,7 @@ $sections_html['new_arrivals'] = ob_get_clean();
 // 7. Best Sellers
 ob_start();
 if (!empty($best_sellers)): ?>
-    <section class="py-5">
+    <section class="section-padding">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="section-title mb-0">Best Sellers</h2><a href="<?php echo SITE_URL; ?>/shop?filter=bestseller"
@@ -309,7 +309,7 @@ $sections_html['best_sellers'] = ob_get_clean();
 
 // 8. Features
 ob_start(); ?>
-<section class="py-5 bg-white border-top">
+<section class="section-padding bg-white border-top">
     <div class="container">
         <div class="row g-4 text-center">
             <div class="col-md-3"><i class="fas fa-shipping-fast fa-3x text-primary mb-3"></i>
