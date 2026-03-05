@@ -1153,14 +1153,13 @@ h6,
 
 /* Curated for You Section */
 .curated-section {
-    padding: 60px 0 !important;
+    padding: 32px 0px 0px 0px !important;
     background: #fff !important;
 }
 
 .curated-title {
-    font-family: 'Playfair Display', serif !important;
     font-size: 38px !important;
-    font-weight: 700 !important;
+    font-weight: 600 !important;
     text-align: center !important;
     margin-bottom: 40px !important;
     color: #1a1a1a !important;
