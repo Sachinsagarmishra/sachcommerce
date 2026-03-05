@@ -37,36 +37,51 @@ include 'includes/navbar.php';
                 <div class="col-md-3">
                     <div class="card product-card">
                         <div class="product-image-wrapper">
+                            <div class="product-label-group">
+                                <?php if ($item['sale_price']): ?>
+                                    <span
+                                        class="product-label label-sale">-<?php echo calculate_discount_percentage($item['price'], $item['sale_price']); ?>%</span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="product-action-icons">
+                                <a href="javascript:void(0)" class="action-icon text-danger"
+                                    onclick="removeFromWishlist(<?php echo $item['product_id']; ?>)">
+                                    <i class="fas fa-trash-can"></i>
+                                </a>
+                                <a href="<?php echo SITE_URL; ?>/products/<?php echo $item['slug']; ?>" class="action-icon">
+                                    <i class="far fa-eye"></i>
+                                </a>
+                            </div>
                             <a href="<?php echo SITE_URL; ?>/products/<?php echo $item['slug']; ?>">
-                                <img src="<?php echo $item['image'] ? PRODUCT_IMAGE_URL . $item['image'] : 'https://via.placeholder.com/300x250'; ?>"
+                                <img src="<?php echo $item['image'] ? PRODUCT_IMAGE_URL . $item['image'] : 'https://via.placeholder.com/300x250?text=No+Image'; ?>"
                                     class="product-image" alt="<?php echo htmlspecialchars($item['name']); ?>">
                             </a>
-                            <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"
-                                onclick="removeFromWishlist(<?php echo $item['product_id']; ?>)">
-                                <i class="fas fa-times"></i>
-                            </button>
+                            <div class="product-add-to-cart-hover">
+                                <button class="btn-hover-cart add-to-cart-btn"
+                                    data-product-id="<?php echo $item['product_id']; ?>">
+                                    <span>Add to cart</span>
+                                    <div class="cart-icon-wrapper">
+                                        <i class="fas fa-shopping-bag"></i>
+                                    </div>
+                                </button>
+                            </div>
                         </div>
                         <div class="product-info">
-                            <h6 class="product-title">
+                            <div class="product-brand">Brand: <?php echo SITE_NAME; ?></div>
+                            <h6 class="product-name">
                                 <a href="<?php echo SITE_URL; ?>/products/<?php echo $item['slug']; ?>"
                                     class="text-decoration-none text-dark">
                                     <?php echo htmlspecialchars($item['name']); ?>
                                 </a>
                             </h6>
-                            <div class="product-price">
+                            <div class="product-price-wrapper">
                                 <?php if ($item['sale_price']): ?>
-                                    <?php echo format_price($item['sale_price']); ?>
-                                    <span class="product-price-old"><?php echo format_price($item['price']); ?></span>
+                                    <span class="old-price"><?php echo format_price($item['price']); ?></span>
+                                    <span class="current-price"><?php echo format_price($item['sale_price']); ?></span>
                                 <?php else: ?>
-                                    <?php echo format_price($item['price']); ?>
+                                    <span class="current-price"><?php echo format_price($item['price']); ?></span>
                                 <?php endif; ?>
                             </div>
-                        </div>
-                        <div class="product-footer">
-                            <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
-                                data-product-id="<?php echo $item['product_id']; ?>">
-                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                            </button>
                         </div>
                     </div>
                 </div>

@@ -35,32 +35,57 @@ include 'includes/navbar.php';
                 <div class="col-md-3">
                     <div class="card product-card">
                         <div class="product-image-wrapper">
-                            <a href="<?php echo SITE_URL; ?>/product-detail.php?slug=<?php echo $product['slug']; ?>">
-                                <img src="<?php echo $product['primary_image'] ? PRODUCT_IMAGE_URL . $product['primary_image'] : 'https://via.placeholder.com/300x250'; ?>"
+                            <div class="product-label-group">
+                                <?php if ($product['is_new_arrival']): ?>
+                                    <span class="product-label label-new">NEW</span>
+                                <?php endif; ?>
+                                <?php if ($product['sale_price']): ?>
+                                    <span
+                                        class="product-label label-sale">-<?php echo calculate_discount_percentage($product['price'], $product['sale_price']); ?>%</span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="product-action-icons">
+                                <a href="javascript:void(0)"
+                                    class="action-icon add-to-wishlist-btn <?php echo is_in_wishlist($product['id']) ? 'active' : ''; ?>"
+                                    data-product-id="<?php echo $product['id']; ?>">
+                                    <i class="<?php echo is_in_wishlist($product['id']) ? 'fas' : 'far'; ?> fa-heart"></i>
+                                </a>
+                                <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>" class="action-icon">
+                                    <i class="far fa-eye"></i>
+                                </a>
+                                <a href="javascript:void(0)" class="action-icon">
+                                    <i class="fas fa-arrows-rotate"></i>
+                                </a>
+                            </div>
+                            <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>">
+                                <img src="<?php echo $product['primary_image'] ? PRODUCT_IMAGE_URL . $product['primary_image'] : 'https://via.placeholder.com/300x250?text=No+Image'; ?>"
                                     class="product-image" alt="<?php echo htmlspecialchars($product['name']); ?>">
                             </a>
+                            <div class="product-add-to-cart-hover">
+                                <button class="btn-hover-cart add-to-cart-btn" data-product-id="<?php echo $product['id']; ?>">
+                                    <span>Add to cart</span>
+                                    <div class="cart-icon-wrapper">
+                                        <i class="fas fa-shopping-bag"></i>
+                                    </div>
+                                </button>
+                            </div>
                         </div>
                         <div class="product-info">
-                            <h6 class="product-title">
-                                <a href="<?php echo SITE_URL; ?>/product-detail.php?slug=<?php echo $product['slug']; ?>"
+                            <div class="product-brand">Brand: <?php echo SITE_NAME; ?></div>
+                            <h6 class="product-name">
+                                <a href="<?php echo SITE_URL; ?>/products/<?php echo $product['slug']; ?>"
                                     class="text-decoration-none text-dark">
                                     <?php echo htmlspecialchars($product['name']); ?>
                                 </a>
                             </h6>
-                            <div class="product-price">
+                            <div class="product-price-wrapper">
                                 <?php if ($product['sale_price']): ?>
-                                    <?php echo format_price($product['sale_price']); ?>
-                                    <span class="product-price-old"><?php echo format_price($product['price']); ?></span>
+                                    <span class="old-price"><?php echo format_price($product['price']); ?></span>
+                                    <span class="current-price"><?php echo format_price($product['sale_price']); ?></span>
                                 <?php else: ?>
-                                    <?php echo format_price($product['price']); ?>
+                                    <span class="current-price"><?php echo format_price($product['price']); ?></span>
                                 <?php endif; ?>
                             </div>
-                        </div>
-                        <div class="product-footer">
-                            <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
-                                data-product-id="<?php echo $product['id']; ?>">
-                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                            </button>
                         </div>
                     </div>
                 </div>
