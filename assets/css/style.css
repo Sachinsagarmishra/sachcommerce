@@ -1099,3 +1099,183 @@ h6,
     background-color: #f8f9fa;
     border-color: #ddd;
 }
+
+/* Announcement Marquee */
+.announcement-marquee {
+    background: #621415 !important;
+    color: #fff !important;
+    padding: 12px 0 !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    z-index: 10 !important;
+}
+
+.marquee-content {
+    display: inline-block !important;
+    animation: marquee-scroll 30s linear infinite !important;
+    padding-left: 100% !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+}
+
+.marquee-item {
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+.marquee-separator {
+    margin: 0 40px !important;
+    font-size: 18px !important;
+    opacity: 0.7 !important;
+}
+
+@keyframes marquee-scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* Curated for You Section */
+.curated-section {
+    padding: 60px 0 !important;
+    background: #fff !important;
+}
+
+.curated-title {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 38px !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    margin-bottom: 40px !important;
+    color: #1a1a1a !important;
+}
+
+.curated-grid {
+    display: flex !important;
+    gap: 20px !important;
+    overflow-x: auto !important;
+    padding: 10px 5px 30px !important;
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+}
+
+.curated-grid::-webkit-scrollbar {
+    display: none !important;
+}
+
+.curated-card {
+    min-width: 280px !important;
+    height: 480px !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    position: relative !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    cursor: pointer !important;
+}
+
+.curated-card:hover {
+    transform: translateY(-10px) !important;
+}
+
+.curated-video-wrapper {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.curated-video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+.curated-card-overlay {
+    position: absolute !important;
+    bottom: 20px !important;
+    left: 15px !important;
+    right: 15px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 12px !important;
+    padding: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    color: #fff !important;
+    transition: all 0.3s ease !important;
+}
+
+.curated-card:hover .curated-card-overlay {
+    background: rgba(255, 255, 255, 0.25) !important;
+    bottom: 25px !important;
+}
+
+.curated-thumb {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 8px !important;
+    object-fit: cover !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.curated-info {
+    flex-grow: 1 !important;
+    overflow: hidden !important;
+}
+
+.curated-name {
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    color: #fff !important;
+}
+
+.curated-price {
+    font-size: 12px !important;
+    opacity: 0.9 !important;
+    font-weight: 500 !important;
+}
+
+.curated-wishlist {
+    position: absolute !important;
+    top: 20px !important;
+    right: 20px !important;
+    color: #fff !important;
+    font-size: 20px !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    transition: transform 0.3s ease !important;
+    z-index: 5 !important;
+}
+
+.curated-wishlist:hover {
+    transform: scale(1.2) !important;
+}
+
+.curated-view {
+    position: absolute !important;
+    top: 60px !important;
+    right: 20px !important;
+    color: #fff !important;
+    font-size: 20px !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    transition: transform 0.3s ease !important;
+    z-index: 5 !important;
+}
+
+.curated-view:hover {
+    transform: scale(1.2) !important;
+}

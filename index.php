@@ -113,6 +113,97 @@ include 'includes/navbar.php';
     </div>
 </section>
 
+<!-- Announcement Marquee -->
+<div class="announcement-marquee">
+    <div class="marquee-content">
+        <span class="marquee-item">Order by Oct 5th For Guaranteed Diwali Delivery <span
+                class="marquee-separator">✦</span></span>
+        <span class="marquee-item">$20 Duty/Tariff Fee - <a href="#" class="text-white text-decoration-underline">Learn
+                More</a> <span class="marquee-separator">✦</span></span>
+        <span class="marquee-item">Free Shipping On All Orders Above $100 USD <span
+                class="marquee-separator">✦</span></span>
+        <span class="marquee-item">Upto 50% Items In Sale <span class="marquee-separator">✦</span></span>
+        <!-- Duplicate for loop seamlessness -->
+        <span class="marquee-item">Order by Oct 5th For Guaranteed Diwali Delivery <span
+                class="marquee-separator">✦</span></span>
+        <span class="marquee-item">$20 Duty/Tariff Fee - <a href="#" class="text-white text-decoration-underline">Learn
+                More</a> <span class="marquee-separator">✦</span></span>
+        <span class="marquee-item">Free Shipping On All Orders Above $100 USD <span
+                class="marquee-separator">✦</span></span>
+        <span class="marquee-item">Upto 50% Items In Sale <span class="marquee-separator">✦</span></span>
+    </div>
+</div>
+
+<!-- Curated for You / Video Section -->
+<section class="curated-section">
+    <div class="container-fluid px-md-5">
+        <h2 class="curated-title">Curated for You!</h2>
+        <div class="curated-grid">
+            <?php
+            // Use featured products for curated section with dummy vertical videos
+            $curated_data = array_slice($featured_products, 0, 6);
+            if (empty($curated_data))
+                $curated_data = array_slice($new_arrivals, 0, 6);
+
+            // Dummy vertical videos (using generic vertical stock footage links for demo)
+            $dummy_videos = [
+                'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-posing-in-a-red-dress-12503-large.mp4',
+                'https://assets.mixkit.co/videos/preview/mixkit-young-woman-walking-on-the-beach-in-a-dress-42523-large.mp4',
+                'https://assets.mixkit.co/videos/preview/mixkit-woman-smiling-while-carrying-shopping-bags-41487-large.mp4',
+                'https://assets.mixkit.co/videos/preview/mixkit-close-up-of-a-woman-posing-in-a-pink-dress-12499-large.mp4',
+                'https://assets.mixkit.co/videos/preview/mixkit-woman-walking-with-a-red-dress-and-a-hat-12501-large.mp4',
+                'https://assets.mixkit.co/videos/preview/mixkit-girl-in-white-dress-posing-in-front-of-a-mirror-12505-large.mp4'
+            ];
+
+            foreach ($curated_data as $index => $item):
+                $video_url = $dummy_videos[$index % count($dummy_videos)];
+                ?>
+                <div class="curated-card">
+                    <div class="curated-video-wrapper">
+                        <video class="curated-video" autoplay muted loop playsinline>
+                            <source src="<?php echo $video_url; ?>" type="video/mp4">
+                        </video>
+                    </div>
+
+                    <a href="javascript:void(0)"
+                        class="curated-wishlist add-to-wishlist-btn <?php echo is_in_wishlist($item['id']) ? 'active' : ''; ?>"
+                        data-product-id="<?php echo $item['id']; ?>">
+                        <i class="<?php echo is_in_wishlist($item['id']) ? 'fas' : 'far'; ?> fa-heart"></i>
+                    </a>
+                    <a href="<?php echo SITE_URL; ?>/products/<?php echo $item['slug']; ?>" class="curated-view">
+                        <i class="far fa-eye"></i>
+                    </a>
+
+                    <div class="curated-card-overlay"
+                        onclick="window.location.href='<?php echo SITE_URL; ?>/products/<?php echo $item['slug']; ?>'">
+                        <img src="<?php echo $item['primary_image'] ? PRODUCT_IMAGE_URL . $item['primary_image'] : 'https://via.placeholder.com/100'; ?>"
+                            class="curated-thumb" alt="">
+                        <div class="curated-info">
+                            <p class="curated-name">
+                                <?php echo htmlspecialchars($item['name']); ?>
+                            </p>
+                            <span class="curated-price">
+                                <?php if ($item['sale_price']): ?>
+                                    <span class="text-white">
+                                        <?php echo format_price($item['sale_price']); ?>
+                                    </span>
+                                    <span class="text-white-50 text-decoration-line-through small ms-1">
+                                        <?php echo format_price($item['price']); ?>
+                                    </span>
+                                <?php else: ?>
+                                    <span class="text-white">
+                                        <?php echo format_price($item['price']); ?>
+                                    </span>
+                                <?php endif; ?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
 <!-- Featured Products -->
 <section class="py-5">
     <div class="container">
