@@ -171,12 +171,6 @@ ob_start(); ?>
                             <source src="<?php echo $video_url; ?>" type="video/mp4">
                         </video>
                     </div>
-                    <a href="javascript:void(0)"
-                        class="curated-wishlist add-to-wishlist-btn <?php echo is_in_wishlist($item['id']) ? 'active' : ''; ?>"
-                        data-product-id="<?php echo $item['id']; ?>"><i
-                            class="<?php echo is_in_wishlist($item['id']) ? 'fas' : 'far'; ?> fa-heart"></i></a>
-                    <a href="<?php echo SITE_URL; ?>/products/<?php echo $item['slug']; ?>" class="curated-view"><i
-                            class="far fa-eye"></i></a>
                     <div class="curated-card-overlay"
                         onclick="window.location.href='<?php echo SITE_URL; ?>/products/<?php echo $item['slug']; ?>'">
                         <img src="<?php echo $item['primary_image'] ? PRODUCT_IMAGE_URL . $item['primary_image'] : 'https://via.placeholder.com/100'; ?>"
