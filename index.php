@@ -162,6 +162,7 @@ ob_start(); ?>
 foreach ($all_home_sections as $sec) {
     $key = $sec['section_key'];
     $title = $sec['display_title'] ?: $sec['section_name'];
+    $desc = $sec['display_description'];
     $cta = $sec['cta_link'];
 
     // PRE-RENDERED SPECIAL SECTIONS (Marquee and Hero)
@@ -178,6 +179,9 @@ foreach ($all_home_sections as $sec) {
             <div class="container">
                 <div class="text-center mb-5">
                     <h2 class="section-title mb-2"><?php echo htmlspecialchars($title); ?></h2>
+                    <?php if ($desc): ?>
+                        <p class="text-muted mx-auto" style="max-width: 600px;"><?php echo htmlspecialchars($desc); ?></p>
+                    <?php endif; ?>
                     <?php if ($cta): ?><a href="<?php echo $cta; ?>" class="btn btn-sm btn-outline-primary">View
                             All</a><?php endif; ?>
                 </div>
@@ -201,12 +205,75 @@ foreach ($all_home_sections as $sec) {
         </section>
         <?php continue;
     }
+    if ($key == 'tabbed_categories') {
+        $assigned_categories = get_homepage_section_items($key);
+        if (!empty($assigned_categories)): ?>
+            <section class="section-padding <?php echo ($sec['display_order'] % 2 == 0) ? 'bg-light' : ''; ?>">
+                <div class="container">
+                    <div class="text-center mb-5">
+                        <h2 class="section-title mb-2"><?php echo htmlspecialchars($title); ?></h2>
+                        <?php if ($desc): ?>
+                            <p class="text-muted mx-auto mb-4" style="max-width: 600px;"><?php echo htmlspecialchars($desc); ?></p>
+                        <?php endif; ?>
+
+                        <ul class="nav nav-tabs justify-content-center border-0 mb-4" id="categoryTabs" role="tablist">
+                            <?php foreach ($assigned_categories as $index => $cat): ?>
+                                <li class="nav-item m-1" role="presentation">
+                                    <button class="nav-link rounded-pill px-4 <?php echo $index === 0 ? 'active' : ''; ?>" 
+                                            id="cat-tab-<?php echo $cat['id']; ?>" 
+                                            data-bs-toggle="tab" 
+                                            data-bs-target="#cat-content-<?php echo $cat['id']; ?>" 
+                                            type="button" role="tab"><?php echo htmlspecialchars($cat['name']); ?></button>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+
+                    <div class="tab-content" id="categoryTabsContent">
+                        <?php foreach ($assigned_categories as $index => $cat): 
+                            // Fetch products for this category
+                            $stmt = $pdo->prepare("SELECT p.* FROM products p 
+                                                 JOIN product_categories pc ON p.id = pc.product_id 
+                                                 WHERE pc.category_id = ? AND p.status = 'active' 
+                                                 ORDER BY p.id DESC LIMIT 8");
+                            $stmt->execute([$cat['id']]);
+                            $cat_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        ?>
+                            <div class="tab-pane fade <?php echo $index === 0 ? 'show active' : ''; ?>" 
+                                 id="cat-content-<?php echo $cat['id']; ?>" role="tabpanel">
+                                <div class="row g-4">
+                                    <?php if (!empty($cat_products)): ?>
+                                        <?php foreach ($cat_products as $product): ?>
+                                            <div class="col-6 col-md-4 col-lg-3">
+                                                <div class="card product-card">
+                                                    <?php include 'includes/templates/product-card-body.php'; ?>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <div class="col-12 text-center py-5"><p class="text-muted">No products found in this category.</p></div>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="text-center mt-5">
+                                    <a href="<?php echo SITE_URL; ?>/shop?category=<?php echo $cat['slug']; ?>" class="btn btn-outline-dark">View All <?php echo htmlspecialchars($cat['name']); ?></a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </section>
+        <?php endif;
+        continue;
+    }
 
     if ($key == 'curated') { ?>
         <section class="curated-section">
             <div class="container-fluid px-md-5">
                 <div class="text-center mb-5">
                     <h2 class="curated-title mb-2"><?php echo htmlspecialchars($title); ?></h2>
+                    <?php if ($desc): ?>
+                        <p class="text-muted mx-auto mb-3" style="max-width: 600px;"><?php echo htmlspecialchars($desc); ?></p>
+                    <?php endif; ?>
                     <?php if ($cta): ?><a href="<?php echo $cta; ?>" class="btn btn-sm btn-outline-primary">View
                             All</a><?php endif; ?>
                 </div>
@@ -308,6 +375,9 @@ foreach ($all_home_sections as $sec) {
             <div class="container">
                 <div class="text-center mb-5">
                     <h2 class="section-title mb-2"><?php echo htmlspecialchars($title); ?></h2>
+                    <?php if ($desc): ?>
+                        <p class="text-muted mx-auto mb-2" style="max-width: 600px;"><?php echo htmlspecialchars($desc); ?></p>
+                    <?php endif; ?>
                     <?php if ($cta): ?>
                         <a href="<?php echo $cta; ?>" class="btn btn-sm btn-outline-primary">View All</a>
                     <?php endif; ?>

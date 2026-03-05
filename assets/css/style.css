@@ -1285,3 +1285,24 @@ h6,
 .curated-view:hover {
     transform: scale(1.2) !important;
 }
+/* Category Tabs Section */
+.category-tabs .nav-link {
+    color: #666 !important;
+    background: transparent !important;
+    border: none !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    padding: 10px 20px !important;
+    border-bottom: 2px solid transparent !important;
+    border-radius: 0 !important;
+}
+
+.category-tabs .nav-link.active {
+    color: #000 !important;
+    border-bottom: 2px solid #000 !important;
+}
+
+.category-tabs .nav-link:hover:not(.active) {
+    color: #000 !important;
+    border-bottom: 2px solid #eee !important;
+}
