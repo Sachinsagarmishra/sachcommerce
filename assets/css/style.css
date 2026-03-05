@@ -130,7 +130,7 @@ h6,
     width: 100% !important;
     height: 100% !important;
     object-fit: contain !important;
-    padding: 10px !important;
+    padding: 0px !important;
     transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
 }
 
@@ -209,7 +209,7 @@ h6,
 }
 
 .product-info {
-    padding: 15px 20px 20px !important;
+    padding: 10px 10px 10px !important;
     flex-grow: 1 !important;
     display: flex !important;
     flex-direction: column !important;
@@ -239,7 +239,7 @@ h6,
 .product-name {
     font-size: 16px !important;
     font-weight: 600 !important;
-    margin-bottom: 15px !important;
+    margin-bottom: 5px !important;
     color: #333 !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
